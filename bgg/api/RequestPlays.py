@@ -71,8 +71,8 @@ class RequestPlays:
     def queryAll(self) -> Generator[Play, None, None]:
         page = 0
         current_list = self.querySinglePage(page)
-        while len(current_list.plays()) == 100:
-            for play in current_list.plays():
+        while len(current_list) == 100:
+            for play in current_list:
                 yield play
             page += 1
             current_list = self.querySinglePage(page)

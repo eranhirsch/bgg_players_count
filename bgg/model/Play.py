@@ -31,6 +31,9 @@ class Play:
         play.__nowinstats = Play.__stringToBool(nullthrows(root.get("nowinstats")))
         play.__location = nullthrows(root.get("location"))
         play.__items = list(root)
+
+        print(f"Creating element {play}")
+
         return play
 
     def id(self) -> int:
