@@ -1,8 +1,9 @@
 import datetime
 import xml.etree.ElementTree as ET
-from typing import List
 
 from utils import nullthrows
+
+from .PlayItem import PlayItem
 
 
 class Play:
@@ -14,7 +15,7 @@ class Play:
     __incomplete: bool
     __nowinstats: bool
     __location: str
-    __items: List[ET.Element]
+    __item: PlayItem
 
     @staticmethod
     def fromElementTree(root: ET.Element) -> "Play":
@@ -30,7 +31,7 @@ class Play:
         play.__incomplete = Play.__stringToBool(nullthrows(root.get("incomplete")))
         play.__nowinstats = Play.__stringToBool(nullthrows(root.get("nowinstats")))
         play.__location = nullthrows(root.get("location"))
-        play.__items = list(root)
+        play.__item = PlayItem.fromElementTree(nullthrows(root.find("item")))
 
         return play
 
@@ -58,11 +59,11 @@ class Play:
     def location(self) -> str:
         return self.__location
 
-    def items(self) -> List[ET.Element]:
-        return self.__items
+    def item(self) -> PlayItem:
+        return self.__item
 
     def __str__(self) -> str:
-        return f"Play/ID: {self.id()}, UserID: {self.userID()}, Date: {self.date()}, Quantity: {self.quantity()}, Length: {self.length()}, IsIncomplete: {self.is_incomplete()}, NoWinStats: {self.is_nowinstats()}, Location: {self.location()}, Items: {len(self.items())}"
+        return f"Play/ID: {self.id()}, UserID: {self.userID()}, Date: {self.date()}, Quantity: {self.quantity()}, Length: {self.length()}, IsIncomplete: {self.is_incomplete()}, NoWinStats: {self.is_nowinstats()}, Location: {self.location()}, Item: {self.item()}"
 
     @staticmethod
     def __stringToBool(str) -> bool:
