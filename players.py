@@ -2,7 +2,7 @@
 
 import sys
 
-from bgg.api.BGGPlaysRequest import BGGPlaysRequest
+from bgg.api.RequestPlays import RequestPlays
 
 
 def main(argv=[]):
@@ -11,7 +11,7 @@ def main(argv=[]):
     else:
         id = 63888  # Innovation
         count = 0
-        for play in BGGPlaysRequest().forID(id).queryAll():
+        for play in RequestPlays().forID(id).queryAll():
             print(play)
             count += 1
             if count >= 500:

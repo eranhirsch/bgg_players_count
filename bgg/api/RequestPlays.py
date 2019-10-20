@@ -10,7 +10,7 @@ from ..model.Play import Play
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
 
-class BGGPlaysRequest:
+class RequestPlays:
     __userName: Optional[str]
     __id: Optional[int]
     __type: Optional[str]
@@ -26,27 +26,27 @@ class BGGPlaysRequest:
         self.__maxDate = None
         self.__subType = None
 
-    def forUserName(self, userName: str) -> "BGGPlaysRequest":
+    def forUserName(self, userName: str) -> "RequestPlays":
         self.__userName = userName
         return self
 
-    def forID(self, id: int) -> "BGGPlaysRequest":
+    def forID(self, id: int) -> "RequestPlays":
         self.__id = id
         return self
 
-    def ofType(self, type: str) -> "BGGPlaysRequest":
+    def ofType(self, type: str) -> "RequestPlays":
         self.__type = type
         return self
 
-    def fromDate(self, minDate: datetime.date) -> "BGGPlaysRequest":
+    def fromDate(self, minDate: datetime.date) -> "RequestPlays":
         self.__minDate = minDate
         return self
 
-    def toDate(self, maxDate: datetime.date) -> "BGGPlaysRequest":
+    def toDate(self, maxDate: datetime.date) -> "RequestPlays":
         self.__maxDate = maxDate
         return self
 
-    def ofSubType(self, subType: str) -> "BGGPlaysRequest":
+    def ofSubType(self, subType: str) -> "RequestPlays":
         self.__subType = subType
         return self
 
