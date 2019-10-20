@@ -1,6 +1,7 @@
 import datetime
+import itertools
 import xml.etree.ElementTree as ET
-from typing import Dict, Generator, Optional
+from typing import Dict, Generator, Iterable, Iterator, Optional
 
 import requests
 
@@ -10,7 +11,7 @@ from ..model.Plays import Plays
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
 
-class RequestPlays:
+class RequestPlays(Iterable[Plays]):
     """
     A request for a list of plays for the specific object.
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc10
@@ -69,13 +70,13 @@ class RequestPlays:
         return plays
 
     def queryAll(self) -> Generator[Play, None, None]:
-        page = 0
-        current_list = self.querySinglePage(page)
-        while len(current_list) == 100:
-            for play in current_list:
+        for plays in self:
+            for play in plays:
                 yield play
-            page += 1
-            current_list = self.querySinglePage(page)
+
+    def __iter__(self) -> Iterator[Plays]:
+        for page in itertools.count():
+            yield self.querySinglePage(page)
 
     def __getParams(self) -> Dict[str, str]:
         params = {}
