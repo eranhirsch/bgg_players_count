@@ -4,11 +4,12 @@ from typing import List, Optional
 
 from utils import nullthrows
 
+from .ModelBase import ModelBase
 from .Player import Player
 from .PlayItem import PlayItem
 
 
-class Play:
+class Play(ModelBase):
     __id: int
     __userID: int
     __date: datetime.date
@@ -32,8 +33,8 @@ class Play:
         play.__date = datetime.date.fromisoformat(nullthrows(root.get("date")))
         play.__quantity = int(nullthrows(root.get("quantity")))
         play.__length = datetime.timedelta(seconds=int(nullthrows(root.get("length"))))
-        play.__incomplete = Play.__stringToBool(nullthrows(root.get("incomplete")))
-        play.__nowinstats = Play.__stringToBool(nullthrows(root.get("nowinstats")))
+        play.__incomplete = Play._stringToBool(nullthrows(root.get("incomplete")))
+        play.__nowinstats = Play._stringToBool(nullthrows(root.get("nowinstats")))
         play.__location = nullthrows(root.get("location"))
         play.__item = PlayItem.fromElementTree(nullthrows(root.find("item")))
 
@@ -78,12 +79,3 @@ class Play:
 
     def __str__(self) -> str:
         return f"Play/ID: {self.id()}, UserID: {self.userID()}, Date: {self.date()}, Quantity: {self.quantity()}, Length: {self.length()}, IsIncomplete: {self.is_incomplete()}, NoWinStats: {self.is_nowinstats()}, Location: {self.location()}, Item: {self.item()}"
-
-    @staticmethod
-    def __stringToBool(str) -> bool:
-        if str == "0":
-            return False
-        elif str == "1":
-            return True
-        else:
-            raise Exception(f"Unexpected boolean value {str}")
