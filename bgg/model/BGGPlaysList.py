@@ -3,13 +3,13 @@ from typing import List
 
 from utils import nullthrows
 
-from .BGGPlay import BGGPlay
+from .Play import Play
 
 
 class BGGPlaysList:
     __total: int
     __page: int
-    __plays: List[BGGPlay]
+    __plays: List[Play]
 
     @staticmethod
     def fromElementTree(root: ET.Element) -> "BGGPlaysList":
@@ -19,7 +19,7 @@ class BGGPlaysList:
         plays = BGGPlaysList()
         plays.__total = int(nullthrows(root.get("total")))
         plays.__page = int(nullthrows(root.get("page")))
-        plays.__plays = [BGGPlay.fromElementTree(child) for child in root]
+        plays.__plays = [Play.fromElementTree(child) for child in root]
         return plays
 
     def total(self) -> int:
@@ -28,7 +28,7 @@ class BGGPlaysList:
     def page(self) -> int:
         return self.__page
 
-    def plays(self) -> List[BGGPlay]:
+    def plays(self) -> List[Play]:
         return self.__plays
 
     def __str__(self) -> str:

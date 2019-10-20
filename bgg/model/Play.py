@@ -5,7 +5,7 @@ from typing import List
 from utils import nullthrows
 
 
-class BGGPlay:
+class Play:
     __id: int
     __userID: int
     __date: datetime.date
@@ -17,18 +17,18 @@ class BGGPlay:
     __items: List[ET.Element]
 
     @staticmethod
-    def fromElementTree(root: ET.Element) -> "BGGPlay":
+    def fromElementTree(root: ET.Element) -> "Play":
         if root.tag != "play":
             raise Exception(f"Unexpected root tag: {root.tag}")
 
-        play = BGGPlay()
+        play = Play()
         play.__id = int(nullthrows(root.get("id")))
         play.__userID = int(nullthrows(root.get("userid")))
         play.__date = datetime.date.fromisoformat(nullthrows(root.get("date")))
         play.__quantity = int(nullthrows(root.get("quantity")))
         play.__length = datetime.timedelta(seconds=int(nullthrows(root.get("length"))))
-        play.__incomplete = BGGPlay.__stringToBool(nullthrows(root.get("incomplete")))
-        play.__nowinstats = BGGPlay.__stringToBool(nullthrows(root.get("nowinstats")))
+        play.__incomplete = Play.__stringToBool(nullthrows(root.get("incomplete")))
+        play.__nowinstats = Play.__stringToBool(nullthrows(root.get("nowinstats")))
         play.__location = nullthrows(root.get("location"))
         play.__items = list(root)
         return play
@@ -61,7 +61,7 @@ class BGGPlay:
         return self.__items
 
     def __str__(self) -> str:
-        return f"BGGPlay/ID: {self.id()}, UserID: {self.userID()}, Date: {self.date()}, Quantity: {self.quantity()}, Length: {self.length()}, IsIncomplete: {self.is_incomplete()}, NoWinStats: {self.is_nowinstats()}, Location: {self.location()}, Items: {len(self.items())}"
+        return f"Play/ID: {self.id()}, UserID: {self.userID()}, Date: {self.date()}, Quantity: {self.quantity()}, Length: {self.length()}, IsIncomplete: {self.is_incomplete()}, NoWinStats: {self.is_nowinstats()}, Location: {self.location()}, Items: {len(self.items())}"
 
     @staticmethod
     def __stringToBool(str) -> bool:

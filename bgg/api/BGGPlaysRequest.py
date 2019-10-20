@@ -4,8 +4,8 @@ from typing import Dict, Generator, Optional
 
 import requests
 
-from ..model.BGGPlay import BGGPlay
 from ..model.BGGPlaysList import BGGPlaysList
+from ..model.Play import Play
 
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
@@ -63,7 +63,7 @@ class BGGPlaysRequest:
         playsList = BGGPlaysList.fromElementTree(root)
         return playsList
 
-    def queryAll(self) -> Generator[BGGPlay, None, None]:
+    def queryAll(self) -> Generator[Play, None, None]:
         page = 0
         current_list = self.querySinglePage(page)
         while len(current_list.plays()) == 100:
