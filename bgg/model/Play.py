@@ -37,8 +37,6 @@ class Play:
 
         comments = root.find("comments")
         if comments:
-            if comments.tag != "comments":
-                raise Exception(f"Unexpected comments tag: {comments.tag}")
             play.__comments = comments.text
 
         return play
