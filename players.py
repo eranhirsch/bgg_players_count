@@ -5,7 +5,7 @@ import sys
 from bgg.api.RequestPlays import RequestPlays
 
 
-def main(argv=[]):
+def main(argv=[]) -> int:
     if len(argv) > 1:
         id = int(argv[1])
     else:
