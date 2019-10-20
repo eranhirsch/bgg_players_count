@@ -5,3 +5,4 @@ black .
 mypy -p bgg
 mypy -p utils
 mypy *.py
+pylama -i E501
