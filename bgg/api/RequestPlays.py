@@ -11,6 +11,11 @@ BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
 
 class RequestPlays:
+    """
+    A request for a list of plays for the specific object.
+    Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc10
+    """
+
     __userName: Optional[str]
     __id: Optional[int]
     __type: Optional[str]
