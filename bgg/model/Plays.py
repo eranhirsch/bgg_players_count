@@ -33,7 +33,10 @@ class Plays(Sized, Iterable[Play]):
 
     def __iter__(self) -> Iterator[Play]:
         for child in self.__root:
-            yield Play.fromElementTree(child)
+            try:
+                yield Play.fromElementTree(child)
+            except Exception as e:
+                print(f"Skipping element because of error: {e}")
 
     def __str__(self) -> str:
         return f"Plays/Total: {self.total()}, Page: {self.page()}, Plays Count: {len(self)}"

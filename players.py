@@ -6,17 +6,13 @@ from bgg.api.RequestPlays import RequestPlays
 
 
 def main(argv=[]) -> int:
-    if len(argv) > 1:
-        id = int(argv[1])
-    else:
-        id = 63888  # Innovation
-        count = 0
-        for play in RequestPlays().forID(id).queryAll():
-            print(play)
-            count += 1
-            if count >= 10:
-                break
+    # Fallback to Innovation for now...
+    id = int(argv[1]) if len(argv) > 1 else 63888
+    print(f"Processing plays for: ID={id}")
+    for play in RequestPlays().forID(id).queryAll():
+        print(play)
 
+    print(f"Finished processing")
     return 0
 
 

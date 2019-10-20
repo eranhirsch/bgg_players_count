@@ -10,6 +10,11 @@ from ..model.Plays import Plays
 
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
+# Each page in the API responses contains up to 100 entries. This isn't
+# documented anywhere though, so it might be incorrect in some cases, or simply
+# change in the future.
+ENTRIES_IN_FULL_PAGE = 100
+
 
 class RequestPlays(Iterable[Plays]):
     """
@@ -75,8 +80,19 @@ class RequestPlays(Iterable[Plays]):
                 yield play
 
     def __iter__(self) -> Iterator[Plays]:
-        for page in itertools.count():
-            yield self.querySinglePage(page)
+        for page in itertools.count(start=1):
+            plays = self.querySinglePage(page)
+
+            if plays:
+                yield plays
+            else:
+                # Response returned no plays
+                break
+
+            if len(plays) < ENTRIES_IN_FULL_PAGE:
+                # We can guess when the generation is done if the number of
+                # plays we got is lower than the usual number in a full page
+                break
 
     def __getParams(self) -> Dict[str, str]:
         params = {}
