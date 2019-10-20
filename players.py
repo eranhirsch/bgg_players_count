@@ -2,7 +2,7 @@
 
 import sys
 
-from bgg.api.BGGPlaysRequest import *
+from bgg.api.BGGPlaysRequest import BGGPlaysRequest
 
 
 def main(argv=[]):

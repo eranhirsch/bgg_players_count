@@ -3,8 +3,9 @@ import xml.etree.ElementTree as ET
 from typing import Dict, Generator, Optional
 
 import requests
-from bgg.model.BGGPlay import BGGPlay
-from bgg.model.BGGPlaysList import BGGPlaysList
+
+from ..model.BGGPlay import BGGPlay
+from ..model.BGGPlaysList import BGGPlaysList
 
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
@@ -59,7 +60,7 @@ class BGGPlaysRequest:
             raise Exception(f"Bad API response: {response.status_code}")
 
         root = ET.fromstring(response.text)
-        playsList = BGGPlaysList.fromElementTree(root, self)
+        playsList = BGGPlaysList.fromElementTree(root)
         return playsList
 
     def queryAll(self) -> Generator[BGGPlay, None, None]:
