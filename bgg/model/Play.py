@@ -1,5 +1,6 @@
 import datetime
 import xml.etree.ElementTree as ET
+from typing import Optional
 
 from utils import nullthrows
 
@@ -16,6 +17,7 @@ class Play:
     __nowinstats: bool
     __location: str
     __item: PlayItem
+    __comments: Optional[str] = None
 
     @staticmethod
     def fromElementTree(root: ET.Element) -> "Play":
@@ -32,6 +34,10 @@ class Play:
         play.__nowinstats = Play.__stringToBool(nullthrows(root.get("nowinstats")))
         play.__location = nullthrows(root.get("location"))
         play.__item = PlayItem.fromElementTree(nullthrows(root.find("item")))
+
+        comments = root.find("comments")
+        if comments:
+            play.__comments = comments.text
 
         return play
 
