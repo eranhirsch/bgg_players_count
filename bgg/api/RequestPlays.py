@@ -5,7 +5,7 @@ from typing import Dict, Generator, Optional
 import requests
 
 from ..model.Play import Play
-from ..model.PlaysList import PlaysList
+from ..model.Plays import Plays
 
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
@@ -55,7 +55,7 @@ class RequestPlays:
         self.__subType = subType
         return self
 
-    def querySinglePage(self, page: int = 0) -> PlaysList:
+    def querySinglePage(self, page: int = 0) -> Plays:
         uri = f"{BASE_URL}plays"
         params = self.__getParams()
         params["page"] = str(page)
@@ -65,8 +65,8 @@ class RequestPlays:
             raise Exception(f"Bad API response: {response.status_code}")
 
         root = ET.fromstring(response.text)
-        playsList = PlaysList.fromElementTree(root)
-        return playsList
+        plays = Plays.fromElementTree(root)
+        return plays
 
     def queryAll(self) -> Generator[Play, None, None]:
         page = 0

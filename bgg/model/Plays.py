@@ -6,17 +6,17 @@ from utils import nullthrows
 from .Play import Play
 
 
-class PlaysList(Sized, Iterable[Play]):
+class Plays(Sized, Iterable[Play]):
     __total: int
     __page: int
     __root: ET.Element
 
     @staticmethod
-    def fromElementTree(root: ET.Element) -> "PlaysList":
+    def fromElementTree(root: ET.Element) -> "Plays":
         if root.tag != "plays":
             raise Exception(f"Unexpected root tag: {root.tag}")
 
-        plays = PlaysList()
+        plays = Plays()
         plays.__total = int(nullthrows(root.get("total")))
         plays.__page = int(nullthrows(root.get("page")))
         plays.__root = root
@@ -36,4 +36,4 @@ class PlaysList(Sized, Iterable[Play]):
             yield Play.fromElementTree(child)
 
     def __str__(self) -> str:
-        return f"PlaysList/Total: {self.total()}, Page: {self.page()}, Plays Count: {len(self)}"
+        return f"Plays/Total: {self.total()}, Page: {self.page()}, Plays Count: {len(self)}"

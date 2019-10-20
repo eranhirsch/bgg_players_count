@@ -14,7 +14,7 @@ def main(argv=[]) -> int:
         for play in RequestPlays().forID(id).queryAll():
             print(play)
             count += 1
-            if count >= 500:
+            if count >= 10:
                 break
 
     return 0
