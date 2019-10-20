@@ -32,8 +32,6 @@ class Play:
         play.__location = nullthrows(root.get("location"))
         play.__items = list(root)
 
-        print(f"Creating element {play}")
-
         return play
 
     def id(self) -> int:
