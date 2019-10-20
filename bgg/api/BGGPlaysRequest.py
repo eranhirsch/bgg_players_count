@@ -3,7 +3,8 @@ import xml.etree.ElementTree as ET
 from typing import Dict, Generator, Optional
 
 import requests
-from bgg.model.BGGPlaysList import *
+from bgg.model.BGGPlay import BGGPlay
+from bgg.model.BGGPlaysList import BGGPlaysList
 
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 

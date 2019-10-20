@@ -1,8 +1,8 @@
 import xml.etree.ElementTree as ET
 from typing import List
 
-from bgg.api.BGGPlaysRequest import *
-from bgg.model.BGGPlay import *
+from bgg.api.BGGPlaysRequest import BGGPlaysRequest
+from bgg.model.BGGPlay import BGGPlay
 from utils import nullthrows
 
 
