@@ -12,19 +12,22 @@ def main(argv=[]) -> int:
     print(f"Processing plays for: ID={id}")
 
     count = 0
-    player_count: Dict[int, int] = {}
-    for play in RequestPlays().forID(id).queryAll():
-        players = play.players()
-        if players:
+    player_count_aggr: Dict[str, int] = {}
+    try:
+        for play in RequestPlays().forID(id).queryAll():
+            players = play.players()
+            player_count = f"{len(players)} Players" if players else "Missing"
             try:
-                player_count[len(players)] += 1
+                player_count_aggr[player_count] += 1
             except KeyError:
-                player_count[len(players)] = 1
-        count += 1
-        if count >= 5000:
-            break
+                player_count_aggr[player_count] = 1
+            count += 1
+            if count >= 5000:
+                break
+    except Exception as e:
+        print(f"Encountered exception {e} while processing")
 
-    print(f"Player Count: {player_count}")
+    print(f"Player Count: {player_count_aggr}")
 
     print(f"Finished processing")
     return 0
