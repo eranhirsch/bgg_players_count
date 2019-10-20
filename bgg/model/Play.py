@@ -1,9 +1,10 @@
 import datetime
 import xml.etree.ElementTree as ET
-from typing import Optional
+from typing import List, Optional
 
 from utils import nullthrows
 
+from .Player import Player
 from .PlayItem import PlayItem
 
 
@@ -18,6 +19,7 @@ class Play:
     __location: str
     __item: PlayItem
     __comments: Optional[str] = None
+    __players: Optional[List[Player]] = None
 
     @staticmethod
     def fromElementTree(root: ET.Element) -> "Play":
@@ -38,6 +40,12 @@ class Play:
         comments = root.find("comments")
         if comments:
             play.__comments = comments.text
+
+        players = root.find("players")
+        if players:
+            play.__players = [
+                Player.fromElementTree(player) for player in list(players)
+            ]
 
         return play
 
