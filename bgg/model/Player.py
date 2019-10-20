@@ -37,6 +37,33 @@ class Player(ModelBase):
 
         return player
 
+    def userName(self) -> Optional[str]:
+        return self.__userName
+
+    def userID(self) -> Optional[int]:
+        return self.__userID
+
+    def name(self) -> str:
+        return self.__name
+
+    def startPosition(self) -> Optional[str]:
+        return self.__startPosition
+
+    def color(self) -> Optional[str]:
+        return self.__color
+
+    def score(self) -> Optional[str]:
+        return self.__score
+
+    def isNew(self) -> bool:
+        return self.__isNew
+
+    def rating(self) -> int:
+        return self.__rating
+
+    def isWinner(self) -> bool:
+        return self.__isWinner
+
     @staticmethod
     def __nonifyStr(x: str) -> Optional[str]:
         return None if x == "" else x

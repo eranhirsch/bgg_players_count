@@ -77,5 +77,11 @@ class Play(ModelBase):
     def item(self) -> PlayItem:
         return self.__item
 
+    def comments(self) -> Optional[str]:
+        return self.__comments
+
+    def players(self) -> Optional[List[Player]]:
+        return self.__players
+
     def __str__(self) -> str:
         return f"Play/ID: {self.id()}, UserID: {self.userID()}, Date: {self.date()}, Quantity: {self.quantity()}, Length: {self.length()}, IsIncomplete: {self.is_incomplete()}, NoWinStats: {self.is_nowinstats()}, Location: {self.location()}, Item: {self.item()}"
