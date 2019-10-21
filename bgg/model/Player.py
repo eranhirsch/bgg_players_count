@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import Optional
 
-from ..utils import nullthrows
+from ..utils import nonthrows
 from .ModelBase import ModelBase
 
 
@@ -22,17 +22,17 @@ class Player(ModelBase):
             raise Exception(f"Unexpected root tag: {root.tag}")
 
         player = Player()
-        player.__userName = Player.__nonifyStr(nullthrows(root.get("username")))
-        player.__userID = Player.__nonifyInt(nullthrows(root.get("userid")))
-        player.__name = nullthrows(root.get("name"))
+        player.__userName = Player.__nonifyStr(nonthrows(root.get("username")))
+        player.__userID = Player.__nonifyInt(nonthrows(root.get("userid")))
+        player.__name = nonthrows(root.get("name"))
         player.__startPosition = Player.__nonifyStr(
-            nullthrows(root.get("startposition"))
+            nonthrows(root.get("startposition"))
         )
-        player.__color = Player.__nonifyStr(nullthrows(root.get("color")))
-        player.__score = Player.__nonifyStr(nullthrows(root.get("score")))
-        player.__isNew = Player._stringToBool(nullthrows(root.get("new")))
-        player.__rating = int(nullthrows(root.get("rating")))
-        player.__isWinner = Player._stringToBool(nullthrows(root.get("win")))
+        player.__color = Player.__nonifyStr(nonthrows(root.get("color")))
+        player.__score = Player.__nonifyStr(nonthrows(root.get("score")))
+        player.__isNew = Player._stringToBool(nonthrows(root.get("new")))
+        player.__rating = int(nonthrows(root.get("rating")))
+        player.__isWinner = Player._stringToBool(nonthrows(root.get("win")))
 
         return player
 

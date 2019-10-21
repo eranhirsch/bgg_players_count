@@ -2,7 +2,7 @@ import datetime
 import xml.etree.ElementTree as ET
 from typing import List, Optional
 
-from ..utils import nullthrows
+from ..utils import nonthrows
 from .ModelBase import ModelBase
 from .Player import Player
 from .PlayItem import PlayItem
@@ -27,15 +27,15 @@ class Play(ModelBase):
             raise Exception(f"Unexpected root tag: {root.tag}")
 
         play = Play()
-        play.__id = int(nullthrows(root.get("id")))
-        play.__userID = int(nullthrows(root.get("userid")))
-        play.__date = datetime.date.fromisoformat(nullthrows(root.get("date")))
-        play.__quantity = int(nullthrows(root.get("quantity")))
-        play.__length = datetime.timedelta(seconds=int(nullthrows(root.get("length"))))
-        play.__incomplete = Play._stringToBool(nullthrows(root.get("incomplete")))
-        play.__nowinstats = Play._stringToBool(nullthrows(root.get("nowinstats")))
-        play.__location = nullthrows(root.get("location"))
-        play.__item = PlayItem.fromElementTree(nullthrows(root.find("item")))
+        play.__id = int(nonthrows(root.get("id")))
+        play.__userID = int(nonthrows(root.get("userid")))
+        play.__date = datetime.date.fromisoformat(nonthrows(root.get("date")))
+        play.__quantity = int(nonthrows(root.get("quantity")))
+        play.__length = datetime.timedelta(seconds=int(nonthrows(root.get("length"))))
+        play.__incomplete = Play._stringToBool(nonthrows(root.get("incomplete")))
+        play.__nowinstats = Play._stringToBool(nonthrows(root.get("nowinstats")))
+        play.__location = nonthrows(root.get("location"))
+        play.__item = PlayItem.fromElementTree(nonthrows(root.find("item")))
 
         comments = root.find("comments")
         if comments:

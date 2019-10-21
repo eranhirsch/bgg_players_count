@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import Iterable, Iterator, Sized
 
-from ..utils import nullthrows
+from ..utils import nonthrows
 from .Play import Play
 
 
@@ -16,8 +16,8 @@ class Plays(Sized, Iterable[Play]):
             raise Exception(f"Unexpected root tag: {root.tag}")
 
         plays = Plays()
-        plays.__total = int(nullthrows(root.get("total")))
-        plays.__page = int(nullthrows(root.get("page")))
+        plays.__total = int(nonthrows(root.get("total")))
+        plays.__page = int(nonthrows(root.get("page")))
         plays.__root = root
         return plays
 

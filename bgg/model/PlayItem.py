@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import List
 
-from ..utils import nullthrows
+from ..utils import nonthrows
 
 
 class PlayItem:
@@ -16,12 +16,12 @@ class PlayItem:
             raise Exception(f"Unexpected root tag: {root.tag}")
 
         item = PlayItem()
-        item.__name = nullthrows(root.get("name"))
-        item.__objectType = nullthrows(root.get("objecttype"))
-        item.__objectID = int(nullthrows(root.get("objectid")))
+        item.__name = nonthrows(root.get("name"))
+        item.__objectType = nonthrows(root.get("objecttype"))
+        item.__objectID = int(nonthrows(root.get("objectid")))
         item.__subTypes = [
-            nullthrows(subtype.get("value"))
-            for subtype in list(nullthrows(root.find("subtypes")))
+            nonthrows(subtype.get("value"))
+            for subtype in list(nonthrows(root.find("subtypes")))
         ]
         return item
 
