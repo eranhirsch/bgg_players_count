@@ -13,7 +13,7 @@ class Player(ModelBase):
     __color: Optional[str]
     __score: Optional[str]
     __isNew: bool
-    __rating: int
+    __rating: float
     __isWinner: bool
 
     @staticmethod
@@ -31,7 +31,7 @@ class Player(ModelBase):
         player.__color = Player.__nonifyStr(nonthrows(root.get("color")))
         player.__score = Player.__nonifyStr(nonthrows(root.get("score")))
         player.__isNew = Player._stringToBool(nonthrows(root.get("new")))
-        player.__rating = int(nonthrows(root.get("rating")))
+        player.__rating = float(nonthrows(root.get("rating")))
         player.__isWinner = Player._stringToBool(nonthrows(root.get("win")))
 
         return player
