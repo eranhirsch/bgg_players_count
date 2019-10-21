@@ -41,7 +41,7 @@ def extractGameIDFromUserInput(user_input: str) -> int:
 
     result = firstx(results)
     if len(results) == 1:
-        print(f"Game found (as '{result.name()[0]}'")
+        print(f"Game found (as '{result.name()[0]}')")
     else:
         print(
             f"More than one entry found, using '{result.name()[0]}' published in {result.yearPublished()}"
