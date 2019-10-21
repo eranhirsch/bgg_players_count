@@ -50,12 +50,15 @@ def extractGameIDFromUserInput(user_input: str) -> int:
 
 
 def formatResults(player_count_aggr: Dict[int, int]) -> str:
+    print(f"{player_count_aggr}")
     missing = player_count_aggr[0]
     max_count = max(player_count_aggr.keys())
     total_plays = sum(player_count_aggr.values())
-    out = ["Players\tPlays\tRatio\tRatio (No Unknowns)"]
-    for player_count in range(max_count):
-        plays_count = player_count_aggr[player_count] or 0
+    out = ["Players\t\tPlays\tRatio\tRatio (No Unknowns)"]
+    for player_count in range(max_count+1):
+        plays_count = (
+            player_count_aggr[player_count] if player_count in player_count_aggr else 0
+        )
         if player_count == 0:
             label = "Unknown\t"
         elif player_count == 1:
