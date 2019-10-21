@@ -41,9 +41,9 @@ def main(argv=[]) -> int:
             players = play.players() or []
             player_count = len(players)
             try:
-                player_count_aggr[player_count] += 1
+                player_count_aggr[player_count] += play.quantity()
             except KeyError:
-                player_count_aggr[player_count] = 1
+                player_count_aggr[player_count] = play.quantity()
         return 0
     except Exception:
         print(f"Encountered exception while processing")
