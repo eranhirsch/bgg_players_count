@@ -3,9 +3,9 @@ import xml.etree.ElementTree as ET
 from typing import List, Optional
 
 from ..utils import nonthrows
+from .Item import Item
 from .ModelBase import ModelBase
 from .Player import Player
-from .PlayItem import PlayItem
 
 
 class Play(ModelBase):
@@ -17,7 +17,7 @@ class Play(ModelBase):
     __incomplete: bool
     __nowinstats: bool
     __location: str
-    __item: PlayItem
+    __item: Item
     __comments: Optional[str] = None
     __players: Optional[List[Player]] = None
 
@@ -35,7 +35,7 @@ class Play(ModelBase):
         play.__incomplete = Play._stringToBool(nonthrows(root.get("incomplete")))
         play.__nowinstats = Play._stringToBool(nonthrows(root.get("nowinstats")))
         play.__location = nonthrows(root.get("location"))
-        play.__item = PlayItem.fromElementTree(nonthrows(root.find("item")))
+        play.__item = Item.fromElementTree(nonthrows(root.find("item")))
 
         comments = root.find("comments")
         if comments:
@@ -73,7 +73,7 @@ class Play(ModelBase):
     def location(self) -> str:
         return self.__location
 
-    def item(self) -> PlayItem:
+    def item(self) -> Item:
         return self.__item
 
     def comments(self) -> Optional[str]:

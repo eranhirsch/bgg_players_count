@@ -4,18 +4,18 @@ from typing import List
 from ..utils import nonthrows
 
 
-class PlayItem:
+class Item:
     __name: str
     __objectType: str
     __objectID: int
     __subTypes: List[str]
 
     @staticmethod
-    def fromElementTree(root: ET.Element) -> "PlayItem":
+    def fromElementTree(root: ET.Element) -> "Item":
         if root.tag != "item":
             raise Exception(f"Unexpected root tag: {root.tag}")
 
-        item = PlayItem()
+        item = Item()
         item.__name = nonthrows(root.get("name"))
         item.__objectType = nonthrows(root.get("objecttype"))
         item.__objectID = int(nonthrows(root.get("objectid")))
@@ -38,4 +38,4 @@ class PlayItem:
         return self.__subTypes
 
     def __str__(self) -> str:
-        return f"PlayItem/Name: {self.name()}, Type: {self.objectType()}, ID: {self.objectID()}, Subtypes: {':'.join(self.subTypes())}"
+        return f"Item/Name: {self.name()}, Type: {self.objectType()}, ID: {self.objectID()}, Subtypes: {':'.join(self.subTypes())}"
