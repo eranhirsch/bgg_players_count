@@ -89,7 +89,7 @@ class RequestPlays(Iterable[Plays]):
                     )
                 message = nonthrows(root.find("message")).text
                 retry_secs = 2 ** (retries)  # Exponential backoff
-                print(f"TOO MANY REQUESTS[{message}]. Retrying in {retry_secs}s")
+                print(f'TOO MANY REQUESTS["{message}"]. Retrying in {retry_secs}s')
                 time.sleep(retry_secs)
 
             else:
