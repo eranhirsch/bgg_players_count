@@ -12,9 +12,7 @@ from ..utils import nonthrows
 
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
-# Each page in the API responses contains up to 100 entries. This isn't
-# documented anywhere though, so it might be incorrect in some cases, or simply
-# change in the future.
+# Each page in the API responses contains up to 100 entries.
 ENTRIES_IN_FULL_PAGE = 100
 
 HTTP_STATUS_CODE_OK = 200
