@@ -25,7 +25,6 @@ class RequestSearch:
     """
 
     __type: Optional[str]
-    __isExact: bool = False
 
     def __init__(self):
         self.__type = None
@@ -34,14 +33,12 @@ class RequestSearch:
         self.__type = type
         return self
 
-    def exactMatchOnly(self, is_exact: bool) -> "RequestSearch":
-        self.__isExact = is_exact
-        return self
-
-    def query(self, query: str) -> Items:
+    def query(self, query: str, is_exact: bool = True) -> Items:
         uri = f"{BASE_URL}search"
         params = self.__getParams()
         params["query"] = query
+        if is_exact:
+            params["exact"] = "1"
 
         for retries in range(MAX_RETRIES):
             response = requests.get(uri, params=params)
@@ -74,8 +71,5 @@ class RequestSearch:
 
         if self.__type:
             params["type"] = self.__type
-
-        if self.__isExact:
-            params["exact"] = "1"
 
         return params

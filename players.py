@@ -4,6 +4,8 @@ import sys
 from typing import Dict
 
 from bgg.api.RequestPlays import RequestPlays
+from bgg.api.RequestSearch import RequestSearch
+from bgg.utils import firstx
 
 
 def formatResults(player_count_aggr: Dict[int, int]) -> str:
@@ -31,8 +33,26 @@ def formatResults(player_count_aggr: Dict[int, int]) -> str:
 
 
 def main(argv=[]) -> int:
-    # Fallback to Innovation for now...
-    id = int(argv[1]) if len(argv) > 1 else 63888
+    if len(argv) > 1:
+        game_input = argv[1]
+        if not game_input.isdigit():
+            results = RequestSearch().ofType("boardgame").query(game_input)
+            if not results:
+                raise Exception(f"No game found with the name '{game_input}'")
+
+            result = firstx(results)
+            if len(results) == 1:
+                print(f"Game found (as '{result.name()[0]}'")
+            else:
+                print(
+                    f"More than one entry found, using '{result.name()[0]}' published in {result.yearPublished()}"
+                )
+            id = result.id()
+        else:
+            id = int(game_input)
+    else:
+        # Innovation, just for fun...
+        id = 63888
     print(f"Processing plays for: ID={id}")
 
     player_count_aggr: Dict[int, int] = {}
