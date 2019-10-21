@@ -1,8 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import Iterable, Iterator, Sized
 
-from utils import nullthrows
-
+from ..utils import nullthrows
 from .Play import Play
 
 

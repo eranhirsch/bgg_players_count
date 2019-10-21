@@ -2,8 +2,7 @@ import datetime
 import xml.etree.ElementTree as ET
 from typing import List, Optional
 
-from utils import nullthrows
-
+from ..utils import nullthrows
 from .ModelBase import ModelBase
 from .Player import Player
 from .PlayItem import PlayItem

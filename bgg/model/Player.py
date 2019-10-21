@@ -1,8 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import Optional
 
-from utils import nullthrows
-
+from ..utils import nullthrows
 from .ModelBase import ModelBase
 
 

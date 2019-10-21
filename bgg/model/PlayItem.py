@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import List
 
-from utils import nullthrows
+from ..utils import nullthrows
 
 
 class PlayItem:
