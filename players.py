@@ -9,26 +9,7 @@ from bgg.utils import firstx
 
 
 def main(argv=[]) -> int:
-    if len(argv) > 1:
-        game_input = argv[1]
-        if not game_input.isdigit():
-            results = RequestSearch().ofType("boardgame").query(game_input)
-            if not results:
-                raise Exception(f"No game found with the name '{game_input}'")
-
-            result = firstx(results)
-            if len(results) == 1:
-                print(f"Game found (as '{result.name()[0]}'")
-            else:
-                print(
-                    f"More than one entry found, using '{result.name()[0]}' published in {result.yearPublished()}"
-                )
-            id = result.id()
-        else:
-            id = int(game_input)
-    else:
-        # Innovation, just for fun...
-        id = 63888
+    id = extractGameIDFromUserInput(argv[1]) if len(argv) > 1 else 63888
     print(f"Processing plays for: ID={id}")
 
     player_count_aggr: Dict[int, int] = {}
@@ -48,6 +29,24 @@ def main(argv=[]) -> int:
         print(formatResults(player_count_aggr))
 
     print(f"Finished processing")
+
+
+def extractGameIDFromUserInput(user_input: str) -> int:
+    if user_input.isdigit():
+        return int(user_input)
+
+    results = RequestSearch().ofType("boardgame").query(user_input)
+    if not results:
+        raise Exception(f"No game found with the name '{user_input}'")
+
+    result = firstx(results)
+    if len(results) == 1:
+        print(f"Game found (as '{result.name()[0]}'")
+    else:
+        print(
+            f"More than one entry found, using '{result.name()[0]}' published in {result.yearPublished()}"
+        )
+    return result.id()
 
 
 def formatResults(player_count_aggr: Dict[int, int]) -> str:
