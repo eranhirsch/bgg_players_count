@@ -1,5 +1,6 @@
 import datetime
 import itertools
+import time
 import xml.etree.ElementTree as ET
 from typing import Dict, Generator, Iterable, Iterator, Optional
 
@@ -7,6 +8,7 @@ import requests
 
 from ..model.Play import Play
 from ..model.Plays import Plays
+from ..utils import nonthrows
 
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
@@ -14,6 +16,11 @@ BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 # documented anywhere though, so it might be incorrect in some cases, or simply
 # change in the future.
 ENTRIES_IN_FULL_PAGE = 100
+
+HTTP_STATUS_CODE_OK = 200
+HTTP_STATUS_CODE_TOO_MANY_REQUESTS = 429
+
+MAX_RETRIES = 5
 
 
 class RequestPlays(Iterable[Plays]):
@@ -65,14 +72,34 @@ class RequestPlays(Iterable[Plays]):
         uri = f"{BASE_URL}plays"
         params = self.__getParams()
         params["page"] = str(page)
-        response = requests.get(uri, params=params)
 
-        if response.status_code != 200:
-            raise Exception(f"Bad API response: {response.status_code}")
+        for retries in range(MAX_RETRIES):
+            response = requests.get(uri, params=params)
+            root = ET.fromstring(response.text)
 
-        root = ET.fromstring(response.text)
-        plays = Plays.fromElementTree(root)
-        return plays
+            if response.status_code == HTTP_STATUS_CODE_OK:
+                print(f"Page {page} received")
+                plays = Plays.fromElementTree(root)
+                return plays
+
+            elif response.status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
+                if root.tag != "error":
+                    raise Exception(
+                        f"Unexpected error format, was exepecting 'error' tag but got {root.tag}"
+                    )
+                message = nonthrows(root.find("message")).text
+                retry_secs = 2 ** (retries)  # Exponential backoff
+                print(
+                    f"TOO MANY REQUESTS[{message}]. Retrying in {retry_secs}s"
+                )
+                time.sleep(retry_secs)
+
+            else:
+                raise Exception(f"Bad API response: {response.status_code}")
+
+        raise Exception(
+            f"Bailing out! failed to query server for page {page} after {retries} retries"
+        )
 
     def queryAll(self) -> Generator[Play, None, None]:
         for plays in self:

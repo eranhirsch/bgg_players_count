@@ -22,15 +22,16 @@ def main(argv=[]) -> int:
             except KeyError:
                 player_count_aggr[player_count] = 1
             count += 1
-            if count >= 5000:
-                break
-    except Exception as e:
-        print(f"Encountered exception {e} while processing")
-
-    print(f"Player Count: {player_count_aggr}")
+            # if count >= 5000:
+            #     break
+        return 0
+    except Exception:
+        print(f"Encountered exception while processing")
+        raise
+    finally:
+        print(f"Player Count: {player_count_aggr}")
 
     print(f"Finished processing")
-    return 0
 
 
 if __name__ == "__main__":
