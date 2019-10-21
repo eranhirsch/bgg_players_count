@@ -57,7 +57,7 @@ class Player(ModelBase):
     def isNew(self) -> bool:
         return self.__isNew
 
-    def rating(self) -> int:
+    def rating(self) -> float:
         return self.__rating
 
     def isWinner(self) -> bool:
