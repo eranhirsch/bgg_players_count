@@ -55,7 +55,7 @@ def formatResults(player_count_aggr: Dict[int, int]) -> str:
     max_count = max(player_count_aggr.keys())
     total_plays = sum(player_count_aggr.values())
     out = ["Players\t\tPlays\tRatio\tRatio (No Unknowns)"]
-    for player_count in range(max_count+1):
+    for player_count in range(max_count + 1):
         plays_count = (
             player_count_aggr[player_count] if player_count in player_count_aggr else 0
         )
