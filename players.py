@@ -50,7 +50,6 @@ def extractGameIDFromUserInput(user_input: str) -> int:
 
 
 def formatResults(player_count_aggr: Dict[int, int]) -> str:
-    print(f"{player_count_aggr}")
     missing = player_count_aggr[0]
     max_count = max(player_count_aggr.keys())
     total_plays = sum(player_count_aggr.values())
