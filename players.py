@@ -54,23 +54,19 @@ def formatResults(player_count_aggr: Dict[int, int]) -> str:
     max_count = max(player_count_aggr.keys())
     total_plays = sum(player_count_aggr.values())
     out = ["Players\t\tPlays\tRatio\tRatio (No Unknowns)"]
-    for player_count in range(max_count + 1):
-        plays_count = (
-            player_count_aggr[player_count] if player_count in player_count_aggr else 0
-        )
-        if player_count == 0:
+    for players in range(max_count + 1):
+        plays = player_count_aggr.get(players, 0)
+        if players == 0:
             label = "Unknown\t"
-        elif player_count == 1:
+        elif players == 1:
             label = "Solo\t"
         else:
-            label = f"{player_count} Players"
-        ratio = round(100 * (plays_count / total_plays))
-        ratio_no_unknowns = (
-            round(100 * (plays_count / (total_plays - missing)))
-            if player_count > 0
-            else 0
+            label = f"{players} Players"
+        ratio = plays / total_plays
+        ratio_no_unknowns = plays / (total_plays - missing) if players > 0 else 0
+        out.append(
+            f"{label}\t{plays}\t{100*ratio:2.0f}%\t{100*ratio_no_unknowns:2.0f}%"
         )
-        out.append(f"{label}\t{plays_count}\t{ratio}%\t{ratio_no_unknowns}%")
     out.append(f"Total:\t\t{total_plays}")
     return "\n".join(out)
 
