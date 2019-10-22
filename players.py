@@ -7,9 +7,11 @@ from bgg.api.RequestPlays import RequestPlays
 from bgg.api.RequestSearch import RequestSearch
 from bgg.utils import firstx
 
+# Just some random game for testing
+GAME_ID_INNOVATION = 63888
 
 def main(argv=[]) -> int:
-    id = extractGameIDFromUserInput(argv[1]) if len(argv) > 1 else 63888
+    id = extractGameIDFromUserInput(argv[1]) if len(argv) > 1 else GAME_ID_INNOVATION
     print(f"Processing plays for: ID={id}")
 
     player_count_aggr: Dict[int, int] = {}
