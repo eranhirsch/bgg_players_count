@@ -10,6 +10,7 @@ from bgg.utils import firstx
 # Just some random game for testing
 GAME_ID_INNOVATION = 63888
 
+
 def main(argv=[]) -> int:
     id = extractGameIDFromUserInput(argv[1]) if len(argv) > 1 else GAME_ID_INNOVATION
     print(f"Processing plays for: ID={id}")

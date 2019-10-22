@@ -7,6 +7,11 @@ from .ModelBase import ModelBase
 from .Player import Player
 from .PlayItem import PlayItem
 
+# Some people log really odd quantities for plays, like 50 and 100. These
+# very valuable to us so we cap it at a reasonable number and return that
+# instead by default.
+SANITY_MAX_QUANTITY: int = 10
+
 
 class Play(ModelBase):
     __id: int
@@ -58,8 +63,10 @@ class Play(ModelBase):
     def date(self) -> datetime.date:
         return self.__date
 
-    def quantity(self) -> int:
-        return self.__quantity
+    def quantity(self, sanitized: bool = True) -> int:
+        return (
+            min(self.__quantity, SANITY_MAX_QUANTITY) if sanitized else self.__quantity
+        )
 
     def length(self) -> datetime.timedelta:
         return self.__length
