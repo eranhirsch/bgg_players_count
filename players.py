@@ -26,11 +26,13 @@ def main(argv=[]) -> int:
             except KeyError:
                 player_count_aggr[player_count] = play.quantity()
 
-            location = play.location().lower()
-            try:
-                locations[location] += 1
-            except KeyError:
-                locations[location] = 1
+            location = play.location()
+            if location:
+                location = location.lower()
+                try:
+                    locations[location] += 1
+                except KeyError:
+                    locations[location] = 1
 
         return 0
     except Exception:
@@ -85,16 +87,11 @@ def formatResults(player_count_aggr: Dict[int, int]) -> str:
 
 def formatLocations(locations: Dict[str, int]) -> str:
     return "\n".join(
-        [
+        ["Location\tCount"]
+        + [
             f"{location}\t{count}"
             for count, location in sorted(
-                [
-                    (location, count)
-                    for location, count in locations.items()
-                    if location != "" and count > 1
-                ],
-                key=lambda item: item[1],
-                reverse=True,
+                list(locations.items()), key=lambda item: item[1], reverse=True
             )[:10]
         ]
     )
