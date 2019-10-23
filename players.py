@@ -10,6 +10,21 @@ from bgg.utils import firstx
 # Just some random game for testing
 GAME_ID_INNOVATION = 63888
 
+# Some people log really odd quantities for plays, like 50 and 100. These
+# very valuable to us so we cap it at a reasonable number and return that
+# instead by default.
+SANITY_MAX_QUANTITY: int = 10
+
+# A list of apps and platforms that allow digital play. KEEP LOWERCASE!
+DIGITAL_LOCATIONS = [
+    "isotropic",
+    "online",
+    "boardgamearena",
+    "bga",
+    "isotropic.org",
+    "boardgamearena.com",
+]
+
 
 def main(argv=[]) -> int:
     id = extractGameIDFromUserInput(argv[1]) if len(argv) > 1 else GAME_ID_INNOVATION
@@ -21,18 +36,20 @@ def main(argv=[]) -> int:
         for play in RequestPlays().forID(id).queryAll():
             players = play.players() or []
             player_count = len(players)
+            quantity = min(play.quantity(), SANITY_MAX_QUANTITY)
             try:
-                player_count_aggr[player_count] += play.quantity()
+                player_count_aggr[player_count] += quantity
             except KeyError:
-                player_count_aggr[player_count] = play.quantity()
+                player_count_aggr[player_count] = quantity
 
             location = play.location()
             if location:
                 location = location.lower()
-                try:
-                    locations[location] += 1
-                except KeyError:
-                    locations[location] = 1
+                if location not in DIGITAL_LOCATIONS:
+                    try:
+                        locations[location] += 1
+                    except KeyError:
+                        locations[location] = 1
 
         return 0
     except Exception:

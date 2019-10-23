@@ -7,14 +7,6 @@ from .ModelBase import ModelBase
 from .Player import Player
 from .PlayItem import PlayItem
 
-# Some people log really odd quantities for plays, like 50 and 100. These
-# very valuable to us so we cap it at a reasonable number and return that
-# instead by default.
-SANITY_MAX_QUANTITY: int = 10
-
-# A list of apps and platforms that allow digital play. KEEP LOWERCASE!
-DIGITAL_LOCATIONS = ["isotropic", "online", "boardgamearena", "bga", "isotropic.org"]
-
 
 class Play(ModelBase):
     __id: int
@@ -66,10 +58,8 @@ class Play(ModelBase):
     def date(self) -> datetime.date:
         return self.__date
 
-    def quantity(self, sanitized: bool = True) -> int:
-        return (
-            min(self.__quantity, SANITY_MAX_QUANTITY) if sanitized else self.__quantity
-        )
+    def quantity(self) -> int:
+        return self.__quantity
 
     def length(self) -> datetime.timedelta:
         return self.__length
@@ -80,9 +70,7 @@ class Play(ModelBase):
     def is_nowinstats(self) -> bool:
         return self.__nowinstats
 
-    def location(self, include_digital: bool = False) -> Optional[str]:
-        if not include_digital and self.__location in DIGITAL_LOCATIONS:
-            return None
+    def location(self) -> Optional[str]:
         return self.__location
 
     def item(self) -> PlayItem:
