@@ -1,66 +1,32 @@
 #!/usr/local/bin/python3.7
 
-import re
 import sys
 from typing import Dict
 
 from bgg.api.RequestPlays import RequestPlays
 from bgg.api.RequestSearch import RequestSearch
 from bgg.utils import firstx
+from observers.LocationsCountLogic import LocationsCountLogic
+from observers.PlayerCountAggregatorLogic import PlayerCountAggregatorLogic
 
 # Just some random game for testing
 GAME_ID_INNOVATION = 63888
-
-# Some people log really odd quantities for plays, like 50 and 100. These aren't
-# very valuable to us so we cap it at a reasonable number and return that
-SANITY_MAX_QUANTITY: int = 10
-
-# A list of apps and platforms that allow digital play. KEEP LOWERCASE!
-DIGITAL_LOCATIONS_RE = [
-    re.compile(re_str)
-    for re_str in [
-        r"(\w+\.)?isotropic(\.org)?",
-        r"a smartphone",
-        r"b(oard)? ?g(ame)? ?a(rena)?(\.com)?",
-        r"emulator",
-        r"online",
-        r"tabletop simulator",
-    ]
-]
 
 
 def main(argv=[]) -> int:
     id = extractGameIDFromUserInput(argv[1]) if len(argv) > 1 else GAME_ID_INNOVATION
     print(f"Processing plays for: ID={id}")
 
-    player_count_aggr: Dict[int, int] = {}
-    locations: Dict[str, int] = {}
+    player_count_logic = PlayerCountAggregatorLogic()
+    locations_logic = LocationsCountLogic()
     try:
         for play in RequestPlays().forID(id).queryAll():
-            players = play.players() or []
-            player_count = len(players)
-            quantity = min(play.quantity(), SANITY_MAX_QUANTITY)
-            try:
-                player_count_aggr[player_count] += quantity
-            except KeyError:
-                player_count_aggr[player_count] = quantity
-
-            location = play.location()
-            if location:
-                location = location.lower()
-                if not any([re.match(location) for re in DIGITAL_LOCATIONS_RE]):
-                    try:
-                        locations[location] += 1
-                    except KeyError:
-                        locations[location] = 1
-
+            player_count_logic.visit(play)
+            locations_logic.visit(play)
         return 0
-    except Exception:
-        print(f"Encountered exception while processing")
-        raise
     finally:
-        print(formatResults(player_count_aggr))
-        print(formatLocations(locations))
+        print(formatResults(player_count_logic.getResults()))
+        print(formatLocations(locations_logic.getResults()))
 
     print(f"Finished processing")
 
