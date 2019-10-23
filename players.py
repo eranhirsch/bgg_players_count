@@ -10,19 +10,20 @@ from bgg.utils import firstx
 # Just some random game for testing
 GAME_ID_INNOVATION = 63888
 
-# Some people log really odd quantities for plays, like 50 and 100. These
+# Some people log really odd quantities for plays, like 50 and 100. These aren't
 # very valuable to us so we cap it at a reasonable number and return that
 # instead by default.
 SANITY_MAX_QUANTITY: int = 10
 
 # A list of apps and platforms that allow digital play. KEEP LOWERCASE!
 DIGITAL_LOCATIONS = [
+    "bga",
+    "boardgamearena.com",
+    "boardgamearena",
+    "board game arena",
+    "isotropic.org",
     "isotropic",
     "online",
-    "boardgamearena",
-    "bga",
-    "isotropic.org",
-    "boardgamearena.com",
 ]
 
 
