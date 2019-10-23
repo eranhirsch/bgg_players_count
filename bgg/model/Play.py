@@ -12,6 +12,9 @@ from .PlayItem import PlayItem
 # instead by default.
 SANITY_MAX_QUANTITY: int = 10
 
+# A list of apps and platforms that allow digital play. KEEP LOWERCASE!
+DIGITAL_LOCATIONS = ["isotropic", "online", "boardgamearena", "bga", "isotropic.org"]
+
 
 class Play(ModelBase):
     __id: int
@@ -21,7 +24,7 @@ class Play(ModelBase):
     __length: datetime.timedelta
     __incomplete: bool
     __nowinstats: bool
-    __location: str
+    __location: Optional[str]
     __item: PlayItem
     __comments: Optional[str] = None
     __players: Optional[List[Player]] = None
@@ -39,7 +42,7 @@ class Play(ModelBase):
         play.__length = datetime.timedelta(seconds=int(nonthrows(root.get("length"))))
         play.__incomplete = Play._stringToBool(nonthrows(root.get("incomplete")))
         play.__nowinstats = Play._stringToBool(nonthrows(root.get("nowinstats")))
-        play.__location = nonthrows(root.get("location"))
+        play.__location = Play._nonifyStr(nonthrows(root.get("location")))
         play.__item = PlayItem.fromElementTree(nonthrows(root.find("item")))
 
         comments = root.find("comments")
@@ -77,7 +80,9 @@ class Play(ModelBase):
     def is_nowinstats(self) -> bool:
         return self.__nowinstats
 
-    def location(self) -> str:
+    def location(self, include_digital: bool = False) -> Optional[str]:
+        if not include_digital and self.__location in DIGITAL_LOCATIONS:
+            return None
         return self.__location
 
     def item(self) -> PlayItem:

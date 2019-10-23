@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/local/bin/python3.7
 
 import sys
 from typing import Dict
@@ -16,6 +16,7 @@ def main(argv=[]) -> int:
     print(f"Processing plays for: ID={id}")
 
     player_count_aggr: Dict[int, int] = {}
+    locations: Dict[str, int] = {}
     try:
         for play in RequestPlays().forID(id).queryAll():
             players = play.players() or []
@@ -24,12 +25,20 @@ def main(argv=[]) -> int:
                 player_count_aggr[player_count] += play.quantity()
             except KeyError:
                 player_count_aggr[player_count] = play.quantity()
+
+            location = play.location().lower()
+            try:
+                locations[location] += 1
+            except KeyError:
+                locations[location] = 1
+
         return 0
     except Exception:
         print(f"Encountered exception while processing")
         raise
     finally:
         print(formatResults(player_count_aggr))
+        print(formatLocations(locations))
 
     print(f"Finished processing")
 
@@ -72,6 +81,23 @@ def formatResults(player_count_aggr: Dict[int, int]) -> str:
         )
     out.append(f"Total:\t\t{total_plays}")
     return "\n".join(out)
+
+
+def formatLocations(locations: Dict[str, int]) -> str:
+    return "\n".join(
+        [
+            f"{location}\t{count}"
+            for count, location in sorted(
+                [
+                    (location, count)
+                    for location, count in locations.items()
+                    if location != "" and count > 1
+                ],
+                key=lambda item: item[1],
+                reverse=True,
+            )[:10]
+        ]
+    )
 
 
 if __name__ == "__main__":

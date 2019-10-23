@@ -22,14 +22,12 @@ class Player(ModelBase):
             raise Exception(f"Unexpected root tag: {root.tag}")
 
         player = Player()
-        player.__userName = Player.__nonifyStr(nonthrows(root.get("username")))
-        player.__userID = Player.__nonifyInt(nonthrows(root.get("userid")))
+        player.__userName = Player._nonifyStr(nonthrows(root.get("username")))
+        player.__userID = Player._nonifyInt(nonthrows(root.get("userid")))
         player.__name = nonthrows(root.get("name"))
-        player.__startPosition = Player.__nonifyStr(
-            nonthrows(root.get("startposition"))
-        )
-        player.__color = Player.__nonifyStr(nonthrows(root.get("color")))
-        player.__score = Player.__nonifyStr(nonthrows(root.get("score")))
+        player.__startPosition = Player._nonifyStr(nonthrows(root.get("startposition")))
+        player.__color = Player._nonifyStr(nonthrows(root.get("color")))
+        player.__score = Player._nonifyStr(nonthrows(root.get("score")))
         player.__isNew = Player._stringToBool(nonthrows(root.get("new")))
         player.__rating = float(nonthrows(root.get("rating")))
         player.__isWinner = Player._stringToBool(nonthrows(root.get("win")))
@@ -62,11 +60,3 @@ class Player(ModelBase):
 
     def isWinner(self) -> bool:
         return self.__isWinner
-
-    @staticmethod
-    def __nonifyStr(x: str) -> Optional[str]:
-        return None if x == "" else x
-
-    @staticmethod
-    def __nonifyInt(x: str) -> Optional[int]:
-        return None if x == "" or x == "0" else int(x)
