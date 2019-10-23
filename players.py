@@ -19,9 +19,12 @@ SANITY_MAX_QUANTITY: int = 10
 DIGITAL_LOCATIONS_RE = [
     re.compile(re_str)
     for re_str in [
-        r"b(oard)? ?g(ame)? ?a(rena)?(\.com)?",
         r"(\w+\.)?isotropic(\.org)?",
+        r"a smartphone",
+        r"b(oard)? ?g(ame)? ?a(rena)?(\.com)?",
+        r"emulator",
         r"online",
+        r"tabletop simulator",
     ]
 ]
 
@@ -109,7 +112,7 @@ def formatLocations(locations: Dict[str, int]) -> str:
             f"{location}\t{count}"
             for count, location in sorted(
                 list(locations.items()), key=lambda item: item[1], reverse=True
-            )[:10]
+            )[:25]
         ]
     )
 
