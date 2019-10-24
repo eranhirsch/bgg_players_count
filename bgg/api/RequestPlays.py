@@ -2,7 +2,7 @@ import datetime
 import itertools
 import time
 import xml.etree.ElementTree as ET
-from typing import Dict, Generator, Iterable, Iterator, Optional
+from typing import Dict, Generator, Iterable, Iterator, Optional, Sized
 
 import requests
 
@@ -21,7 +21,7 @@ HTTP_STATUS_CODE_TOO_MANY_REQUESTS = 429
 MAX_RETRIES = 5
 
 
-class RequestPlays(Iterable[Plays]):
+class RequestPlays(Sized, Iterable[Plays]):
     """
     A request for a list of plays for the specific object.
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc10
@@ -115,6 +115,11 @@ class RequestPlays(Iterable[Plays]):
                 # We can guess when the generation is done if the number of
                 # plays we got is lower than the usual number in a full page
                 break
+
+    def __len__(self) -> int:
+        # Just use any really large number here which is unlikely to have entries in it
+        empty_page = self.querySinglePage(99999)
+        return empty_page.total()
 
     def __getParams(self) -> Dict[str, str]:
         params = {}
