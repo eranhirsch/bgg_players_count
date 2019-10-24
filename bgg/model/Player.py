@@ -8,28 +8,28 @@ class Player(ModelBase):
         return "player"
 
     def userName(self) -> Optional[str]:
-        return Player._nonifyStr(self._fieldRaw("username"))
+        return Player._nonifyStr(self._field("username"))
 
     def userID(self) -> Optional[int]:
-        return Player._nonifyInt(self._fieldRaw("userid"))
+        return Player._nonifyInt(self._field("userid"))
 
     def name(self) -> str:
-        return self._fieldRaw("name")
+        return self._field("name")
 
     def startPosition(self) -> Optional[str]:
-        return Player._nonifyStr(self._fieldRaw("startposition"))
+        return Player._nonifyStr(self._field("startposition"))
 
     def color(self) -> Optional[str]:
-        return Player._nonifyStr(self._fieldRaw("color"))
+        return Player._nonifyStr(self._field("color"))
 
     def score(self) -> Optional[str]:
-        return Player._nonifyStr(self._fieldRaw("score"))
+        return Player._nonifyStr(self._field("score"))
 
     def isNew(self) -> bool:
-        return Player._stringToBool(self._fieldRaw("new"))
+        return Player._stringToBool(self._field("new"))
 
     def rating(self) -> float:
-        return float(self._fieldRaw("rating"))
+        return float(self._field("rating"))
 
     def isWinner(self) -> bool:
-        return Player._stringToBool(self._fieldRaw("win"))
+        return Player._stringToBool(self._field("win"))

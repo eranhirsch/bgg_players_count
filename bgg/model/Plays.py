@@ -9,10 +9,10 @@ class Plays(ModelBase, Sized, Iterable[Play]):
         return "plays"
 
     def total(self) -> int:
-        return int(self._fieldRaw("total"))
+        return int(self._field("total"))
 
     def page(self) -> int:
-        return int(self._fieldRaw("page"))
+        return int(self._field("page"))
 
     def __len__(self) -> int:
         return len(self._root)

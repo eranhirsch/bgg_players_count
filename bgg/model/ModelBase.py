@@ -16,7 +16,7 @@ class ModelBase:
 
         self._root = root
 
-    def _fieldRaw(self, name) -> str:
+    def _field(self, name) -> str:
         return nonthrows(self._root.get(name))
 
     @staticmethod

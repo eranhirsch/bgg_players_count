@@ -9,7 +9,7 @@ class Items(ModelBase, Sized, Iterable[SearchItem]):
         return "items"
 
     def total(self) -> int:
-        return int(self._fieldRaw("total"))
+        return int(self._field("total"))
 
     def __len__(self) -> int:
         return len(self._root)
