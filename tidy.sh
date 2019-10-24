@@ -2,7 +2,7 @@
 autoflake -r --in-place --remove-unused-variables .
 isort -rc .
 black .
-mypy -p bgg
-mypy -p observers
-mypy *.py
+/opt/homebrew/bin/mypy -p bgg
+/opt/homebrew/bin/mypy -p observers
+/opt/homebrew/bin/mypy *.py
 pylama -i E501
