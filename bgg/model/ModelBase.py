@@ -2,6 +2,8 @@ import abc
 import xml.etree.ElementTree as ET
 from typing import Optional
 
+from ..utils import nonthrows
+
 
 class ModelBase:
     @abc.abstractmethod
@@ -13,6 +15,9 @@ class ModelBase:
             raise Exception(f"Unexpected root tag: {root.tag}")
 
         self._root = root
+
+    def _fieldRaw(self, name) -> str:
+        return nonthrows(self._root.get(name))
 
     @staticmethod
     def _stringToBool(str) -> bool:

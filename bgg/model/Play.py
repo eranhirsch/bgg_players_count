@@ -12,28 +12,28 @@ class Play(ModelBase):
         return "play"
 
     def id(self) -> int:
-        return int(nonthrows(self._root.get("id")))
+        return int(self._fieldRaw("id"))
 
     def userID(self) -> int:
-        return int(nonthrows(self._root.get("userid")))
+        return int(self._fieldRaw("userid"))
 
     def date(self) -> datetime.date:
-        return datetime.date.fromisoformat(nonthrows(self._root.get("date")))
+        return datetime.date.fromisoformat(self._fieldRaw("date"))
 
     def quantity(self) -> int:
-        return int(nonthrows(self._root.get("quantity")))
+        return int(self._fieldRaw("quantity"))
 
     def length(self) -> datetime.timedelta:
-        return datetime.timedelta(seconds=int(nonthrows(self._root.get("length"))))
+        return datetime.timedelta(seconds=int(self._fieldRaw("length")))
 
     def is_incomplete(self) -> bool:
-        return Play._stringToBool(nonthrows(self._root.get("incomplete")))
+        return Play._stringToBool(self._fieldRaw("incomplete"))
 
     def is_nowinstats(self) -> bool:
-        return Play._stringToBool(nonthrows(self._root.get("nowinstats")))
+        return Play._stringToBool(self._fieldRaw("nowinstats"))
 
     def location(self) -> Optional[str]:
-        return Play._nonifyStr(nonthrows(self._root.get("location")))
+        return Play._nonifyStr(self._fieldRaw("location"))
 
     def item(self) -> PlayItem:
         return PlayItem(nonthrows(self._root.find("item")))

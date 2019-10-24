@@ -1,6 +1,5 @@
 from typing import Iterable, Iterator, Sized
 
-from ..utils import nonthrows
 from .ModelBase import ModelBase
 from .Play import Play
 
@@ -10,10 +9,10 @@ class Plays(ModelBase, Sized, Iterable[Play]):
         return "plays"
 
     def total(self) -> int:
-        return int(nonthrows(self._root.get("total")))
+        return int(self._fieldRaw("total"))
 
     def page(self) -> int:
-        return int(nonthrows(self._root.get("page")))
+        return int(self._fieldRaw("page"))
 
     def __len__(self) -> int:
         return len(self._root)

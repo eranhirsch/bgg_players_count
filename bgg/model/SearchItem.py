@@ -9,10 +9,10 @@ class SearchItem(ModelBase):
         return "item"
 
     def type(self) -> str:
-        return nonthrows(self._root.get("type"))
+        return self._fieldRaw("type")
 
     def id(self) -> int:
-        return int(nonthrows(self._root.get("id")))
+        return int(self._fieldRaw("id"))
 
     def name(self) -> Tuple[str, str]:
         name_elem = nonthrows(self._root.find("name"))

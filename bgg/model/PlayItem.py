@@ -9,13 +9,13 @@ class PlayItem(ModelBase):
         return "item"
 
     def name(self) -> str:
-        return nonthrows(self._root.get("name"))
+        return self._fieldRaw("name")
 
     def objectType(self) -> str:
-        return nonthrows(self._root.get("objecttype"))
+        return self._fieldRaw("objecttype")
 
     def objectID(self) -> int:
-        return int(nonthrows(self._root.get("objectid")))
+        return int(self._fieldRaw("objectid"))
 
     def subTypes(self) -> List[str]:
         return [

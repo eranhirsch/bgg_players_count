@@ -1,6 +1,5 @@
 from typing import Optional
 
-from ..utils import nonthrows
 from .ModelBase import ModelBase
 
 
@@ -9,28 +8,28 @@ class Player(ModelBase):
         return "player"
 
     def userName(self) -> Optional[str]:
-        return Player._nonifyStr(nonthrows(self._root.get("username")))
+        return Player._nonifyStr(self._fieldRaw("username"))
 
     def userID(self) -> Optional[int]:
-        return Player._nonifyInt(nonthrows(self._root.get("userid")))
+        return Player._nonifyInt(self._fieldRaw("userid"))
 
     def name(self) -> str:
-        return nonthrows(self._root.get("name"))
+        return self._fieldRaw("name")
 
     def startPosition(self) -> Optional[str]:
-        return Player._nonifyStr(nonthrows(self._root.get("startposition")))
+        return Player._nonifyStr(self._fieldRaw("startposition"))
 
     def color(self) -> Optional[str]:
-        return Player._nonifyStr(nonthrows(self._root.get("color")))
+        return Player._nonifyStr(self._fieldRaw("color"))
 
     def score(self) -> Optional[str]:
-        return Player._nonifyStr(nonthrows(self._root.get("score")))
+        return Player._nonifyStr(self._fieldRaw("score"))
 
     def isNew(self) -> bool:
-        return Player._stringToBool(nonthrows(self._root.get("new")))
+        return Player._stringToBool(self._fieldRaw("new"))
 
     def rating(self) -> float:
-        return float(nonthrows(self._root.get("rating")))
+        return float(self._fieldRaw("rating"))
 
     def isWinner(self) -> bool:
-        return Player._stringToBool(nonthrows(self._root.get("win")))
+        return Player._stringToBool(self._fieldRaw("win"))

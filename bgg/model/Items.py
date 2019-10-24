@@ -1,6 +1,5 @@
 from typing import Iterable, Iterator, Sized
 
-from ..utils import nonthrows
 from .ModelBase import ModelBase
 from .SearchItem import SearchItem
 
@@ -10,7 +9,7 @@ class Items(ModelBase, Sized, Iterable[SearchItem]):
         return "items"
 
     def total(self) -> int:
-        return int(nonthrows(self._root.get("total")))
+        return int(self._fieldRaw("total"))
 
     def __len__(self) -> int:
         return len(self._root)
