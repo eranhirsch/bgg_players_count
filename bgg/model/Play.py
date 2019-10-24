@@ -6,6 +6,9 @@ from .ModelBase import ModelBase
 from .Player import Player
 from .PlayItem import PlayItem
 
+# Some entries have their date set as this, we'll just assume it's missing for those cases
+MISSING_DATE_VALUE = "0000-00-00"
+
 
 class Play(ModelBase):
     def rootTagName(self) -> str:
@@ -17,8 +20,11 @@ class Play(ModelBase):
     def userID(self) -> int:
         return int(self._field("userid"))
 
-    def date(self) -> datetime.date:
-        return datetime.date.fromisoformat(self._field("date"))
+    def date(self) -> Optional[datetime.date]:
+        date_str = self._field("date")
+        if date_str == MISSING_DATE_VALUE:
+            return None
+        return datetime.date.fromisoformat(date_str)
 
     def quantity(self) -> int:
         return int(self._field("quantity"))
