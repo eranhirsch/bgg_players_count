@@ -5,37 +5,25 @@ from ..utils import nonthrows
 
 
 class PlayItem:
-    __name: str
-    __objectType: str
-    __objectID: int
-    __subTypes: List[str]
-
-    @staticmethod
-    def fromElementTree(root: ET.Element) -> "PlayItem":
+    def __init__(self, root: ET.Element) -> None:
         if root.tag != "item":
             raise Exception(f"Unexpected root tag: {root.tag}")
-
-        item = PlayItem()
-        item.__name = nonthrows(root.get("name"))
-        item.__objectType = nonthrows(root.get("objecttype"))
-        item.__objectID = int(nonthrows(root.get("objectid")))
-        item.__subTypes = [
-            nonthrows(subtype.get("value"))
-            for subtype in list(nonthrows(root.find("subtypes")))
-        ]
-        return item
+        self.__root = root
 
     def name(self) -> str:
-        return self.__name
+        return nonthrows(self.__root.get("name"))
 
     def objectType(self) -> str:
-        return self.__objectType
+        return nonthrows(self.__root.get("objecttype"))
 
     def objectID(self) -> int:
-        return self.__objectID
+        return int(nonthrows(self.__root.get("objectid")))
 
     def subTypes(self) -> List[str]:
-        return self.__subTypes
+        return [
+            nonthrows(subtype.get("value"))
+            for subtype in list(nonthrows(self.__root.find("subtypes")))
+        ]
 
     def __str__(self) -> str:
         return f"PlayItem/Name: {self.name()}, Type: {self.objectType()}, ID: {self.objectID()}, Subtypes: {':'.join(self.subTypes())}"

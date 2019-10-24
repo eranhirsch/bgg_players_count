@@ -39,7 +39,7 @@ class Play(ModelBase):
         return Play._nonifyStr(nonthrows(self.__root.get("location")))
 
     def item(self) -> PlayItem:
-        return PlayItem.fromElementTree(nonthrows(self.__root.find("item")))
+        return PlayItem(nonthrows(self.__root.find("item")))
 
     def comments(self) -> Optional[str]:
         comments = self.__root.find("comments")
