@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.7
+#!/usr/local/bin/python3
 
 import sys
 from typing import Dict
@@ -9,12 +9,9 @@ from bgg.utils import firstx
 from observers.LocationsCountLogic import LocationsCountLogic
 from observers.PlayerCountAggregatorLogic import PlayerCountAggregatorLogic
 
-# Just some random game for testing
-GAME_ID_INNOVATION = 63888
-
 
 def main(argv=[]) -> int:
-    id = extractGameIDFromUserInput(argv[1]) if len(argv) > 1 else GAME_ID_INNOVATION
+    id = extractGameIDFromUserInput(argv[1])
     print(f"Processing plays for: ID={id}")
 
     player_count_logic = PlayerCountAggregatorLogic()
@@ -26,6 +23,7 @@ def main(argv=[]) -> int:
         return 0
     finally:
         print(formatResults(player_count_logic.getResults()))
+        print("\n" * 3)
         print(formatLocations(locations_logic.getResults()))
 
     print(f"Finished processing")
@@ -67,6 +65,12 @@ def formatResults(player_count_aggr: Dict[int, int]) -> str:
         out.append(
             f"{label}\t{plays}\t{100*ratio:2.0f}%\t{100*ratio_no_unknowns:2.0f}%"
         )
+
+        if players == 0:
+            # Just to make it look better
+            out.append("-" * 40)
+
+    out.append("=" * 40)
     out.append(f"Total:\t\t{total_plays}")
     return "\n".join(out)
 
