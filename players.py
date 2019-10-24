@@ -20,7 +20,7 @@ def main(argv=[]) -> int:
     try:
         plays_request = RequestPlays().forID(id)
 
-        print(f"The game has {len(plays_request)} plays in BGG")
+        print(f"The game has {len(plays_request)} logged plays on BGG")
 
         for play in plays_request.queryAll():
             player_count_logic.visit(play)
@@ -40,9 +40,6 @@ def extractGameIDFromUserInput(user_input: str) -> int:
         return int(user_input)
 
     results = RequestSearch().ofType("boardgame").query(user_input)
-    if not results:
-        raise Exception(f"No game found with the name '{user_input}'")
-
     result = firstx(results)
     if len(results) == 1:
         print(f"Game found (as '{result.name()[0]}')")
