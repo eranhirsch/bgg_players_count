@@ -28,7 +28,7 @@ class Items(Sized, Iterable[SearchItem]):
     def __iter__(self) -> Iterator[SearchItem]:
         for child in self.__root:
             try:
-                yield SearchItem.fromElementTree(child)
+                yield SearchItem(child)
             except Exception:
                 # print(f"Skipping element because of error: {e}")
 
