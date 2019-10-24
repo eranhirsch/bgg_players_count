@@ -24,7 +24,7 @@ class Plays(Sized, Iterable[Play]):
     def __iter__(self) -> Iterator[Play]:
         for child in self.__root:
             try:
-                yield Play.fromElementTree(child)
+                yield Play(child)
             except Exception:
                 # print(f"Skipping element because of error: {e}")
 
