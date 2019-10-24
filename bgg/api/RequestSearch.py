@@ -46,7 +46,7 @@ class RequestSearch:
 
             if response.status_code == HTTP_STATUS_CODE_OK:
                 print(f"Search results for {query} received")
-                results = Items.fromElementTree(root)
+                results = Items(root)
                 return results
 
             elif response.status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:

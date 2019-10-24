@@ -6,21 +6,14 @@ from .SearchItem import SearchItem
 
 
 class Items(Sized, Iterable[SearchItem]):
-    __total: int
-    __root: ET.Element
-
-    @staticmethod
-    def fromElementTree(root: ET.Element) -> "Items":
+    def __init__(self, root: ET.Element) -> None:
         if root.tag != "items":
             raise Exception(f"Unexpected root tag: {root.tag}")
 
-        items = Items()
-        items.__total = int(nonthrows(root.get("total")))
-        items.__root = root
-        return items
+        self.__root = root
 
     def total(self) -> int:
-        return self.__total
+        return int(nonthrows(self.__root.get("total")))
 
     def __len__(self) -> int:
         return len(self.__root)
