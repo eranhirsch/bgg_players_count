@@ -1,7 +1,7 @@
 import datetime
-from typing import List, Optional
+from typing import Optional, Sequence
 
-from ..utils import nonthrows
+from ..utils import LazySequence, nonthrows
 from .ModelBase import ModelBase
 from .Player import Player
 from .PlayItem import PlayItem
@@ -50,11 +50,11 @@ class Play(ModelBase):
             return None
         return comments.text
 
-    def players(self) -> Optional[List[Player]]:
+    def players(self) -> Optional[Sequence[Player]]:
         players = self._root.find("players")
         if not players:
             return None
-        return [Player(player) for player in list(players)]
+        return LazySequence(players, lambda player: Player(player))
 
     def __str__(self) -> str:
         return f"Play/ID: {self.id()}, UserID: {self.userID()}, Date: {self.date()}, Quantity: {self.quantity()}, Length: {self.length()}, IsIncomplete: {self.is_incomplete()}, NoWinStats: {self.is_nowinstats()}, Location: {self.location()}, PlayItem: {self.item()}"
