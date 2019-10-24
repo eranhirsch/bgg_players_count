@@ -55,6 +55,3 @@ class Play(ModelBase):
         if not players:
             return None
         return LazySequence(players, lambda player: Player(player))
-
-    def __str__(self) -> str:
-        return f"Play/ID: {self.id()}, UserID: {self.userID()}, Date: {self.date()}, Quantity: {self.quantity()}, Length: {self.length()}, IsIncomplete: {self.is_incomplete()}, NoWinStats: {self.is_nowinstats()}, Location: {self.location()}, PlayItem: {self.item()}"

@@ -27,6 +27,3 @@ class Plays(ModelBase, Sized, Iterable[Play]):
                 # TODO: Temporarily don't allow failed parsing so we can find
                 # all the quirks of the API
                 raise
-
-    def __str__(self) -> str:
-        return f"Plays/Total: {self.total()}, Page: {self.page()}, Plays Count: {len(self)}"

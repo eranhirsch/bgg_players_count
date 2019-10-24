@@ -22,6 +22,3 @@ class PlayItem(ModelBase):
             nonthrows(subtype.get("value"))
             for subtype in list(nonthrows(self._root.find("subtypes")))
         ]
-
-    def __str__(self) -> str:
-        return f"PlayItem/Name: {self.name()}, Type: {self.objectType()}, ID: {self.objectID()}, Subtypes: {':'.join(self.subTypes())}"
