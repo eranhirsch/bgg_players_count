@@ -6,26 +6,17 @@ from .Play import Play
 
 
 class Plays(Sized, Iterable[Play]):
-    __total: int
-    __page: int
-    __root: ET.Element
-
-    @staticmethod
-    def fromElementTree(root: ET.Element) -> "Plays":
+    def __init__(self, root: ET.Element) -> None:
         if root.tag != "plays":
             raise Exception(f"Unexpected root tag: {root.tag}")
 
-        plays = Plays()
-        plays.__total = int(nonthrows(root.get("total")))
-        plays.__page = int(nonthrows(root.get("page")))
-        plays.__root = root
-        return plays
+        self.__root = root
 
     def total(self) -> int:
-        return self.__total
+        return int(nonthrows(self.__root.get("total")))
 
     def page(self) -> int:
-        return self.__page
+        return int(nonthrows(self.__root.get("page")))
 
     def __len__(self) -> int:
         return len(self.__root)

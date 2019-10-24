@@ -77,8 +77,7 @@ class RequestPlays(Iterable[Plays]):
 
             if response.status_code == HTTP_STATUS_CODE_OK:
                 print(f"Page {page} received")
-                plays = Plays.fromElementTree(root)
-                return plays
+                return Plays(root)
 
             elif response.status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
                 if root.tag != "error":
