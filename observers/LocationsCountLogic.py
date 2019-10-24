@@ -8,15 +8,16 @@ DIGITAL_LOCATIONS_RE = [
     re.compile(re_str, re.IGNORECASE)
     for re_str in [
         r"(\w+\.)?isotropic(\.org)?",
+        r"(the )?internet",
         r"a smartphone",
         r"app",
         r"b(oard)? ?g(ame)? ?a(rena)?(\.com)?",
         r"emulator",
-        r"internet",
         r"iphone",
-        r"online",
+        r"on ?line",
         r"pc",
         r"steam",
+        r"switch",
         r"tabletop simulator",
         r"web",
     ]
