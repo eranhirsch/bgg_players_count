@@ -16,19 +16,23 @@ def main(argv=[]) -> int:
 
     player_count_logic = PlayerCountAggregatorLogic()
     locations_logic = LocationsCountLogic()
+
     try:
         plays_request = RequestPlays().forID(id)
+
         print(f"The game has {len(plays_request)} plays in BGG")
+
         for play in plays_request.queryAll():
             player_count_logic.visit(play)
             locations_logic.visit(play)
+
+        print(f"Finished processing")
         return 0
+
     finally:
         print(formatResults(player_count_logic.getResults()))
         print("\n" * 3)
         print(formatLocations(locations_logic.getResults()))
-
-    print(f"Finished processing")
 
 
 def extractGameIDFromUserInput(user_input: str) -> int:
