@@ -4,9 +4,6 @@ from .ModelBase import ModelBase
 
 
 class Player(ModelBase):
-    def rootTagName(self) -> str:
-        return "player"
-
     def userName(self) -> Optional[str]:
         return Player._nonifyStr(self._field("username"))
 
@@ -33,3 +30,6 @@ class Player(ModelBase):
 
     def isWinner(self) -> bool:
         return Player._stringToBool(self._field("win"))
+
+    def _rootTagName(self) -> str:
+        return "player"

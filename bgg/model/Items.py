@@ -5,11 +5,11 @@ from .SearchItem import SearchItem
 
 
 class Items(ModelBase, Sized, Iterable[SearchItem]):
-    def rootTagName(self) -> str:
-        return "items"
-
     def total(self) -> int:
         return int(self._field("total"))
+
+    def _rootTagName(self) -> str:
+        return "items"
 
     def __len__(self) -> int:
         return len(self._root)

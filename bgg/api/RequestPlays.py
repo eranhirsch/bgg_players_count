@@ -120,7 +120,9 @@ class RequestPlays(Sized, Iterable[Plays]):
         # Just use any really large number here which is unlikely to have entries in it
         empty_page = self.querySinglePage(9999)
         if len(empty_page) > 0:
-            raise Exception(f"Unexpected error: Page {empty_page.page()} contained entries")
+            raise Exception(
+                f"Unexpected error: Page {empty_page.page()} contained entries"
+            )
         return empty_page.total()
 
     def __getParams(self) -> Dict[str, str]:

@@ -7,11 +7,11 @@ from ..utils import nonthrows
 
 class ModelBase:
     @abc.abstractmethod
-    def rootTagName(self) -> str:
+    def _rootTagName(self) -> str:
         pass
 
     def __init__(self, root: ET.Element) -> None:
-        if root.tag != self.rootTagName():
+        if root.tag != self._rootTagName():
             raise Exception(f"Unexpected root tag: {root.tag}")
 
         self._root = root
