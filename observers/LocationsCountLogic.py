@@ -13,6 +13,8 @@ DIGITAL_LOCATIONS_RE = [
         r"app",
         r"b(oard)? ?g(ame)? ?a(rena)?(\.com)?",
         r"emulator",
+        r"ios",
+        r"ipad",
         r"iphone",
         r"on ?line",
         r"pc",
