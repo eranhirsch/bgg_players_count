@@ -51,7 +51,7 @@ class Play(ModelBase):
         players = self.__root.find("players")
         if not players:
             return None
-        return [Player.fromElementTree(player) for player in list(players)]
+        return [Player(player) for player in list(players)]
 
     def __str__(self) -> str:
         return f"Play/ID: {self.id()}, UserID: {self.userID()}, Date: {self.date()}, Quantity: {self.quantity()}, Length: {self.length()}, IsIncomplete: {self.is_incomplete()}, NoWinStats: {self.is_nowinstats()}, Location: {self.location()}, PlayItem: {self.item()}"

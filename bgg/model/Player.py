@@ -6,57 +6,34 @@ from .ModelBase import ModelBase
 
 
 class Player(ModelBase):
-    __userName: Optional[str]
-    __userID: Optional[int]
-    __name: str
-    __startPosition: Optional[str]
-    __color: Optional[str]
-    __score: Optional[str]
-    __isNew: bool
-    __rating: float
-    __isWinner: bool
-
-    @staticmethod
-    def fromElementTree(root: ET.Element) -> "Player":
+    def __init__(self, root: ET.Element) -> None:
         if root.tag != "player":
             raise Exception(f"Unexpected root tag: {root.tag}")
-
-        player = Player()
-        player.__userName = Player._nonifyStr(nonthrows(root.get("username")))
-        player.__userID = Player._nonifyInt(nonthrows(root.get("userid")))
-        player.__name = nonthrows(root.get("name"))
-        player.__startPosition = Player._nonifyStr(nonthrows(root.get("startposition")))
-        player.__color = Player._nonifyStr(nonthrows(root.get("color")))
-        player.__score = Player._nonifyStr(nonthrows(root.get("score")))
-        player.__isNew = Player._stringToBool(nonthrows(root.get("new")))
-        player.__rating = float(nonthrows(root.get("rating")))
-        player.__isWinner = Player._stringToBool(nonthrows(root.get("win")))
-
-        return player
+        self.__root = root
 
     def userName(self) -> Optional[str]:
-        return self.__userName
+        return Player._nonifyStr(nonthrows(self.__root.get("username")))
 
     def userID(self) -> Optional[int]:
-        return self.__userID
+        return Player._nonifyInt(nonthrows(self.__root.get("userid")))
 
     def name(self) -> str:
-        return self.__name
+        return nonthrows(self.__root.get("name"))
 
     def startPosition(self) -> Optional[str]:
-        return self.__startPosition
+        return Player._nonifyStr(nonthrows(self.__root.get("startposition")))
 
     def color(self) -> Optional[str]:
-        return self.__color
+        return Player._nonifyStr(nonthrows(self.__root.get("color")))
 
     def score(self) -> Optional[str]:
-        return self.__score
+        return Player._nonifyStr(nonthrows(self.__root.get("score")))
 
     def isNew(self) -> bool:
-        return self.__isNew
+        return Player._stringToBool(nonthrows(self.__root.get("new")))
 
     def rating(self) -> float:
-        return self.__rating
+        return float(nonthrows(self.__root.get("rating")))
 
     def isWinner(self) -> bool:
-        return self.__isWinner
+        return Player._stringToBool(nonthrows(self.__root.get("win")))
