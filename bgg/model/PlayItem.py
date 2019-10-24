@@ -1,28 +1,26 @@
-import xml.etree.ElementTree as ET
 from typing import List
 
 from ..utils import nonthrows
+from .ModelBase import ModelBase
 
 
-class PlayItem:
-    def __init__(self, root: ET.Element) -> None:
-        if root.tag != "item":
-            raise Exception(f"Unexpected root tag: {root.tag}")
-        self.__root = root
+class PlayItem(ModelBase):
+    def rootTagName(self) -> str:
+        return "item"
 
     def name(self) -> str:
-        return nonthrows(self.__root.get("name"))
+        return nonthrows(self._root.get("name"))
 
     def objectType(self) -> str:
-        return nonthrows(self.__root.get("objecttype"))
+        return nonthrows(self._root.get("objecttype"))
 
     def objectID(self) -> int:
-        return int(nonthrows(self.__root.get("objectid")))
+        return int(nonthrows(self._root.get("objectid")))
 
     def subTypes(self) -> List[str]:
         return [
             nonthrows(subtype.get("value"))
-            for subtype in list(nonthrows(self.__root.find("subtypes")))
+            for subtype in list(nonthrows(self._root.find("subtypes")))
         ]
 
     def __str__(self) -> str:

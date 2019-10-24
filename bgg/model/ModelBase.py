@@ -1,7 +1,19 @@
+import abc
+import xml.etree.ElementTree as ET
 from typing import Optional
 
 
 class ModelBase:
+    @abc.abstractmethod
+    def rootTagName(self) -> str:
+        pass
+
+    def __init__(self, root: ET.Element) -> None:
+        if root.tag != self.rootTagName():
+            raise Exception(f"Unexpected root tag: {root.tag}")
+
+        self._root = root
+
     @staticmethod
     def _stringToBool(str) -> bool:
         if str == "0":

@@ -1,25 +1,22 @@
-import xml.etree.ElementTree as ET
 from typing import Iterable, Iterator, Sized
 
 from ..utils import nonthrows
+from .ModelBase import ModelBase
 from .SearchItem import SearchItem
 
 
-class Items(Sized, Iterable[SearchItem]):
-    def __init__(self, root: ET.Element) -> None:
-        if root.tag != "items":
-            raise Exception(f"Unexpected root tag: {root.tag}")
-
-        self.__root = root
+class Items(ModelBase, Sized, Iterable[SearchItem]):
+    def rootTagName(self) -> str:
+        return "items"
 
     def total(self) -> int:
-        return int(nonthrows(self.__root.get("total")))
+        return int(nonthrows(self._root.get("total")))
 
     def __len__(self) -> int:
-        return len(self.__root)
+        return len(self._root)
 
     def __iter__(self) -> Iterator[SearchItem]:
-        for child in self.__root:
+        for child in self._root:
             try:
                 yield SearchItem(child)
             except Exception:

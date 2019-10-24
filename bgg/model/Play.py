@@ -1,5 +1,4 @@
 import datetime
-import xml.etree.ElementTree as ET
 from typing import List, Optional
 
 from ..utils import nonthrows
@@ -9,46 +8,44 @@ from .PlayItem import PlayItem
 
 
 class Play(ModelBase):
-    def __init__(self, root: ET.Element) -> None:
-        if root.tag != "play":
-            raise Exception(f"Unexpected root tag: {root.tag}")
-        self.__root = root
+    def rootTagName(self) -> str:
+        return "play"
 
     def id(self) -> int:
-        return int(nonthrows(self.__root.get("id")))
+        return int(nonthrows(self._root.get("id")))
 
     def userID(self) -> int:
-        return int(nonthrows(self.__root.get("userid")))
+        return int(nonthrows(self._root.get("userid")))
 
     def date(self) -> datetime.date:
-        return datetime.date.fromisoformat(nonthrows(self.__root.get("date")))
+        return datetime.date.fromisoformat(nonthrows(self._root.get("date")))
 
     def quantity(self) -> int:
-        return int(nonthrows(self.__root.get("quantity")))
+        return int(nonthrows(self._root.get("quantity")))
 
     def length(self) -> datetime.timedelta:
-        return datetime.timedelta(seconds=int(nonthrows(self.__root.get("length"))))
+        return datetime.timedelta(seconds=int(nonthrows(self._root.get("length"))))
 
     def is_incomplete(self) -> bool:
-        return Play._stringToBool(nonthrows(self.__root.get("incomplete")))
+        return Play._stringToBool(nonthrows(self._root.get("incomplete")))
 
     def is_nowinstats(self) -> bool:
-        return Play._stringToBool(nonthrows(self.__root.get("nowinstats")))
+        return Play._stringToBool(nonthrows(self._root.get("nowinstats")))
 
     def location(self) -> Optional[str]:
-        return Play._nonifyStr(nonthrows(self.__root.get("location")))
+        return Play._nonifyStr(nonthrows(self._root.get("location")))
 
     def item(self) -> PlayItem:
-        return PlayItem(nonthrows(self.__root.find("item")))
+        return PlayItem(nonthrows(self._root.find("item")))
 
     def comments(self) -> Optional[str]:
-        comments = self.__root.find("comments")
+        comments = self._root.find("comments")
         if not comments:
             return None
         return comments.text
 
     def players(self) -> Optional[List[Player]]:
-        players = self.__root.find("players")
+        players = self._root.find("players")
         if not players:
             return None
         return [Player(player) for player in list(players)]
