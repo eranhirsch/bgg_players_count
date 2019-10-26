@@ -28,6 +28,7 @@ DIGITAL_LOCATIONS_RE = [
         r"switch",
         r"tabletop simulator",
         r"web",
+        r"yucata(\.de)?",
     ]
 ]
 
