@@ -10,7 +10,10 @@ SANITY_MAX_QUANTITY: int = 10
 class PlayerCountAggregatorLogic:
     __playerCountAggr: Dict[int, int] = {}
 
-    def visit(self, play: Play):
+    def visit(self, play: Play) -> None:
+        if play.is_incomplete():
+            return
+
         players = play.players() or []
         player_count = len(players)
         quantity = min(play.quantity(), SANITY_MAX_QUANTITY)
