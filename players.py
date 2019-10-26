@@ -52,7 +52,13 @@ def extractGameIDFromUserInput(user_input: str) -> int:
 
 
 def formatResults(results: PCResults) -> str:
-    player_count_aggr = results.playerCountAggr
+    out = ""
+    out += f"//COMPLETE{'/'*30}\n{formatCounts(results.complete())}\n\n\n"
+    out += f"//INCOMPLETE{'/'*28}\n{formatCounts(results.incomplete())}\n"
+    return out
+
+
+def formatCounts(player_count_aggr: Dict[int, int]) -> str:
     missing = player_count_aggr[0]
     max_count = max(player_count_aggr.keys())
     total_plays = sum(player_count_aggr.values())
@@ -77,7 +83,6 @@ def formatResults(results: PCResults) -> str:
 
     out.append("=" * 40)
     out.append(f"Total:\t\t{total_plays}")
-    out.append(f"Incomplete:\t\t{results.incomplete}")
     return "\n".join(out)
 
 
