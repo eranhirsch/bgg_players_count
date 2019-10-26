@@ -8,7 +8,7 @@ from bgg.model.Play import Play
 # very valuable to us so we cap it at a reasonable number and return that
 SANITY_MAX_QUANTITY: int = 10
 
-# A list of apps and platforms that allow digital play. KEEP LOWERCASE!
+# A list of apps and platforms that allow digital play.
 DIGITAL_LOCATIONS_RE = [
     re.compile(re_str, re.IGNORECASE)
     for re_str in [
