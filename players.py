@@ -8,6 +8,7 @@ from bgg.api.RequestSearch import RequestSearch
 from bgg.utils import firstx
 from observers.LocationsCountLogic import LocationsCountLogic
 from observers.PlayerCountAggregatorLogic import PlayerCountAggregatorLogic
+from observers.PlayerCountAggregatorLogic import Results as PCResults
 
 
 def main(argv=[]) -> int:
@@ -50,7 +51,8 @@ def extractGameIDFromUserInput(user_input: str) -> int:
     return result.id()
 
 
-def formatResults(player_count_aggr: Dict[int, int]) -> str:
+def formatResults(results: PCResults) -> str:
+    player_count_aggr = results.playerCountAggr
     missing = player_count_aggr[0]
     max_count = max(player_count_aggr.keys())
     total_plays = sum(player_count_aggr.values())
@@ -75,6 +77,7 @@ def formatResults(player_count_aggr: Dict[int, int]) -> str:
 
     out.append("=" * 40)
     out.append(f"Total:\t\t{total_plays}")
+    out.append(f"Incomplete:\t\t{results.incomplete}")
     return "\n".join(out)
 
 

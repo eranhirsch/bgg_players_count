@@ -7,20 +7,26 @@ from bgg.model.Play import Play
 SANITY_MAX_QUANTITY: int = 10
 
 
+class Results:
+    playerCountAggr: Dict[int, int] = {}
+    incomplete: int = 0
+
+
 class PlayerCountAggregatorLogic:
-    __playerCountAggr: Dict[int, int] = {}
+    __results = Results()
 
     def visit(self, play: Play) -> None:
         if play.is_incomplete():
+            self.__results.incomplete += 1
             return
 
         players = play.players() or []
         player_count = len(players)
         quantity = min(play.quantity(), SANITY_MAX_QUANTITY)
         try:
-            self.__playerCountAggr[player_count] += quantity
+            self.__results.playerCountAggr[player_count] += quantity
         except KeyError:
-            self.__playerCountAggr[player_count] = quantity
+            self.__results.playerCountAggr[player_count] = quantity
 
-    def getResults(self) -> Dict[int, int]:
-        return self.__playerCountAggr
+    def getResults(self) -> Results:
+        return self.__results
