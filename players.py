@@ -18,7 +18,7 @@ def main(argv=[]) -> int:
     locations_logic = LocationsCountLogic()
 
     try:
-        plays_request = RequestPlays().forID(id)
+        plays_request = RequestPlays(thingid=id)
 
         print(f"The game has {len(plays_request)} logged plays on BGG")
 

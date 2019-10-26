@@ -27,44 +27,24 @@ class RequestPlays(Sized, Iterable[Plays]):
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc10
     """
 
-    __userName: Optional[str]
-    __id: Optional[int]
-    __type: Optional[str]
-    __minDate: Optional[datetime.date]
-    __maxDate: Optional[datetime.date]
-    __subType: Optional[str]
+    def __init__(
+        self,
+        username: Optional[str] = None,
+        thingid: Optional[int] = None,
+        thingtype: Optional[str] = None,
+        subtype: Optional[str] = None,
+        mindate: Optional[datetime.date] = None,
+        maxdate: Optional[datetime.date] = None,
+    ):
+        if not username and not thingid:
+            raise Exception("Either username or id required to query plays")
 
-    def __init__(self):
-        self.__userName = None
-        self.__id = None
-        self.__type = None
-        self.__minDate = None
-        self.__maxDate = None
-        self.__subType = None
-
-    def forUserName(self, userName: str) -> "RequestPlays":
-        self.__userName = userName
-        return self
-
-    def forID(self, id: int) -> "RequestPlays":
-        self.__id = id
-        return self
-
-    def ofType(self, type: str) -> "RequestPlays":
-        self.__type = type
-        return self
-
-    def fromDate(self, minDate: datetime.date) -> "RequestPlays":
-        self.__minDate = minDate
-        return self
-
-    def toDate(self, maxDate: datetime.date) -> "RequestPlays":
-        self.__maxDate = maxDate
-        return self
-
-    def ofSubType(self, subType: str) -> "RequestPlays":
-        self.__subType = subType
-        return self
+        self.__userName = username
+        self.__id = thingid
+        self.__type = thingtype
+        self.__minDate = mindate
+        self.__maxDate = maxdate
+        self.__subType = subtype
 
     def querySinglePage(self, page: int = 0) -> Plays:
         uri = f"{BASE_URL}plays"
