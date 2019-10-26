@@ -7,8 +7,7 @@ from bgg.api.RequestPlays import RequestPlays
 from bgg.api.RequestSearch import RequestSearch
 from bgg.utils import firstx
 from observers.LocationsCountLogic import LocationsCountLogic
-from observers.PlayerCountAggregatorLogic import PlayerCountAggregatorLogic
-from observers.PlayerCountAggregatorLogic import Results as PCResults
+from observers.PlayerCountAggregatorLogic import PlayerCountAggregatorLogic, TResults
 
 
 def main(argv=[]) -> int:
@@ -51,11 +50,13 @@ def extractGameIDFromUserInput(user_input: str) -> int:
     return result.id()
 
 
-def formatResults(results: PCResults) -> str:
-    out = ""
-    out += f"//COMPLETE{'/'*30}\n{formatCounts(results.complete())}\n\n\n"
-    out += f"//INCOMPLETE{'/'*28}\n{formatCounts(results.incomplete())}\n"
-    return out
+def formatResults(results: TResults) -> str:
+    return "\n\n\n".join(
+        [
+            f"// {label.name} {'/'*(36-len(label.name))}\n{formatCounts(counts)}"
+            for label, counts in results.items()
+        ]
+    )
 
 
 def formatCounts(player_count_aggr: Dict[int, int]) -> str:

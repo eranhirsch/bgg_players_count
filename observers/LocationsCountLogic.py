@@ -1,29 +1,8 @@
-import re
 from typing import Dict
 
 from bgg.model.Play import Play
 
-# A list of apps and platforms that allow digital play. KEEP LOWERCASE!
-DIGITAL_LOCATIONS_RE = [
-    re.compile(re_str, re.IGNORECASE)
-    for re_str in [
-        r"(\w+\.)?isotropic(\.org)?",
-        r"(the )?internet",
-        r"a smartphone",
-        r"app",
-        r"b(oard)? ?g(ame)? ?a(rena)?(\.com)?",
-        r"emulator",
-        r"ios",
-        r"ipad",
-        r"iphone",
-        r"on ?line",
-        r"pc",
-        r"steam",
-        r"switch",
-        r"tabletop simulator",
-        r"web",
-    ]
-]
+from .PlayerCountAggregatorLogic import DIGITAL_LOCATIONS_RE
 
 
 class LocationsCountLogic:
