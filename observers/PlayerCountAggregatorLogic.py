@@ -33,7 +33,7 @@ DIGITAL_LOCATIONS_RE = [
 
 
 class ResultsCategory(Enum):
-    COMPLETE = auto()
+    REGULAR = auto()
     INCOMPLETE = auto()
     DIGITAL = auto()
 
@@ -50,16 +50,9 @@ class PlayerCountAggregatorLogic:
             self.__results[cat] = {}
 
     def visit(self, play: Play) -> None:
-        location = play.location()
-        if location and any([re.match(location) for re in DIGITAL_LOCATIONS_RE]):
-            category = ResultsCategory.DIGITAL
-        elif play.is_incomplete():
-            category = ResultsCategory.INCOMPLETE
-        else:
-            category = ResultsCategory.COMPLETE
         players = play.players()
         self.__bump(
-            category,
+            PlayerCountAggregatorLogic.__categorize(play),
             len(players) if players else 0,
             min(play.quantity(), SANITY_MAX_QUANTITY),
         )
@@ -72,3 +65,16 @@ class PlayerCountAggregatorLogic:
             self.__results[category][bucket] += quantity
         except KeyError:
             self.__results[category][bucket] = quantity
+
+    @staticmethod
+    def __categorize(play: Play) -> ResultsCategory:
+        location = play.location()
+        if location and any(
+            [digital.match(location) for digital in DIGITAL_LOCATIONS_RE]
+        ):
+            return ResultsCategory.DIGITAL
+
+        if play.is_incomplete():
+            return ResultsCategory.INCOMPLETE
+
+        return ResultsCategory.REGULAR
