@@ -13,11 +13,13 @@ DIGITAL_LOCATIONS_RE = [
     re.compile(re_str, re.IGNORECASE)
     for re_str in [
         r"(\w+\.)?isotropic(\.org)?",
+        r"(http://)?(www\.)?boiteajeux(\.net)?/?",
+        r"(http://)?(www\.)?yucata(\.de)?/?",
         r"(the )?internet",
         r"a smartphone",
         r"app",
         r"b(oard)? ?g(ame)? ?a(rena)?(\.com)?",
-        r"boiteajeux(\.net)?",
+        r"bo(i|î)te (a|à) jeux",
         r"emulator",
         r"ios",
         r"ipad",
@@ -28,7 +30,6 @@ DIGITAL_LOCATIONS_RE = [
         r"switch",
         r"tabletop simulator",
         r"web",
-        r"yucata(\.de)?",
     ]
 ]
 
