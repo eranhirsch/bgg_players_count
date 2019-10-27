@@ -69,13 +69,13 @@ class PlayerCountAggregatorLogic:
 
     @staticmethod
     def __categorize(play: Play) -> ResultsCategory:
+        if play.is_incomplete():
+            return ResultsCategory.INCOMPLETE
+
         location = play.location()
         if location and any(
             [digital.match(location) for digital in DIGITAL_LOCATIONS_RE]
         ):
             return ResultsCategory.DIGITAL
-
-        if play.is_incomplete():
-            return ResultsCategory.INCOMPLETE
 
         return ResultsCategory.REGULAR
