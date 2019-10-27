@@ -22,8 +22,7 @@ DIGITAL_LOCATIONS_RE = [
         r"^digital$",
         r"^emulator$",
         r"^ios$",
-        r"^ipad$",
-        r"^iphone$",
+        r"^ip(hone|ad)$",
         r"^on ?line$",
         r"^pc$",
         r"^steam$",
@@ -76,7 +75,7 @@ class PlayerCountAggregatorLogic:
 
         location = play.location()
         if location and any(
-            [digital.match(location) for digital in DIGITAL_LOCATIONS_RE]
+            [digital.match(location.strip()) for digital in DIGITAL_LOCATIONS_RE]
         ):
             return ResultsCategory.DIGITAL
 

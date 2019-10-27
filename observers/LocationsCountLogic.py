@@ -18,6 +18,7 @@ class LocationsCountLogic:
         if not location:
             return
 
+        location = location.strip()
         is_digital = any([re.match(location) for re in DIGITAL_LOCATIONS_RE])
         label = LocationsCountLogic.__getLabel(is_digital)
 
