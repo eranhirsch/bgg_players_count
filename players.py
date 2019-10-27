@@ -32,7 +32,9 @@ def main(argv=[]) -> int:
     finally:
         print(formatResults(player_count_logic.getResults()))
         print("\n" * 3)
-        print(formatLocations(locations_logic.getResults()))
+        print(formatLocations(locations_logic.getResults(False)))
+        print("\n")
+        print(formatLocations(locations_logic.getResults(True)))
 
 
 def extractGameIDFromUserInput(user_input: str) -> int:
