@@ -13,13 +13,15 @@ DIGITAL_LOCATIONS_RE = [
     re.compile(re_str, re.IGNORECASE)
     for re_str in [
         r"^(\w+\.)?isotropic(\.org)?$",
+        r"^(a )?smartphone$",
         r"^(http://)?(www\.)?bo(i|î)te ?(a|à) ?jeux(\.net)?/?$",
         r"^(http://)?(www\.)?yucata(\.de)?/?$",
-        r"^(phone )?app$",
+        r"^(phone|digital|ios )?app$",
         r"^(the )?internet$",
-        r"^a smartphone$",
         r"^android$",
+        r"^appstore$",
         r"^b(oard)? ?g(ame)? ?a(rena)?(\.com)?$",
+        r"^b(oard)? ?g(aming)?( |-)?o(nline)?(\.com)?$",
         r"^d(ays)? ?of? ?w(onder)?(\.com)?$",
         r"^digital$",
         r"^emulator$",
