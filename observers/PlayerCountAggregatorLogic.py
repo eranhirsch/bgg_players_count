@@ -23,9 +23,9 @@ DIGITAL_LOCATIONS_RE = [
         r"^b(oard)? ?g(ame)? ?a(rena)?(\.com)?$",
         r"^b(oard)? ?g(aming)?( |-)?o(nline)?(\.com)?$",
         r"^d(ays)? ?of? ?w(onder)?(\.com)?$",
-        r"^digital$",
+        r"^digitaa?l$",
         r"^emulator$",
-        r"^ios$",
+        r"^ios( device)?$",
         r"^ipad( air)?$",
         r"^iphone$",
         r"^on ?line$",
@@ -33,7 +33,9 @@ DIGITAL_LOCATIONS_RE = [
         r"^steam$",
         r"^switch$",
         r"^t(able)?t(op)? ?s(imulator)?$",
+        r"^tablet$",
         r"^tabletopia(\.com)?$",
+        r"^virtual$",
         r"^web$",
     ]
 ]
