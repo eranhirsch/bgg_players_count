@@ -20,6 +20,7 @@ DIGITAL_LOCATIONS_RE = [
         r"^a smartphone$",
         r"^android$",
         r"^b(oard)? ?g(ame)? ?a(rena)?(\.com)?$",
+        r"^d(ays)? ?of? ?w(onder)?(\.com)?$",
         r"^digital$",
         r"^emulator$",
         r"^ios$",
