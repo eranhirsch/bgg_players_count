@@ -62,7 +62,7 @@ def formatResults(results: TResults) -> str:
 
 
 def formatCounts(player_count_aggr: Dict[int, int]) -> str:
-    missing = player_count_aggr[0]
+    missing = player_count_aggr[0] if 0 in player_count_aggr else 0
     max_count = max(player_count_aggr.keys())
     total_plays = sum(player_count_aggr.values())
     out = ["Players\t\tPlays\tRatio\tRatio (No Unknowns)"]
