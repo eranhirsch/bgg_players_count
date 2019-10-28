@@ -12,11 +12,11 @@ SANITY_MAX_QUANTITY: int = 10
 DIGITAL_LOCATIONS_RE = [
     re.compile(re_str, re.IGNORECASE)
     for re_str in [
+        r"^.*?\bapp\b.*?$",
         r"^(\w+\.)?isotropic(\.org)?$",
         r"^(a )?smartphone$",
         r"^(http://)?(www\.)?bo(i|î)te ?(a|à) ?jeux(\.net)?/?$",
         r"^(http://)?(www\.)?yucata(\.de)?/?$",
-        r"^(phone|digital|ios )?app$",
         r"^(the )?internet$",
         r"^android$",
         r"^appstore$",
