@@ -133,7 +133,9 @@ class RequestPlays(Sized, Iterable[Plays]):
         return params
 
     def __cacheResponse(self, response: str, page: int) -> None:
-        cache_dir = f"{tempfile.gettempdir()}/bggcache/plays/{self.__id}"
+        cache_dir = os.path.join(
+            tempfile.gettempdir(), "bggcache", "plays", f"{self.__id}"
+        )
         os.makedirs(cache_dir, exist_ok=True)
-        with open(f"{cache_dir}/{page}.xml", "w") as cache:
+        with open(os.path.join(cache_dir, f"{page:04d}.xml"), "w") as cache:
             cache.write(response)
