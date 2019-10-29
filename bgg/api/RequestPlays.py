@@ -5,7 +5,7 @@ import os
 import tempfile
 import time
 import xml.etree.ElementTree as ET
-from typing import Dict, Generator, Iterable, Iterator, Optional, Sized
+from typing import Dict, Generator, Iterable, Iterator, Optional, Sized, Tuple
 
 import requests
 
@@ -50,21 +50,15 @@ class RequestPlays(Sized, Iterable[Plays]):
         self.__subType = subtype
 
     def querySinglePage(self, page: int = 0) -> Plays:
-        uri = f"{BASE_URL}plays"
-        params = self.__getParams()
-        params["page"] = str(page)
-
         for retries in range(MAX_RETRIES):
-            response = requests.get(uri, params=params)
-            response_text = response.text
-            self.__cacheResponse(response_text, page)
-            root = ET.fromstring(response_text)
+            page_contents, status_code = self.__getPage(page)
+            root = ET.fromstring(page_contents)
 
-            if response.status_code == HTTP_STATUS_CODE_OK:
+            if status_code == HTTP_STATUS_CODE_OK:
                 print(f"Page {page} received")
                 return Plays(root)
 
-            elif response.status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
+            elif status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
                 if root.tag != "error":
                     raise Exception(
                         f"Unexpected error format, was exepecting 'error' tag but got {root.tag}"
@@ -75,7 +69,7 @@ class RequestPlays(Sized, Iterable[Plays]):
                 time.sleep(retry_secs)
 
             else:
-                raise Exception(f"Bad API response: {response.status_code}")
+                raise Exception(f"Bad API response: {status_code}")
 
         raise Exception(
             f"Bailing out! failed to query server for page {page} after {retries} retries"
@@ -133,10 +127,35 @@ class RequestPlays(Sized, Iterable[Plays]):
 
         return params
 
+    def __getPage(self, page: int) -> Tuple[str, int]:
+        cached = self.__readFromCache(page)
+        if cached:
+            return cached, HTTP_STATUS_CODE_OK
+
+        uri = f"{BASE_URL}plays"
+        params = self.__getParams()
+        params["page"] = str(page)
+        response = requests.get(uri, params=params)
+        response_text = response.text
+        if response.status_code == HTTP_STATUS_CODE_OK:
+            self.__cacheResponse(response_text, page)
+        return response_text, response.status_code
+
+    def __readFromCache(self, page: int) -> Optional[str]:
+        cache_dir = self.__getCacheDir()
+        try:
+            with bz2.open(
+                os.path.join(cache_dir, f"{page:04d}.xml.bz2"), "rt"
+            ) as cache:
+                return cache.read()
+        except FileNotFoundError:
+            return None
+
     def __cacheResponse(self, response: str, page: int) -> None:
-        cache_dir = os.path.join(
-            tempfile.gettempdir(), "bggcache", "plays", f"{self.__id}"
-        )
+        cache_dir = self.__getCacheDir()
         os.makedirs(cache_dir, exist_ok=True)
         with bz2.open(os.path.join(cache_dir, f"{page:04d}.xml.bz2"), "wt") as cache:
             cache.write(response)
+
+    def __getCacheDir(self) -> str:
+        return os.path.join(tempfile.gettempdir(), "bggcache", "plays", f"{self.__id}")
