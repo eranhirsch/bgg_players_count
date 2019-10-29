@@ -11,7 +11,7 @@ import requests
 
 from ..model.Play import Play
 from ..model.Plays import Plays
-from ..utils import nonthrows
+from ..utils import InlineOutput, nonthrows
 
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
@@ -51,11 +51,12 @@ class RequestPlays(Sized, Iterable[Plays]):
 
     def querySinglePage(self, page: int = 0) -> Plays:
         for retries in range(MAX_RETRIES):
+            InlineOutput.overwrite(f"Fetching page {page}...")
+
             page_contents, status_code = self.__getPage(page)
             root = ET.fromstring(page_contents)
 
             if status_code == HTTP_STATUS_CODE_OK:
-                print(f"\rPage {page} received", end="\r")
                 return Plays(root)
 
             elif status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
@@ -65,9 +66,8 @@ class RequestPlays(Sized, Iterable[Plays]):
                     )
                 message = nonthrows(root.find("message")).text
                 retry_secs = 2 ** (retries)  # Exponential backoff
-                print(
-                    f'\rTOO MANY REQUESTS["{message}"]. Retrying in {retry_secs}s',
-                    end="\r",
+                InlineOutput.write(
+                    f' TOO MANY REQUESTS["{message}"]. Retrying in {retry_secs}s'
                 )
                 time.sleep(retry_secs)
 

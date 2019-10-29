@@ -30,3 +30,17 @@ class LazySequence(Sequence[Tout]):
 
     def __len__(self) -> int:
         return len(self.__rawCollection)
+
+
+class InlineOutput:
+    __previous: str = ""
+
+    @staticmethod
+    def overwrite(s: str) -> None:
+        filler = max(len(InlineOutput.__previous) - len(s), 0)
+        print(f"\r{s}{' '*filler}", end="")
+        InlineOutput.__previous = s
+
+    @staticmethod
+    def write(s: str) -> None:
+        InlineOutput.overwrite(InlineOutput.__previous + s)
