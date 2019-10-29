@@ -55,7 +55,7 @@ class RequestPlays(Sized, Iterable[Plays]):
             root = ET.fromstring(page_contents)
 
             if status_code == HTTP_STATUS_CODE_OK:
-                print(f"Page {page} received")
+                print(f"\rPage {page} received", end="\r")
                 return Plays(root)
 
             elif status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
@@ -65,7 +65,10 @@ class RequestPlays(Sized, Iterable[Plays]):
                     )
                 message = nonthrows(root.find("message")).text
                 retry_secs = 2 ** (retries)  # Exponential backoff
-                print(f'TOO MANY REQUESTS["{message}"]. Retrying in {retry_secs}s')
+                print(
+                    f'\rTOO MANY REQUESTS["{message}"]. Retrying in {retry_secs}s',
+                    end="\r",
+                )
                 time.sleep(retry_secs)
 
             else:
