@@ -1,5 +1,7 @@
 import datetime
 import itertools
+import os
+import tempfile
 import time
 import xml.etree.ElementTree as ET
 from typing import Dict, Generator, Iterable, Iterator, Optional, Sized
@@ -53,7 +55,9 @@ class RequestPlays(Sized, Iterable[Plays]):
 
         for retries in range(MAX_RETRIES):
             response = requests.get(uri, params=params)
-            root = ET.fromstring(response.text)
+            response_text = response.text
+            self.__cacheResponse(response_text, page)
+            root = ET.fromstring(response_text)
 
             if response.status_code == HTTP_STATUS_CODE_OK:
                 print(f"Page {page} received")
@@ -127,3 +131,9 @@ class RequestPlays(Sized, Iterable[Plays]):
             params["subtype"] = self.__subType
 
         return params
+
+    def __cacheResponse(self, response: str, page: int) -> None:
+        cache_dir = f"{tempfile.gettempdir()}/bggcache/plays/{self.__id}"
+        os.makedirs(cache_dir, exist_ok=True)
+        with open(f"{cache_dir}/{page}.xml", "w") as cache:
+            cache.write(response)
