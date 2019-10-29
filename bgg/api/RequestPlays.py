@@ -1,3 +1,4 @@
+import bz2
 import datetime
 import itertools
 import os
@@ -137,5 +138,5 @@ class RequestPlays(Sized, Iterable[Plays]):
             tempfile.gettempdir(), "bggcache", "plays", f"{self.__id}"
         )
         os.makedirs(cache_dir, exist_ok=True)
-        with open(os.path.join(cache_dir, f"{page:04d}.xml"), "w") as cache:
+        with bz2.open(os.path.join(cache_dir, f"{page:04d}.xml.bz2"), "wt") as cache:
             cache.write(response)
