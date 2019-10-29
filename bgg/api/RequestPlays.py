@@ -49,9 +49,14 @@ class RequestPlays(Sized, Iterable[Plays]):
         self.__maxDate = maxdate
         self.__subType = subtype
 
-    def querySinglePage(self, page: int = 0) -> Plays:
+    def querySinglePage(self, page: int = 1, total: Optional[int] = None) -> Plays:
         for retries in range(MAX_RETRIES):
-            InlineOutput.overwrite(f"Fetching page {page}...")
+            if total:
+                InlineOutput.overwrite(
+                    f"Fetching page {page} of {total} ({(page/total)*100:.2f}%)"
+                )
+            else:
+                InlineOutput.overwrite(f"Fetching page {page}...")
 
             page_contents, status_code = self.__getPage(page)
             root = ET.fromstring(page_contents)
@@ -84,8 +89,12 @@ class RequestPlays(Sized, Iterable[Plays]):
                 yield play
 
     def __iter__(self) -> Iterator[Plays]:
+        total = None
         for page in itertools.count(start=1):
-            plays = self.querySinglePage(page)
+            plays = self.querySinglePage(page, total)
+
+            if not total:
+                total = (plays.total() // ENTRIES_IN_FULL_PAGE) + 1
 
             if plays:
                 yield plays
@@ -99,13 +108,7 @@ class RequestPlays(Sized, Iterable[Plays]):
                 break
 
     def __len__(self) -> int:
-        # Just use any really large number here which is unlikely to have entries in it
-        empty_page = self.querySinglePage(9999)
-        if len(empty_page) > 0:
-            raise Exception(
-                f"Unexpected error: Page {empty_page.page()} contained entries"
-            )
-        return empty_page.total()
+        return self.querySinglePage().total()
 
     def __getParams(self) -> Dict[str, str]:
         params = {}
