@@ -24,7 +24,7 @@ class RequestList:
     def __init__(self, listid: int) -> None:
         self.__listID = listid
 
-    def query(self, with_comments: bool = False) -> GeekList:
+    def fetch(self, with_comments: bool = False) -> GeekList:
         uri = f"{BASE_URL}geeklist/{self.__listID}"
         params: Dict[str, str] = {}
         if with_comments:

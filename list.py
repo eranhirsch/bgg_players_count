@@ -7,10 +7,7 @@ from bgg.api.RequestList import RequestList
 
 def main(argv=[]) -> int:
     listid = int(argv[1])
-    geeklist = RequestList(listid).query()
-    print(
-        f"Geeklist {geeklist.description()}, {geeklist.edit_date()}, {geeklist.id()}, {geeklist.post_date()}, {geeklist.thumbs()}, {geeklist.title()}, {geeklist.user_name()}, {len(geeklist)}"
-    )
+    geeklist = RequestList(listid).fetch()
     return 0
 
 
