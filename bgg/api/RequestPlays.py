@@ -20,6 +20,7 @@ ENTRIES_IN_FULL_PAGE = 100
 
 HTTP_STATUS_CODE_OK = 200
 HTTP_STATUS_CODE_TOO_MANY_REQUESTS = 429
+HTTP_STATUS_CODE_BAD_GATEWAY = 502
 
 MAX_RETRIES = 5
 
@@ -59,25 +60,37 @@ class RequestPlays(Sized, Iterable[Plays]):
                 InlineOutput.overwrite(f"Fetching page {page}...")
 
             page_contents, status_code = self.__getPage(page)
-            root = ET.fromstring(page_contents)
 
-            if status_code == HTTP_STATUS_CODE_OK:
-                return Plays(root)
-
-            elif status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
-                if root.tag != "error":
-                    raise Exception(
-                        f"Unexpected error format, was exepecting 'error' tag but got {root.tag}"
-                    )
-                message = nonthrows(root.find("message")).text
+            if status_code == HTTP_STATUS_CODE_BAD_GATEWAY:
                 retry_secs = 0.75 * (2 ** retries)  # Exponential backoff
-                InlineOutput.write(
-                    f' TOO MANY REQUESTS["{message}"]. Retrying in {retry_secs}s'
-                )
+                InlineOutput.write(f" BAD GATEWAY! Retrying in {retry_secs}s")
                 time.sleep(retry_secs)
+                continue
 
-            else:
-                raise Exception(f"Bad API response: {status_code}")
+            try:
+                root = ET.fromstring(page_contents)
+                if status_code == HTTP_STATUS_CODE_OK:
+                    return Plays(root)
+
+                elif status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
+                    if root.tag != "error":
+                        raise Exception(
+                            f"Unexpected error format, was exepecting 'error' tag but got {root.tag}"
+                        )
+                    message = nonthrows(root.find("message")).text
+                    retry_secs = 0.75 * (2 ** retries)  # Exponential backoff
+                    InlineOutput.write(
+                        f' TOO MANY REQUESTS["{message}"]. Retrying in {retry_secs}s'
+                    )
+                    time.sleep(retry_secs)
+
+                else:
+                    raise Exception(f"Bad API response: {status_code}")
+
+            except ET.ParseError as e:
+                InlineOutput.overwrite(
+                    f"Couldn't parse page {page} after recieving code {status_code} [{e.msg}]. Contents:\n{page_contents}"
+                )
 
         raise Exception(
             f"Bailing out! failed to query server for page {page} after {retries} retries"
