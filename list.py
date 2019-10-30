@@ -3,6 +3,7 @@
 import sys
 
 from bgg.api.RequestList import RequestList
+from bgg.api.RequestPlays import RequestPlays
 
 
 def main(argv=[]) -> int:
@@ -10,12 +11,27 @@ def main(argv=[]) -> int:
 
     items = RequestList(listid).fetch().items()
     if not items:
-        return 1
+        print(f"No items in list!")
 
     for item in items:
+        if item.object_type() != "thing":
+            print(
+                f"Skipping: {item.object_name()} ({item.object_id()})/Wrong type: '{item.object_type()}'"
+            )
+            continue
+
+        if item.sub_type() != "boardgame":
+            print(
+                f"Skipping: {item.object_name()} ({item.object_id()})/Wrong subtype: '{item.sub_type()}'"
+            )
+            continue
+
         print(
-            f"{item.edit_date()}, {item.id()}, {item.image_id()}, {item.object_id()}, {item.object_name()}, {item.object_type()}, {item.post_date()}, {item.sub_type()}, {item.thumbs()}, {item.user_name()}"
+            f"Caching item {item.object_id()}: {item.object_name()} ({item.object_id()})"
         )
+        for play in RequestPlays(thingid=item.object_id()):
+            pass  # we just want to iterate over the plays
+        print("\nDone!\n")
 
     return 0
 
