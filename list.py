@@ -9,11 +9,13 @@ from bgg.api.RequestPlays import RequestPlays
 def main(argv=[]) -> int:
     listid = int(argv[1])
 
-    items = RequestList(listid).fetch().items()
-    if not items:
-        print(f"No items in list!")
+    geeklist = RequestList(listid).fetch()
 
-    for item in items:
+    print(
+        f'Caching geeklist "{geeklist.title()}" by {geeklist.user_name()} [last updated: {geeklist.edit_date()}]'
+    )
+
+    for item in geeklist.items():
         if item.object_type() != "thing":
             print(
                 f"Skipping: {item.object_name()} ({item.object_id()})/Wrong type: '{item.object_type()}'"
