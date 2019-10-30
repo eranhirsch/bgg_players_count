@@ -2,5 +2,5 @@ from .ModelBase import ModelBase
 
 
 class GeekListItem(ModelBase):
-
-    pass
+    def _rootTagName(self) -> str:
+        return "item"

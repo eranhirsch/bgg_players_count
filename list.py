@@ -7,7 +7,14 @@ from bgg.api.RequestList import RequestList
 
 def main(argv=[]) -> int:
     listid = int(argv[1])
-    geeklist = RequestList(listid).fetch()
+
+    items = RequestList(listid).fetch().items()
+    if not items:
+        return 1
+
+    for item in items:
+        print(f"{item}")
+
     return 0
 
 

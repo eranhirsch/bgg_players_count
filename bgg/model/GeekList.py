@@ -1,7 +1,8 @@
 import datetime
-from typing import Sized
+from typing import Optional, Sequence, Sized
 
-from ..utils import nonthrows
+from ..utils import LazySequence, nonthrows
+from .GeekListItem import GeekListItem
 from .ModelBase import ModelBase
 
 
@@ -31,6 +32,12 @@ class GeekList(ModelBase, Sized):
 
     def description(self) -> str:
         return nonthrows(nonthrows(self._root.find("description")).text)
+
+    def items(self) -> Optional[Sequence[GeekListItem]]:
+        items = self._root.findall("item")
+        if not items:
+            return None
+        return LazySequence(items, lambda item: GeekListItem(item))
 
     def __len__(self) -> int:
         return int(nonthrows(nonthrows(self._root.find("numitems")).text))
