@@ -70,7 +70,7 @@ class RequestPlays(Sized, Iterable[Plays]):
                         f"Unexpected error format, was exepecting 'error' tag but got {root.tag}"
                     )
                 message = nonthrows(root.find("message")).text
-                retry_secs = 2 ** (retries)  # Exponential backoff
+                retry_secs = 0.5 * (2 ** retries)  # Exponential backoff
                 InlineOutput.write(
                     f' TOO MANY REQUESTS["{message}"]. Retrying in {retry_secs}s'
                 )
