@@ -51,7 +51,7 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
         for page in itertools.count(start=1):
             InlineOutput.overwrite(f"Fetching page {page}")
             if total:
-                InlineOutput.write(f" of {total} ({100*(page/total):.2f})")
+                InlineOutput.write(f" of {total} ({100*(page/total):.2f}%)")
             plays = self._fetch(page=page)
 
             if not total:
