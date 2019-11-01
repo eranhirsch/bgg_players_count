@@ -4,6 +4,7 @@ import os
 import tempfile
 import time
 import xml.etree.ElementTree as ET
+from enum import IntEnum
 from typing import IO, Dict, Generic, Optional, TypeVar
 
 import requests
@@ -18,9 +19,11 @@ API_BASE_URL = {
 }
 
 
-HTTP_STATUS_CODE_OK = 200
-HTTP_STATUS_CODE_TOO_MANY_REQUESTS = 429
-HTTP_STATUS_CODE_BAD_GATEWAY = 502
+class HttpStatusCode(IntEnum):
+    OK = 200
+    TOO_MANY_REQUESTS = 429
+    BAD_GATEWAY = 502
+
 
 MAX_RETRIES = 5
 
@@ -82,14 +85,14 @@ class RequestBase(Generic[TResponse]):
         uri = f"{API_BASE_URL[self._api_version()]}/{self._api_path(**kwargs)}"
         response = requests.get(uri, params=self._api_params(**kwargs))
 
-        if response.status_code == HTTP_STATUS_CODE_OK:
+        if response.status_code == HttpStatusCode.OK:
             self.__writeToCache(response.text, **kwargs)
             return response.text
 
-        if response.status_code == HTTP_STATUS_CODE_BAD_GATEWAY:
+        if response.status_code == HttpStatusCode.BAD_GATEWAY:
             raise ServerIssue("BAD GATEWAY")
 
-        if response.status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
+        if response.status_code == HttpStatusCode.TOO_MANY_REQUESTS:
             # Rate limiting responses are returned as XMLs with an error message
             error = ET.fromstring(response.text)
             raise ServerIssue(
