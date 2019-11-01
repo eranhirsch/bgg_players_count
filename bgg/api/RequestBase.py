@@ -28,15 +28,8 @@ TResponse = TypeVar("TResponse")
 
 
 class RequestBase(Generic[TResponse]):
-    def _cache_dir(self) -> Optional[str]:
-        return None
-
     @abc.abstractmethod
     def _api_version(self) -> int:
-        pass
-
-    @abc.abstractmethod
-    def _cache_file_name(str, **kwargs) -> str:
         pass
 
     @abc.abstractmethod
@@ -49,6 +42,13 @@ class RequestBase(Generic[TResponse]):
 
     @abc.abstractmethod
     def _build_response(self, root: ET.Element) -> TResponse:
+        pass
+
+    def _cache_dir(self) -> Optional[str]:
+        return None
+
+    @abc.abstractmethod
+    def _cache_file_name(str, **kwargs) -> str:
         pass
 
     def _fetch(self, **kwargs) -> TResponse:
@@ -100,6 +100,17 @@ class RequestBase(Generic[TResponse]):
             self.__writeToCache(response_text, **kwargs)
         return response_text, response.status_code
 
+    def __readFromCache(self, **kwargs) -> Optional[str]:
+        try:
+            with self.__openCacheFile("r", **kwargs) as cache:
+                return cache.read()
+        except FileNotFoundError:
+            return None
+
+    def __writeToCache(self, response: str, **kwargs) -> None:
+        with self.__openCacheFile("w", **kwargs) as cache:
+            cache.write(response)
+
     def __openCacheFile(self, mode: str, **kwargs) -> IO:
         cache_dir = self.__getCacheRootDir()
         if mode == "w":
@@ -111,17 +122,6 @@ class RequestBase(Generic[TResponse]):
             cache_dir, f"{self._cache_file_name(**kwargs)}.xml.bz2"
         )
         return bz2.open(cache_file, f"{mode}t")
-
-    def __readFromCache(self, **kwargs) -> Optional[str]:
-        try:
-            with self.__openCacheFile("r", **kwargs) as cache:
-                return cache.read()
-        except FileNotFoundError:
-            return None
-
-    def __writeToCache(self, response: str, **kwargs) -> None:
-        with self.__openCacheFile("w", **kwargs) as cache:
-            cache.write(response)
 
     def __getCacheRootDir(self) -> str:
         parts = [tempfile.gettempdir(), CACHE_ROOT_DIR, self.__class__.__name__]
