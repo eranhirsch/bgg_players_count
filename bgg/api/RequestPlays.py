@@ -54,7 +54,7 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
         return kwargs["page"]
 
     def _api_path(self, **kwargs) -> str:
-        "plays"
+        return "plays"
 
     def _api_params(self, **kwargs) -> Dict[str, str]:
         params = {}
