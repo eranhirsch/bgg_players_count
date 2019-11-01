@@ -4,7 +4,7 @@ import os
 import tempfile
 import time
 import xml.etree.ElementTree as ET
-from typing import IO, Dict, Generic, Optional, Tuple, TypeVar
+from typing import IO, Dict, Generic, Optional, TypeVar
 
 import requests
 
@@ -53,52 +53,53 @@ class RequestBase(Generic[TResponse]):
 
     def _fetch(self, **kwargs) -> TResponse:
         for retries in range(MAX_RETRIES):
-            page_contents, status_code = self.__getRawResponse(**kwargs)
-
-            if status_code == HTTP_STATUS_CODE_BAD_GATEWAY:
-                retry_secs = 0.75 * (2 ** retries)  # Exponential backoff
-                InlineOutput.write(f" BAD GATEWAY! Retrying in {retry_secs}s")
-                time.sleep(retry_secs)
-                continue
-
             try:
+                page_contents = self.__getRawResponse(**kwargs)
                 root = ET.fromstring(page_contents)
-                if status_code == HTTP_STATUS_CODE_OK:
-                    return self._build_response(root)
-
-                elif status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
-                    if root.tag != "error":
-                        raise Exception(
-                            f"Unexpected error format, was exepecting 'error' tag but got {root.tag}"
-                        )
-                    message = nonthrows(root.find("message")).text
-                    retry_secs = 0.75 * (2 ** retries)  # Exponential backoff
-                    InlineOutput.write(
-                        f' TOO MANY REQUESTS["{message}"]. Retrying in {retry_secs}s'
-                    )
-                    time.sleep(retry_secs)
-
-                else:
-                    raise Exception(f"Bad API response: {status_code}")
-
+                return self._build_response(root)
+            except ServerIssue as issue:
+                InlineOutput.write(
+                    f" Encountered server issue {issue.tldr}: {issue.extra or ''}"
+                )
             except ET.ParseError as e:
                 InlineOutput.overwrite(
-                    f"Couldn't parse response with code: {status_code} [{e.msg}]. Contents:\n{page_contents}"
+                    f"Failed to parse response [{e.msg}]. Contents:\n{page_contents}"
                 )
+
+            retry_secs = 0.75 * (2 ** retries)  # Exponential backoff
+            InlineOutput.write(f" Retrying in {retry_secs}s")
+            time.sleep(retry_secs)
 
         raise Exception(f"Bailing out! API FETCH failed {MAX_RETRIES} retries")
 
-    def __getRawResponse(self, **kwargs) -> Tuple[str, int]:
+    def __getRawResponse(self, **kwargs) -> str:
         cached = self.__readFromCache(**kwargs)
         if cached:
-            return cached, HTTP_STATUS_CODE_OK
+            return cached
 
         uri = f"{API_BASE_URL[self._api_version()]}/{self._api_path(**kwargs)}"
         response = requests.get(uri, params=self._api_params(**kwargs))
-        response_text = response.text
+
         if response.status_code == HTTP_STATUS_CODE_OK:
-            self.__writeToCache(response_text, **kwargs)
-        return response_text, response.status_code
+            self.__writeToCache(response.text, **kwargs)
+            return response.text
+
+        if response.status_code == HTTP_STATUS_CODE_BAD_GATEWAY:
+            raise ServerIssue("BAD GATEWAY")
+
+        if response.status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
+            # Rate limiting responses are returned as XMLs with an error message
+            error = ET.fromstring(response.text)
+            raise ServerIssue(
+                "RATE LIMITED",
+                nonthrows(error.find("message")).text
+                if error.tag == "error"
+                else "Failed to parse error message!",
+            )
+
+        raise ServerIssue(
+            "UNEXPECTED STATUS CODE", f"Status code: {response.status_code}"
+        )
 
     def __readFromCache(self, **kwargs) -> Optional[str]:
         try:
@@ -129,3 +130,9 @@ class RequestBase(Generic[TResponse]):
         if cache_dir:
             parts.append(cache_dir)
         return os.path.join(*parts)
+
+
+class ServerIssue(Exception):
+    def __init__(self, tldr: str, extra: Optional[str] = None) -> None:
+        self.tldr = tldr
+        self.extra = extra
