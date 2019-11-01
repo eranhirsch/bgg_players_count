@@ -11,7 +11,9 @@ import requests
 from ..utils import InlineOutput, nonthrows
 
 API_BASE_URL = {
+    # Docs: https://boardgamegeek.com/wiki/page/BGG_XML_API
     1: "https://www.boardgamegeek.com/xmlapi",
+    # Docs: https://boardgamegeek.com/wiki/page/BGG_XML_API2
     2: "https://www.boardgamegeek.com/xmlapi2",
 }
 
