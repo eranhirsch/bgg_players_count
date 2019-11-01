@@ -109,4 +109,4 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
         return f"{self.__id}"
 
     def _cache_file_name(str, **kwargs) -> str:
-        return kwargs["page"]
+        return f"{kwargs['page']:04d}"
