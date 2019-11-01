@@ -5,6 +5,7 @@ from typing import Dict, Generator, Iterable, Iterator, Optional, Sized
 
 from ..model.Play import Play
 from ..model.Plays import Plays
+from ..utils import InlineOutput
 from .RequestBase import RequestBase
 
 # Each page in the API responses contains up to 100 entries.
@@ -48,7 +49,10 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
     def __iter__(self) -> Iterator[Plays]:
         total = None
         for page in itertools.count(start=1):
-            plays = self._fetch(page=page, total=total)
+            InlineOutput.overwrite(f"Fetching page {page}")
+            if total:
+                InlineOutput.write(f" of {total}")
+            plays = self._fetch(page=page)
 
             if not total:
                 total = (plays.total() // ENTRIES_IN_FULL_PAGE) + 1
