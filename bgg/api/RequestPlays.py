@@ -1,17 +1,11 @@
-import bz2
 import datetime
 import itertools
-import os
-import tempfile
-import time
 import xml.etree.ElementTree as ET
-from typing import Dict, Generator, Iterable, Iterator, Optional, Sized, Tuple
-
-import requests
+from typing import Dict, Generator, Iterable, Iterator, Optional, Sized
 
 from ..model.Play import Play
 from ..model.Plays import Plays
-from ..utils import InlineOutput, nonthrows
+from .RequestBase import RequestBase
 
 BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
 
@@ -25,7 +19,7 @@ HTTP_STATUS_CODE_BAD_GATEWAY = 502
 MAX_RETRIES = 5
 
 
-class RequestPlays(Sized, Iterable[Plays]):
+class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
     """
     A request for a list of plays for the specific object.
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc10
@@ -50,80 +44,19 @@ class RequestPlays(Sized, Iterable[Plays]):
         self.__maxDate = maxdate
         self.__subType = subtype
 
-    def querySinglePage(self, page: int = 1, total: Optional[int] = None) -> Plays:
-        for retries in range(MAX_RETRIES):
-            if total:
-                InlineOutput.overwrite(
-                    f"Fetching page {page} of {total} ({(page/total)*100:.2f}%)"
-                )
-            else:
-                InlineOutput.overwrite(f"Fetching page {page}...")
+    def _cache_dir(self) -> Optional[str]:
+        return f"{self.__id}"
 
-            page_contents, status_code = self.__getPage(page)
+    def _api_version(self) -> int:
+        return 2
 
-            if status_code == HTTP_STATUS_CODE_BAD_GATEWAY:
-                retry_secs = 0.75 * (2 ** retries)  # Exponential backoff
-                InlineOutput.write(f" BAD GATEWAY! Retrying in {retry_secs}s")
-                time.sleep(retry_secs)
-                continue
+    def _cache_file_name(str, **kwargs) -> str:
+        return kwargs["page"]
 
-            try:
-                root = ET.fromstring(page_contents)
-                if status_code == HTTP_STATUS_CODE_OK:
-                    return Plays(root)
+    def _api_path(self, **kwargs) -> str:
+        "plays"
 
-                elif status_code == HTTP_STATUS_CODE_TOO_MANY_REQUESTS:
-                    if root.tag != "error":
-                        raise Exception(
-                            f"Unexpected error format, was exepecting 'error' tag but got {root.tag}"
-                        )
-                    message = nonthrows(root.find("message")).text
-                    retry_secs = 0.75 * (2 ** retries)  # Exponential backoff
-                    InlineOutput.write(
-                        f' TOO MANY REQUESTS["{message}"]. Retrying in {retry_secs}s'
-                    )
-                    time.sleep(retry_secs)
-
-                else:
-                    raise Exception(f"Bad API response: {status_code}")
-
-            except ET.ParseError as e:
-                InlineOutput.overwrite(
-                    f"Couldn't parse page {page} after recieving code {status_code} [{e.msg}]. Contents:\n{page_contents}"
-                )
-
-        raise Exception(
-            f"Bailing out! failed to query server for page {page} after {retries} retries"
-        )
-
-    def queryAll(self) -> Generator[Play, None, None]:
-        for plays in self:
-            for play in plays:
-                yield play
-
-    def __iter__(self) -> Iterator[Plays]:
-        total = None
-        for page in itertools.count(start=1):
-            plays = self.querySinglePage(page, total)
-
-            if not total:
-                total = (plays.total() // ENTRIES_IN_FULL_PAGE) + 1
-
-            if plays:
-                yield plays
-            else:
-                # Response returned no plays
-                break
-
-            if len(plays) < ENTRIES_IN_FULL_PAGE:
-                # We can guess when the generation is done if the number of
-                # plays we got is lower than the usual number in a full page
-                break
-
-    def __len__(self) -> int:
-        return self.querySinglePage().total()
-
-    def __getParams(self) -> Dict[str, str]:
+    def _api_params(self, **kwargs) -> Dict[str, str]:
         params = {}
 
         if self.__userName:
@@ -144,37 +77,36 @@ class RequestPlays(Sized, Iterable[Plays]):
         if self.__subType:
             params["subtype"] = self.__subType
 
+        params["page"] = str(kwargs["page"])
+
         return params
 
-    def __getPage(self, page: int) -> Tuple[str, int]:
-        cached = self.__readFromCache(page)
-        if cached:
-            return cached, HTTP_STATUS_CODE_OK
+    def _build_response(self, root: ET.Element) -> Plays:
+        return Plays(root)
 
-        uri = f"{BASE_URL}plays"
-        params = self.__getParams()
-        params["page"] = str(page)
-        response = requests.get(uri, params=params)
-        response_text = response.text
-        if response.status_code == HTTP_STATUS_CODE_OK:
-            self.__cacheResponse(response_text, page)
-        return response_text, response.status_code
+    def queryAll(self) -> Generator[Play, None, None]:
+        for plays in self:
+            for play in plays:
+                yield play
 
-    def __readFromCache(self, page: int) -> Optional[str]:
-        cache_dir = self.__getCacheDir()
-        try:
-            with bz2.open(
-                os.path.join(cache_dir, f"{page:04d}.xml.bz2"), "rt"
-            ) as cache:
-                return cache.read()
-        except FileNotFoundError:
-            return None
+    def __iter__(self) -> Iterator[Plays]:
+        total = None
+        for page in itertools.count(start=1):
+            plays = self._fetch(page=page, total=total)
 
-    def __cacheResponse(self, response: str, page: int) -> None:
-        cache_dir = self.__getCacheDir()
-        os.makedirs(cache_dir, exist_ok=True)
-        with bz2.open(os.path.join(cache_dir, f"{page:04d}.xml.bz2"), "wt") as cache:
-            cache.write(response)
+            if not total:
+                total = (plays.total() // ENTRIES_IN_FULL_PAGE) + 1
 
-    def __getCacheDir(self) -> str:
-        return os.path.join(tempfile.gettempdir(), "bggcache", "plays", f"{self.__id}")
+            if plays:
+                yield plays
+            else:
+                # Response returned no plays
+                break
+
+            if len(plays) < ENTRIES_IN_FULL_PAGE:
+                # We can guess when the generation is done if the number of
+                # plays we got is lower than the usual number in a full page
+                break
+
+    def __len__(self) -> int:
+        return self._fetch().total()
