@@ -7,16 +7,8 @@ from ..model.Play import Play
 from ..model.Plays import Plays
 from .RequestBase import RequestBase
 
-BASE_URL = "https://www.boardgamegeek.com/xmlapi2/"
-
 # Each page in the API responses contains up to 100 entries.
 ENTRIES_IN_FULL_PAGE = 100
-
-HTTP_STATUS_CODE_OK = 200
-HTTP_STATUS_CODE_TOO_MANY_REQUESTS = 429
-HTTP_STATUS_CODE_BAD_GATEWAY = 502
-
-MAX_RETRIES = 5
 
 
 class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
@@ -71,14 +63,8 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
     def __len__(self) -> int:
         return self._fetch().total()
 
-    def _cache_dir(self) -> Optional[str]:
-        return f"{self.__id}"
-
     def _api_version(self) -> int:
         return 2
-
-    def _cache_file_name(str, **kwargs) -> str:
-        return kwargs["page"]
 
     def _api_path(self, **kwargs) -> str:
         return "plays"
@@ -110,3 +96,9 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
 
     def _build_response(self, root: ET.Element) -> Plays:
         return Plays(root)
+
+    def _cache_dir(self) -> Optional[str]:
+        return f"{self.__id}"
+
+    def _cache_file_name(str, **kwargs) -> str:
+        return kwargs["page"]
