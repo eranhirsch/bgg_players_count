@@ -58,6 +58,9 @@ def formatResults(results: TResults) -> str:
 
 
 def formatCounts(player_count_aggr: Dict[int, int]) -> str:
+    if not player_count_aggr:
+        return "NO DATA!"
+
     missing = player_count_aggr[0] if 0 in player_count_aggr else 0
     max_count = max(player_count_aggr.keys())
     total_plays = sum(player_count_aggr.values())
