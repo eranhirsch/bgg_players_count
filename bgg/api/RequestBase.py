@@ -86,7 +86,7 @@ class RequestBase(Generic[TResponse]):
                     f"Couldn't parse response with code: {status_code} [{e.msg}]. Contents:\n{page_contents}"
                 )
 
-        raise Exception(f"Bailing out! API FETCH failed {retries} retries")
+        raise Exception(f"Bailing out! API FETCH failed {MAX_RETRIES} retries")
 
     def __getRawResponse(self, **kwargs) -> Tuple[str, int]:
         cached = self.__readFromCache(**kwargs)
