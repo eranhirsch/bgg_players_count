@@ -44,6 +44,33 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
         self.__maxDate = maxdate
         self.__subType = subtype
 
+    def queryAll(self) -> Generator[Play, None, None]:
+        for plays in self:
+            for play in plays:
+                yield play
+
+    def __iter__(self) -> Iterator[Plays]:
+        total = None
+        for page in itertools.count(start=1):
+            plays = self._fetch(page=page, total=total)
+
+            if not total:
+                total = (plays.total() // ENTRIES_IN_FULL_PAGE) + 1
+
+            if plays:
+                yield plays
+            else:
+                # Response returned no plays
+                break
+
+            if len(plays) < ENTRIES_IN_FULL_PAGE:
+                # We can guess when the generation is done if the number of
+                # plays we got is lower than the usual number in a full page
+                break
+
+    def __len__(self) -> int:
+        return self._fetch().total()
+
     def _cache_dir(self) -> Optional[str]:
         return f"{self.__id}"
 
@@ -83,30 +110,3 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
 
     def _build_response(self, root: ET.Element) -> Plays:
         return Plays(root)
-
-    def queryAll(self) -> Generator[Play, None, None]:
-        for plays in self:
-            for play in plays:
-                yield play
-
-    def __iter__(self) -> Iterator[Plays]:
-        total = None
-        for page in itertools.count(start=1):
-            plays = self._fetch(page=page, total=total)
-
-            if not total:
-                total = (plays.total() // ENTRIES_IN_FULL_PAGE) + 1
-
-            if plays:
-                yield plays
-            else:
-                # Response returned no plays
-                break
-
-            if len(plays) < ENTRIES_IN_FULL_PAGE:
-                # We can guess when the generation is done if the number of
-                # plays we got is lower than the usual number in a full page
-                break
-
-    def __len__(self) -> int:
-        return self._fetch().total()
