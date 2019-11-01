@@ -17,24 +17,28 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc10
     """
 
-    def __init__(
+    def __init__(self, username: Optional[str] = None, thingid: Optional[int] = None):
+        if not username and not thingid:
+            raise Exception("Either username or id required to query plays")
+        self.__userName = username
+        self.__id = thingid
+        self.__type: Optional[str] = None
+        self.__minDate: Optional[datetime.date] = None
+        self.__maxDate: Optional[datetime.date] = None
+        self.__subType: Optional[str] = None
+
+    def filter_on(
         self,
-        username: Optional[str] = None,
-        thingid: Optional[int] = None,
         thingtype: Optional[str] = None,
         subtype: Optional[str] = None,
         mindate: Optional[datetime.date] = None,
         maxdate: Optional[datetime.date] = None,
-    ):
-        if not username and not thingid:
-            raise Exception("Either username or id required to query plays")
-
-        self.__userName = username
-        self.__id = thingid
+    ) -> "RequestPlays":
         self.__type = thingtype
         self.__minDate = mindate
         self.__maxDate = maxdate
         self.__subType = subtype
+        return self
 
     def queryAll(self) -> Generator[Play, None, None]:
         for plays in self:
