@@ -38,7 +38,7 @@ class InlineOutput:
     @staticmethod
     def overwrite(s: str) -> None:
         filler = max(len(InlineOutput.__previous) - len(s), 0)
-        print(f"\r{s}{' '*filler}", end="")
+        print(f"{s}{' '*filler}", end="\n")
         InlineOutput.__previous = s
 
     @staticmethod

@@ -1,5 +1,6 @@
 import abc
 import bz2
+import datetime
 import os
 import tempfile
 import time
@@ -10,6 +11,7 @@ from typing import IO, Dict, Generic, Optional, TypeVar
 import requests
 
 from ..utils import InlineOutput, nonthrows
+from .RateLimiter import RateLimiter
 
 API_BASE_URL = {
     # Docs: https://boardgamegeek.com/wiki/page/BGG_XML_API
@@ -26,6 +28,7 @@ class HttpStatusCode(IntEnum):
 
 
 MAX_RETRIES = 5
+RETRY_BASE_INTERVAL = datetime.timedelta(seconds=0.5)
 
 CACHE_ROOT_DIR = "bggcache"
 
@@ -33,6 +36,9 @@ TResponse = TypeVar("TResponse")
 
 
 class RequestBase(Generic[TResponse]):
+
+    __rate_limiter = RateLimiter()
+
     @abc.abstractmethod
     def _api_version(self) -> int:
         pass
@@ -71,9 +77,9 @@ class RequestBase(Generic[TResponse]):
                     f"Failed to parse response [{e.msg}]. Contents:\n{page_contents}"
                 )
 
-            retry_secs = 0.75 * (2 ** retries)  # Exponential backoff
+            retry_secs = RETRY_BASE_INTERVAL * (2 ** retries)  # Exponential backoff
             InlineOutput.write(f" Retrying in {retry_secs}s")
-            time.sleep(retry_secs)
+            time.sleep(retry_secs.total_seconds())
 
         raise Exception(f"Bailing out! API FETCH failed {MAX_RETRIES} retries")
 
@@ -83,9 +89,11 @@ class RequestBase(Generic[TResponse]):
             return cached
 
         uri = f"{API_BASE_URL[self._api_version()]}/{self._api_path(**kwargs)}"
+        RequestBase.__rate_limiter.limit()
         response = requests.get(uri, params=self._api_params(**kwargs))
 
         if response.status_code == HttpStatusCode.OK:
+            RequestBase.__rate_limiter.success()
             self.__writeToCache(response.text, **kwargs)
             return response.text
 
@@ -93,6 +101,8 @@ class RequestBase(Generic[TResponse]):
             raise ServerIssue("BAD GATEWAY")
 
         if response.status_code == HttpStatusCode.TOO_MANY_REQUESTS:
+            RequestBase.__rate_limiter.fail()
+
             # Rate limiting responses are returned as XMLs with an error message
             error = ET.fromstring(response.text)
             raise ServerIssue(
