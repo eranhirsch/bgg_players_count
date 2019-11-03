@@ -2,6 +2,8 @@ import datetime
 import time
 from typing import Optional
 
+INITIAL_UPPER_BOUND = datetime.timedelta(seconds=10)
+
 
 class RateLimiter:
     def __init__(self) -> None:
@@ -28,7 +30,7 @@ class RateLimiter:
     def fail(self) -> None:
         self.__last_attempt_time = None
         if not self.__upper_bound:
-            self.__upper_bound = datetime.timedelta(seconds=5)
+            self.__upper_bound = INITIAL_UPPER_BOUND
         else:
             if self.__was_limited:
                 self.__lower_bound = self.__delay_time()
