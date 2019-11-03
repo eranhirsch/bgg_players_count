@@ -28,7 +28,7 @@ class HttpStatusCode(IntEnum):
 
 
 MAX_RETRIES = 5
-RETRY_BASE_INTERVAL = datetime.timedelta(seconds=0.5)
+RETRY_BASE_INTERVAL = datetime.timedelta(seconds=1)
 
 CACHE_ROOT_DIR = "bggcache"
 
