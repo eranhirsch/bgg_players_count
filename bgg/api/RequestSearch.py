@@ -11,7 +11,7 @@ class RequestSearch(RequestBase[Items]):
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc14
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__type: Optional[str] = None
 
     def ofType(self, type: str) -> "RequestSearch":

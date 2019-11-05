@@ -18,7 +18,9 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc10
     """
 
-    def __init__(self, username: Optional[str] = None, thingid: Optional[int] = None):
+    def __init__(
+        self, username: Optional[str] = None, thingid: Optional[int] = None
+    ) -> None:
         if not username and not thingid:
             raise Exception("Either username or id required to query plays")
         self.__userName = username
