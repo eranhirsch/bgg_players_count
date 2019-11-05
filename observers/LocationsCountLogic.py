@@ -4,6 +4,8 @@ from bgg.model.Play import Play
 
 from .PlayerCountAggregatorLogic import DIGITAL_LOCATIONS_RE
 
+NUM_LOCATIONS_TO_PRINT = 50
+
 
 class LocationsCountLogic:
     __locations: Dict[str, Dict[str, int]]
@@ -48,6 +50,6 @@ class LocationsCountCLIPresenter:
                 f"{location}\t{count}"
                 for count, location in sorted(
                     list(locations.items()), key=lambda item: item[1], reverse=True
-                )[:25]
+                )[:NUM_LOCATIONS_TO_PRINT]
             ]
         )
