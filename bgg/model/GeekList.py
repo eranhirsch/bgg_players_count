@@ -1,12 +1,12 @@
 import datetime
-from typing import Sequence, Sized
+from typing import Iterable, Iterator, Sized
 
-from ..utils import LazySequence, nonthrows
+from ..utils import nonthrows
 from .GeekListItem import GeekListItem
 from .ModelBase import ModelBase
 
 
-class GeekList(ModelBase, Sized):
+class GeekList(ModelBase, Sized, Iterable):
     def id(self) -> int:
         return int(self._field("id"))
 
@@ -33,11 +33,13 @@ class GeekList(ModelBase, Sized):
     def description(self) -> str:
         return nonthrows(nonthrows(self._root.find("description")).text)
 
-    def items(self) -> Sequence[GeekListItem]:
+    def __iter__(self) -> Iterator[GeekListItem]:
         items = self._root.findall("item")
         if not items:
-            return []
-        return LazySequence(items, lambda item: GeekListItem(item))
+            raise StopIteration("No item in list")
+
+        for item in items:
+            yield GeekListItem(item)
 
     def __len__(self) -> int:
         return int(nonthrows(nonthrows(self._root.find("numitems")).text))
