@@ -25,11 +25,13 @@ def main(argv: List[str] = []) -> int:
     locations_logic = LocationsCountLogic()
 
     try:
+        index = 1
         for game_id in extractGameIDFromUserInputs(argv[1:]):
-            print(f"Processing plays for: ID={game_id}")
+            print(f"Processing plays for game {index:03d}: ID={game_id}")
             for play in RequestPlays(thingid=game_id).queryAll():
                 player_count_logic.visit(play)
                 locations_logic.visit(play)
+            index += 1
 
         print(f"Finished processing")
         return 0
