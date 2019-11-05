@@ -26,7 +26,7 @@ def main(argv: List[str] = []) -> int:
 
     try:
         index = 1
-        for game_id in extractGameIDFromUserInputs(argv[1:]):
+        for game_id in extract_game_ids_from_input(argv[1:]):
             print(f"Processing plays for game {index:03d}: ID={game_id}")
             for play in RequestPlays(thingid=game_id).queryAll():
                 player_count_logic.visit(play)
@@ -44,7 +44,7 @@ def main(argv: List[str] = []) -> int:
         print(LocationsCountCLIPresenter(locations_logic).render(is_digital=True))
 
 
-def extractGameIDFromUserInputs(user_inputs: List[str]) -> Iterator[int]:
+def extract_game_ids_from_input(user_inputs: List[str]) -> Iterator[int]:
     for user_input in user_inputs:
         if user_input.startswith(LIST_PREFIX):
             listid = int(user_input.split(LIST_PREFIX)[1])
@@ -58,14 +58,14 @@ def extractGameIDFromUserInputs(user_inputs: List[str]) -> Iterator[int]:
 
             print(f"Finished GeekList {geeklist.id()}")
 
+        elif user_input.isdigit():
+            yield int(user_input)
+
         else:
-            yield extractGameIDFromUserInput(user_input)
+            yield get_game_id_from_name(user_input)
 
 
-def extractGameIDFromUserInput(user_input: str) -> int:
-    if user_input.isdigit():
-        return int(user_input)
-
+def get_game_id_from_name(user_input: str) -> int:
     results = RequestSearch().ofType("boardgame").query(user_input)
     result = firstx(results)
     if len(results) == 1:
