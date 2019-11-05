@@ -33,6 +33,9 @@ class GeekList(ModelBase, Sized, Iterable):
     def description(self) -> str:
         return nonthrows(nonthrows(self._root.find("description")).text)
 
+    def _rootTagName(self) -> str:
+        return "geeklist"
+
     def __iter__(self) -> Iterator[GeekListItem]:
         items = self._root.findall("item")
         if not items:
@@ -43,6 +46,3 @@ class GeekList(ModelBase, Sized, Iterable):
 
     def __len__(self) -> int:
         return int(nonthrows(nonthrows(self._root.find("numitems")).text))
-
-    def _rootTagName(self) -> str:
-        return "geeklist"

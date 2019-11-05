@@ -18,10 +18,6 @@ class RequestList(RequestBase[GeekList], Iterable[GeekListItem]):
     def fetch(self, with_comments: bool = False) -> GeekList:
         return self._fetch(listid=self.__listID, with_comments=with_comments)
 
-    def __iter__(self) -> Iterator[GeekListItem]:
-        for item in self.fetch():
-            yield item
-
     def _api_version(self) -> int:
         return 1
 
@@ -41,3 +37,7 @@ class RequestList(RequestBase[GeekList], Iterable[GeekListItem]):
 
     def _cache_file_name(str, **kwargs) -> str:
         return kwargs["listid"]
+
+    def __iter__(self) -> Iterator[GeekListItem]:
+        for item in self.fetch():
+            yield item
