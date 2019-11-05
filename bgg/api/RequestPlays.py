@@ -62,13 +62,13 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
             if plays:
                 yield plays
             else:
-                # Response returned no plays
-                break
+                InlineOutput.write(" Empty page fetched!")
 
             if len(plays) < ENTRIES_IN_FULL_PAGE:
                 # We can guess when the generation is done if the number of
                 # plays we got is lower than the usual number in a full page
-                break
+                InlineOutput.write(" DONE!\n")
+                return "Last page received"
 
     def __len__(self) -> int:
         return self._fetch().total()

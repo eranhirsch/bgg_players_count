@@ -37,11 +37,7 @@ class GeekList(ModelBase, Sized, Iterable):
         return "geeklist"
 
     def __iter__(self) -> Iterator[GeekListItem]:
-        items = self._root.findall("item")
-        if not items:
-            raise StopIteration("No item in list")
-
-        for item in items:
+        for item in self._root.findall("item"):
             yield GeekListItem(item)
 
     def __len__(self) -> int:
