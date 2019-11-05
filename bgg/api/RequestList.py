@@ -1,12 +1,11 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Iterable, Iterator
+from typing import Dict
 
 from ..model.GeekList import GeekList
-from ..model.GeekListItem import GeekListItem
 from .RequestBase import RequestBase
 
 
-class RequestList(RequestBase[GeekList], Iterable[GeekListItem]):
+class RequestList(RequestBase[GeekList]):
     """
     A request for a geek list of items
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API#toc7
@@ -37,7 +36,3 @@ class RequestList(RequestBase[GeekList], Iterable[GeekListItem]):
 
     def _cache_file_name(str, **kwargs) -> str:
         return kwargs["listid"]
-
-    def __iter__(self) -> Iterator[GeekListItem]:
-        for item in self.fetch():
-            yield item
