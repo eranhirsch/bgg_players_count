@@ -34,3 +34,20 @@ class LocationsCountLogic:
     @staticmethod
     def __getLabel(is_digital: bool) -> str:
         return "digital" if is_digital else "regular"
+
+
+class LocationsCountCLIPresenter:
+    def __init__(self, logic: LocationsCountLogic) -> None:
+        self.__logic = logic
+
+    def render(self, **kwargs) -> str:
+        locations = self.__logic.getResults(**kwargs)
+        return "\n".join(
+            ["Location\tCount"]
+            + [
+                f"{location}\t{count}"
+                for count, location in sorted(
+                    list(locations.items()), key=lambda item: item[1], reverse=True
+                )[:25]
+            ]
+        )
