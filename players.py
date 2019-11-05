@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 
 import sys
+from typing import Iterator, List
 
 from bgg.api.RequestPlays import RequestPlays
 from bgg.api.RequestSearch import RequestSearch
@@ -15,17 +16,16 @@ from observers.PlayerCountAggregatorLogic import (
 )
 
 
-def main(argv=[]) -> int:
-    id = extractGameIDFromUserInput(argv[1])
-    print(f"Processing plays for: ID={id}")
-
+def main(argv: List[str] = []) -> int:
     player_count_logic = PlayerCountAggregatorLogic()
     locations_logic = LocationsCountLogic()
 
     try:
-        for play in RequestPlays(thingid=id).queryAll():
-            player_count_logic.visit(play)
-            locations_logic.visit(play)
+        for game_id in extractGameIDFromUserInputs(argv[1:]):
+            print(f"Processing plays for: ID={game_id}")
+            for play in RequestPlays(thingid=game_id).queryAll():
+                player_count_logic.visit(play)
+                locations_logic.visit(play)
 
         print(f"Finished processing")
         return 0
@@ -36,6 +36,11 @@ def main(argv=[]) -> int:
         print(LocationsCountCLIPresenter(locations_logic).render(is_digital=False))
         print("\n")
         print(LocationsCountCLIPresenter(locations_logic).render(is_digital=True))
+
+
+def extractGameIDFromUserInputs(user_inputs: List[str]) -> Iterator[int]:
+    for user_input in user_inputs:
+        yield extractGameIDFromUserInput(user_input)
 
 
 def extractGameIDFromUserInput(user_input: str) -> int:
