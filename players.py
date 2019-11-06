@@ -16,7 +16,6 @@ from observers.PlayerCountAggregatorLogic import (
     PlayerCountAggregatorCLIPresenter,
     PlayerCountAggregatorLogic,
 )
-from observers.QuantityCountLogic import QuantityCountCLIPresenter, QuantityCountLogic
 
 LIST_PREFIX = "list-"
 
@@ -24,7 +23,6 @@ LIST_PREFIX = "list-"
 def main(argv: List[str] = []) -> int:
     player_count_logic = PlayerCountAggregatorLogic()
     locations_logic = LocationsCountLogic()
-    quantity_logic = QuantityCountLogic()
 
     try:
         index = 1
@@ -33,7 +31,6 @@ def main(argv: List[str] = []) -> int:
             for play in RequestPlays(thingid=game_id).queryAll():
                 player_count_logic.visit(play)
                 locations_logic.visit(play)
-                quantity_logic.visit(play)
             index += 1
 
         print(f"Finished processing")
@@ -45,8 +42,6 @@ def main(argv: List[str] = []) -> int:
         print(LocationsCountCLIPresenter(locations_logic).render(is_digital=False))
         print("\n")
         print(LocationsCountCLIPresenter(locations_logic).render(is_digital=True))
-        print("\n")
-        print(QuantityCountCLIPresenter(quantity_logic).render())
 
 
 def extract_game_ids_from_input(user_inputs: List[str]) -> Iterator[int]:

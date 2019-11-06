@@ -6,7 +6,7 @@ from bgg.model.Play import Play
 
 # Some people log really odd quantities for plays, like 50 and 100. These aren't
 # very valuable to us so we cap it at a reasonable number and return that
-SANITY_MAX_QUANTITY: int = 10
+SANITY_MAX_QUANTITY: int = 20
 
 # A list of apps and platforms that allow digital play.
 DIGITAL_LOCATIONS_RE = [
