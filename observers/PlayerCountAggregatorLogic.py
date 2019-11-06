@@ -12,34 +12,40 @@ SANITY_MAX_QUANTITY: int = 20
 DIGITAL_LOCATIONS_RE = [
     re.compile(re_str, re.IGNORECASE)
     for re_str in [
-        r"^.*?\bapp\b.*?$",
-        r"^(\w+\.)?isotropic(\.org)?$",
+        # Devices:
         r"^(a )?smartphone$",
-        r"^(https?://)?(www\.)?b(rett)? ?s(piel)? ?w(elt)?(\.de)?$",
-        r"^(https?://)?(www\.)?bo(i|î)te ?(a|à) ?jeux(\.net)?/?$",
-        r"^(https?://)?(www\.)?yucata(\.de)?/?$",
-        r"^(the )?internet$",
         r"^android$",
         r"^appstore$",
-        r"^b(oard)? ?g(ame)? ?a(rena)?(\.com| online)?$",
-        r"^b(oard)? ?g(aming)?( |-)?o(nline)?(\.com)?$",
-        r"^d(ays)? ?of? ?w(onder)?(\.com)?$",
-        r"^digitaa?l$",
-        r"^emulator$",
         r"^ios( device)?$",
         r"^ipad( air)?$",
         r"^iphone$",
-        r"^j(inteki(\.net)?|\.?net)$",
-        r"^octgn$",
-        r"^on ?line$",
         r"^pc$",
-        r"^steam$",
         r"^switch$",
-        r"^t(able)?t(op)?( ?s(imulator)?)?$",
         r"^tablet$",
-        r"^tabletopia(\.com)?$",
+        # Generic terms:
+        r"^.*?\bapp\b.*?$",
+        r"^(the )?internet$",
+        r"^digitaa?l$",
+        r"^electronic$",
+        r"^emulator$",
+        r"^on ?line( play)?$",
         r"^virtual$",
         r"^web$",
+        # General-purpose services that offer digital versions of games:
+        r"^(https?://)?(\w+\.)?isotropic(\.org/?)?$",
+        r"^(https?://)?(www\.)?b(oard)? ?g(ame)? ?a(rena)?(\.com/?| online)?$",
+        r"^(https?://)?(www\.)?b(oard)? ?g(aming)?( |-)?o(nline)?(\.com/?)?$",
+        r"^(https?://)?(www\.)?b(rett)? ?s(piel)? ?w(elt)?(\.de/?)?$",
+        r"^(https?://)?(www\.)?bo(i|î)te ?(a|à) ?jeux(\.net/?)?/?$",
+        r"^(https?://)?(www\.)?d(ays)? ?of? ?w(onder)?(\.com/?)?$",
+        r"^(https?://)?(www\.)?yucata(\.de)?/?$",
+        r"^octgn$",
+        r"^steam$",
+        r"^t(able)?t(op)?( ?s(imulator)?)?$",
+        r"^tabletopia(\.com)?$",
+        # Game-specific services that offer a digital version:
+        r"^(https?://)?(brass\.)?o(rder)? ?of? ?t(he)? ?h(ammer)?(\.com/?)?$",  # brass
+        r"^(https?://)?(www\.)?j(inteki(\.net)?|\.?net)/?$",  # netrunner
     ]
 ]
 
