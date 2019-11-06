@@ -2,7 +2,6 @@ import abc
 import bz2
 import datetime
 import os
-import tempfile
 import time
 import xml.etree.ElementTree as ET
 from enum import IntEnum
@@ -30,6 +29,9 @@ class HttpStatusCode(IntEnum):
 MAX_RETRIES = 5
 RETRY_BASE_INTERVAL = datetime.timedelta(seconds=1)
 
+# A real temp dir can be found here: tempfile.gettempdir(), but this gets
+# deleted too to be reliable for what I need of it right now...
+TEMP_ROOT_DIR = ".tmp"
 CACHE_ROOT_DIR = "bggcache"
 
 TResponse = TypeVar("TResponse")
@@ -140,7 +142,7 @@ class RequestBase(Generic[TResponse]):
         return bz2.open(cache_file, f"{mode}t")
 
     def __getCacheRootDir(self) -> str:
-        parts = [tempfile.gettempdir(), CACHE_ROOT_DIR, self.__class__.__name__]
+        parts = [TEMP_ROOT_DIR, CACHE_ROOT_DIR, self.__class__.__name__]
         cache_dir = self._cache_dir()
         if cache_dir:
             parts.append(cache_dir)

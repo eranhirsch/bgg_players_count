@@ -4,7 +4,7 @@ from bgg.model.Play import Play
 
 from .PlayerCountAggregatorLogic import DIGITAL_LOCATIONS_RE
 
-NUM_LOCATIONS_TO_PRINT = 50
+NUM_LOCATIONS_TO_PRINT = 100
 
 
 class LocationsCountLogic:
