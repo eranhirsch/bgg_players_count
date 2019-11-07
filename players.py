@@ -17,6 +17,7 @@ from observers.PlayerCountAggregatorLogic import (
 )
 
 LIST_PREFIX = "list-"
+FLAG_ALL_CACHED = "--all-cached"
 
 
 def main(argv: List[str] = []) -> int:
@@ -45,6 +46,10 @@ def main(argv: List[str] = []) -> int:
 
 def extract_game_ids_from_input(user_inputs: List[str]) -> Iterator[int]:
     for user_input in user_inputs:
+        if user_input == FLAG_ALL_CACHED:
+            for id in RequestPlays.cached_queries():
+                yield int(id)
+
         if user_input.startswith(LIST_PREFIX):
             listid = int(user_input.split(LIST_PREFIX)[1])
             geeklist = RequestList(listid).fetch()

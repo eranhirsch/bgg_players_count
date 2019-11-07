@@ -5,7 +5,7 @@ import os
 import time
 import xml.etree.ElementTree as ET
 from enum import IntEnum
-from typing import IO, Dict, Generic, Optional, TypeVar
+from typing import IO, Dict, Generic, Iterator, Optional, TypeVar
 
 import requests
 
@@ -40,6 +40,12 @@ TResponse = TypeVar("TResponse")
 class RequestBase(Generic[TResponse]):
 
     __rate_limiter = RateLimiter()
+
+    @classmethod
+    def cached_queries(cls) -> Iterator[str]:
+        dir = cls.__getRequestTypeCacheRootDir()
+        for id in os.listdir(dir):
+            yield id
 
     @abc.abstractmethod
     def _api_version(self) -> int:
@@ -130,7 +136,7 @@ class RequestBase(Generic[TResponse]):
             cache.write(response)
 
     def __openCacheFile(self, mode: str, **kwargs) -> IO:
-        cache_dir = self.__getCacheRootDir()
+        cache_dir = self.__getInstanceCacheRootDir()
         if mode == "w":
             # Create the directory if it doesnt exist before opening the file
             # for writing
@@ -141,12 +147,17 @@ class RequestBase(Generic[TResponse]):
         )
         return bz2.open(cache_file, f"{mode}t")
 
-    def __getCacheRootDir(self) -> str:
-        parts = [TEMP_ROOT_DIR, CACHE_ROOT_DIR, self.__class__.__name__]
+    def __getInstanceCacheRootDir(self) -> str:
+        request_root_dir = self.__getRequestTypeCacheRootDir()
         cache_dir = self._cache_dir()
-        if cache_dir:
-            parts.append(cache_dir)
-        return os.path.join(*parts)
+        if not cache_dir:
+            return request_root_dir
+
+        return os.path.join(request_root_dir, cache_dir)
+
+    @classmethod
+    def __getRequestTypeCacheRootDir(cls) -> str:
+        return os.path.join(TEMP_ROOT_DIR, CACHE_ROOT_DIR, cls.__name__)
 
 
 class ServerIssue(Exception):
