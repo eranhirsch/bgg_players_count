@@ -1,5 +1,5 @@
 import datetime
-from typing import Iterable, Iterator, Sized
+from typing import Iterable, Iterator, Sized, Tuple
 
 from ..utils import nonthrows
 from .GeekListItem import GeekListItem
@@ -35,6 +35,15 @@ class GeekList(ModelBase, Sized, Iterable):
 
     def _rootTagName(self) -> str:
         return "geeklist"
+
+    def filter(self, *args: Tuple[str, str]) -> Iterator[GeekListItem]:
+        for item in self:
+            if (item.object_type(), item.sub_type()) in args:
+                yield item
+            else:
+                print(
+                    f"Skipping ({item.object_id()}): {item.object_name()}/Wrong type: {item.object_type()}/{item.sub_type()}"
+                )
 
     def __iter__(self) -> Iterator[GeekListItem]:
         for item in self._root.findall("item"):

@@ -6,7 +6,6 @@ from typing import Iterator, List
 from bgg.api.RequestList import RequestList
 from bgg.api.RequestPlays import RequestPlays
 from bgg.api.RequestSearch import RequestSearch
-from bgg.model.GeekListItem import GeekListItem
 from bgg.utils import firstx
 from observers.LocationsCountLogic import (
     LocationsCountCLIPresenter,
@@ -53,7 +52,7 @@ def extract_game_ids_from_input(user_inputs: List[str]) -> Iterator[int]:
                 f'Iterating over geeklist "{geeklist.title()}" by {geeklist.user_name()} [last updated: {geeklist.edit_date()}]'
             )
 
-            for item in filter(is_game, geeklist):
+            for item in geeklist.filter(("thing", "boardgame")):
                 yield item.object_id()
 
             print(f"Finished GeekList {geeklist.id()}")
@@ -75,22 +74,6 @@ def get_game_id_from_name(user_input: str) -> int:
             f"More than one entry found, using '{result.name()[0]}' published in {result.yearPublished()}"
         )
     return result.id()
-
-
-def is_game(item: GeekListItem) -> bool:
-    if item.object_type() != "thing":
-        print(
-            f"Skipping: {item.object_name()} ({item.object_id()})/Wrong type: '{item.object_type()}'"
-        )
-        return False
-
-    if item.sub_type() != "boardgame":
-        print(
-            f"Skipping: {item.object_name()} ({item.object_id()})/Wrong subtype: '{item.sub_type()}'"
-        )
-        return False
-
-    return True
 
 
 if __name__ == "__main__":
