@@ -5,6 +5,10 @@ from .Play import Play
 
 
 class Plays(ModelBase, Sized, Iterable[Play]):
+    @classmethod
+    def _rootTagName(cls) -> str:
+        return "plays"
+
     def total(self) -> int:
         return int(self._field("total"))
 
@@ -24,6 +28,3 @@ class Plays(ModelBase, Sized, Iterable[Play]):
                 # TODO: Temporarily don't allow failed parsing so we can find
                 # all the quirks of the API
                 raise
-
-    def _rootTagName(self) -> str:
-        return "plays"

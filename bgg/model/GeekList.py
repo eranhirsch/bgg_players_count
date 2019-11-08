@@ -7,6 +7,10 @@ from .ModelBase import ModelBase
 
 
 class GeekList(ModelBase, Sized, Iterable):
+    @classmethod
+    def _rootTagName(cls) -> str:
+        return "geeklist"
+
     def id(self) -> int:
         return int(self._field("id"))
 
@@ -32,9 +36,6 @@ class GeekList(ModelBase, Sized, Iterable):
 
     def description(self) -> str:
         return nonthrows(nonthrows(self._root.find("description")).text)
-
-    def _rootTagName(self) -> str:
-        return "geeklist"
 
     def filter(self, *args: Tuple[str, str]) -> Iterator[GeekListItem]:
         for item in self:

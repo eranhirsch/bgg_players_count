@@ -6,8 +6,8 @@ from ..utils import nonthrows
 
 
 class ModelBase:
-    @abc.abstractmethod
-    def _rootTagName(self) -> str:
+    @abc.abstractclassmethod
+    def _rootTagName(cls) -> str:
         pass
 
     def __init__(self, root: ET.Element) -> None:

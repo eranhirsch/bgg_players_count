@@ -7,6 +7,10 @@ DATE_FORMAT = "%a, %d %b %Y %H:%M:%S +0000"
 
 
 class GeekListItem(ModelBase):
+    @classmethod
+    def _rootTagName(cls) -> str:
+        return "item"
+
     def id(self) -> int:
         return int(self._field("id"))
 
@@ -39,6 +43,3 @@ class GeekListItem(ModelBase):
 
     def body(self) -> str:
         return nonthrows(nonthrows(self._root.find("body")).text)
-
-    def _rootTagName(self) -> str:
-        return "item"

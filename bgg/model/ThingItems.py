@@ -5,7 +5,8 @@ from .ThingItem import ThingItem
 
 
 class ThingItems(ModelBase, Sized, Iterable[ThingItem]):
-    def _rootTagName(self) -> str:
+    @classmethod
+    def _rootTagName(cls) -> str:
         return "items"
 
     def __len__(self) -> int:

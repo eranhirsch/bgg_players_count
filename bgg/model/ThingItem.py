@@ -98,7 +98,8 @@ class Link(ModelBase):
 
 
 class ThingItem(ModelBase):
-    def _rootTagName(self) -> str:
+    @classmethod
+    def _rootTagName(cls) -> str:
         return "item"
 
     def type(self) -> str:

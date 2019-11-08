@@ -5,6 +5,10 @@ from .ModelBase import ModelBase
 
 
 class SearchItem(ModelBase):
+    @classmethod
+    def _rootTagName(cls) -> str:
+        return "item"
+
     def type(self) -> str:
         return self._field("type")
 
@@ -17,6 +21,3 @@ class SearchItem(ModelBase):
 
     def yearPublished(self) -> int:
         return int(nonthrows(nonthrows(self._root.find("yearpublished")).get("value")))
-
-    def _rootTagName(self) -> str:
-        return "item"

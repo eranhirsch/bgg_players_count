@@ -11,6 +11,10 @@ MISSING_DATE_VALUE = "0000-00-00"
 
 
 class Play(ModelBase):
+    @classmethod
+    def _rootTagName(cls) -> str:
+        return "play"
+
     def id(self) -> int:
         return int(self._field("id"))
 
@@ -52,6 +56,3 @@ class Play(ModelBase):
         if not players:
             return None
         return LazySequence(players, lambda player: Player(player))
-
-    def _rootTagName(self) -> str:
-        return "play"
