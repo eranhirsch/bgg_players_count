@@ -130,8 +130,8 @@ class RequestBase(Generic[TResponse]):
             # Caching is disabled
             return None
 
-            with cache:
-                return cache.read()
+        with cache:
+            return cache.read()
 
     def __writeToCache(self, response: str, **kwargs) -> None:
         cache = self.__openCacheFile("w", **kwargs)
