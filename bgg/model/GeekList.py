@@ -24,7 +24,7 @@ class GeekList(ModelBase, Sized, Iterable):
         return int(self._child_text("thumbs"))
 
     def user_name(self) -> str:
-        return self._child_text("user_name")
+        return self._child_text("username")
 
     def title(self) -> str:
         return self._child_text("title")
