@@ -4,6 +4,7 @@ import sys
 from typing import Iterable, Iterator, List
 
 from bgg.api.RequestPlays import RequestPlays
+from bgg.api.RequestThing import RequestThing
 from CLIGamesParser import CLIGamesParser
 from observers.PlayerCountAggregatorLogic import (
     PlayerCountAggregatorCSVPresenter,
@@ -28,11 +29,21 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
         for play in RequestPlays(thingid=game_id).queryAll():
             player_count_logic.visit(play)
 
-        yield f"{game_id}{SEPARATOR}{PlayerCountAggregatorCSVPresenter(player_count_logic, SEPARATOR).render()}\n"
+        yield f"{SEPARATOR.join(game_metadata(game_id))}{SEPARATOR}{PlayerCountAggregatorCSVPresenter(player_count_logic, SEPARATOR).render()}\n"
 
         index += 1
 
     print(f"Finished processing {index-1} games")
+
+
+def game_metadata(game_id: int) -> List[str]:
+    game = RequestThing(game_id).query().only_item()
+    return [
+        f"{game.id()}",
+        game.primary_name(),
+        game.type(),
+        f"{game.year_published()}",
+    ]
 
 
 if __name__ == "__main__":
