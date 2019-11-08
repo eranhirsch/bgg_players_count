@@ -2,4 +2,5 @@ from .ModelBase import ModelBase
 
 
 class ThingItems(ModelBase):
-    pass
+    def _rootTagName(self) -> str:
+        return "items"

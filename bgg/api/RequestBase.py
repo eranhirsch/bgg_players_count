@@ -67,7 +67,7 @@ class RequestBase(Generic[TResponse]):
         return None
 
     @abc.abstractmethod
-    def _cache_file_name(str, **kwargs) -> str:
+    def _cache_file_name(str, **kwargs) -> Optional[str]:
         pass
 
     def _fetch(self, **kwargs) -> TResponse:
@@ -125,26 +125,39 @@ class RequestBase(Generic[TResponse]):
         )
 
     def __readFromCache(self, **kwargs) -> Optional[str]:
+        cache = self.__openCacheFile("r", **kwargs)
+        if not cache:
+            # Caching is disabled
+            return None
+
         try:
-            with self.__openCacheFile("r", **kwargs) as cache:
+            with cache:
                 return cache.read()
         except FileNotFoundError:
             return None
 
     def __writeToCache(self, response: str, **kwargs) -> None:
-        with self.__openCacheFile("w", **kwargs) as cache:
+        cache = self.__openCacheFile("w", **kwargs)
+        if not cache:
+            # Caching is disabled
+            return
+
+        with cache:
             cache.write(response)
 
-    def __openCacheFile(self, mode: str, **kwargs) -> IO:
+    def __openCacheFile(self, mode: str, **kwargs) -> Optional[IO]:
+        cache_file_name = self._cache_file_name(**kwargs)
+        if not cache_file_name:
+            # Caching is disabled
+            return None
+
         cache_dir = self.__getInstanceCacheRootDir()
         if mode == "w":
             # Create the directory if it doesnt exist before opening the file
             # for writing
             os.makedirs(cache_dir, exist_ok=True)
 
-        cache_file = os.path.join(
-            cache_dir, f"{self._cache_file_name(**kwargs)}.xml.bz2"
-        )
+        cache_file = os.path.join(cache_dir, f"{cache_file_name}.xml.bz2")
         return bz2.open(cache_file, f"{mode}t")
 
     def __getInstanceCacheRootDir(self) -> str:
