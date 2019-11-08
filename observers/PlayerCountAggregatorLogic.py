@@ -57,11 +57,10 @@ class ResultsCategory(Enum):
 
 
 TCategoryResult = Dict[int, int]
-TResults = Dict[ResultsCategory, TCategoryResult]
 
 
 class PlayerCountAggregatorLogic:
-    __results: TResults = {}
+    __results: Dict[ResultsCategory, TCategoryResult] = {}
 
     def __init__(self) -> None:
         for cat in ResultsCategory:
@@ -75,7 +74,7 @@ class PlayerCountAggregatorLogic:
             min(play.quantity(), SANITY_MAX_QUANTITY),
         )
 
-    def getResults(self) -> TResults:
+    def getResults(self) -> Dict[ResultsCategory, TCategoryResult]:
         return self.__results
 
     def __bump(self, category: ResultsCategory, bucket: int, quantity: int) -> None:
@@ -141,3 +140,33 @@ class PlayerCountAggregatorCLIPresenter:
         out.append("=" * 40)
         out.append(f"Total:\t\t{total_plays}")
         return "\n".join(out)
+
+
+class PlayerCountAggregatorCSVPresenter:
+    def __init__(self, logic: PlayerCountAggregatorLogic) -> None:
+        self.__logic = logic
+
+    def render(self) -> str:
+        results = self.__logic.getResults()
+        regular = results[ResultsCategory.REGULAR]
+        digital = results[ResultsCategory.DIGITAL]
+
+        total_regular = sum(regular.values())
+        missing = regular[0] if 0 in regular else 0
+        players_ratios = [
+            regular.get(player_count, 0) / (total_regular - missing)
+            for player_count in range(1, max(regular.keys()) + 1)
+        ]
+        total_digital = sum(digital.values())
+
+        return "\t".join(
+            map(
+                lambda num: f"{num:.2f}",
+                [
+                    total_regular,
+                    total_digital / (total_digital + total_regular),
+                    missing / total_regular,
+                ]
+                + players_ratios,
+            )
+        )
