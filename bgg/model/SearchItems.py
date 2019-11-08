@@ -4,7 +4,7 @@ from .ModelBase import ModelBase
 from .SearchItem import SearchItem
 
 
-class Items(ModelBase, Sized, Iterable[SearchItem]):
+class SearchItems(ModelBase, Sized, Iterable[SearchItem]):
     def total(self) -> int:
         return int(self._field("total"))
 
