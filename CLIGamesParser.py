@@ -19,7 +19,9 @@ class CLIGamesParser(Iterable[int]):
                 for id in RequestPlays.cached_queries():
                     yield int(id)
 
-            if user_input.startswith(LIST_PREFIX):
+                print(f"Finished Reading entries from cache")
+
+            elif user_input.startswith(LIST_PREFIX):
                 listid = int(user_input.split(LIST_PREFIX)[1])
                 geeklist = RequestList(listid).fetch()
                 print(
