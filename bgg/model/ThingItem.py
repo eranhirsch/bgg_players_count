@@ -119,13 +119,10 @@ class ThingItem(ModelBase):
     def image(self) -> str:
         return self._child_text("image")
 
-    def names(self) -> Iterator[Name]:
-        """Raw data, prefer calling the primary_name method instead"""
-        for name in nonthrows(self._root.findall("name")):
-            yield Name(name)
-
     def primary_name(self) -> str:
-        return next(name for name in self.names() if name.type() == "primary").value()
+        return next(
+            name for name in self.__names_raw() if name.type() == "primary"
+        ).value()
 
     def description(self) -> str:
         return self._child_text("description")
@@ -139,14 +136,9 @@ class ThingItem(ModelBase):
         max = int(self._child_value("maxplayers"))
         return (min, max)
 
-    def polls(self) -> Iterator[Poll]:
-        """Raw data, prefer calling the specific poll methods"""
-        for poll in nonthrows(self._root.findall("poll")):
-            yield Poll(poll)
-
     def suggested_num_players(self) -> Dict[str, Tuple[int, int, int]]:
         poll = next(
-            poll for poll in self.polls() if poll.name() == "suggested_numplayers"
+            poll for poll in self.__polls_raw() if poll.name() == "suggested_numplayers"
         )
         results = {results.num_players(): results.as_dict() for results in poll}
         return {
@@ -156,14 +148,22 @@ class ThingItem(ModelBase):
 
     def suggested_player_age(self) -> Dict[str, int]:
         return (
-            next(poll for poll in self.polls() if poll.name() == "suggested_playerage")
+            next(
+                poll
+                for poll in self.__polls_raw()
+                if poll.name() == "suggested_playerage"
+            )
             .only_results()
             .as_dict()
         )
 
     def language_dependence(self) -> Dict[str, int]:
         return (
-            next(poll for poll in self.polls() if poll.name() == "language_dependence")
+            next(
+                poll
+                for poll in self.__polls_raw()
+                if poll.name() == "language_dependence"
+            )
             .only_results()
             .as_dict()
         )
@@ -177,13 +177,23 @@ class ThingItem(ModelBase):
         """Minimum playing age as defined by the publisher"""
         return int(self._child_value("minage"))
 
-    def links_raw(self) -> Iterator[Link]:
+    def links(self) -> Dict[str, List[Tuple[int, str]]]:
+        out: Dict[str, List[Tuple[int, str]]] = collections.defaultdict(list)
+        for link in self.__links_raw():
+            out[link.type()].append((link.id(), link.value()))
+        return out
+
+    def __names_raw(self) -> Iterator[Name]:
+        """Raw data, prefer calling the primary_name method instead"""
+        for name in nonthrows(self._root.findall("name")):
+            yield Name(name)
+
+    def __polls_raw(self) -> Iterator[Poll]:
+        """Raw data, prefer calling the specific poll methods"""
+        for poll in nonthrows(self._root.findall("poll")):
+            yield Poll(poll)
+
+    def __links_raw(self) -> Iterator[Link]:
         """Raw data, prefer calling links instead"""
         for link in nonthrows(self._root.findall("link")):
             yield Link(link)
-
-    def links(self) -> Dict[str, List[Tuple[int, str]]]:
-        out: Dict[str, List[Tuple[int, str]]] = collections.defaultdict(list)
-        for link in self.links_raw():
-            out[link.type()].append((link.id(), link.value()))
-        return out
