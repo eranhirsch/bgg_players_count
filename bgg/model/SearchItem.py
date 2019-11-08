@@ -16,8 +16,8 @@ class SearchItem(ModelBase):
         return int(self._field("id"))
 
     def name(self) -> Tuple[str, str]:
-        name_elem = nonthrows(self._root.find("name"))
+        name_elem = self._child("name")
         return (nonthrows(name_elem.get("value")), nonthrows(name_elem.get("type")))
 
     def yearPublished(self) -> int:
-        return int(self._child_value('yearpublished'))
+        return int(self._child_value("yearpublished"))

@@ -1,6 +1,5 @@
 import datetime
 
-from ..utils import nonthrows
 from .ModelBase import ModelBase
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S +0000"
@@ -42,4 +41,4 @@ class GeekListItem(ModelBase):
         return int(self._field("imageid"))
 
     def body(self) -> str:
-        return nonthrows(nonthrows(self._root.find("body")).text)
+        return self._child_text("body")

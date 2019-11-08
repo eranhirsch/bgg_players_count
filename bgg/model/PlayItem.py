@@ -19,7 +19,4 @@ class PlayItem(ModelBase):
         return int(self._field("objectid"))
 
     def subTypes(self) -> List[str]:
-        return [
-            nonthrows(subtype.get("value"))
-            for subtype in list(nonthrows(self._root.find("subtypes")))
-        ]
+        return [nonthrows(subtype.get("value")) for subtype in self._child("subtypes")]

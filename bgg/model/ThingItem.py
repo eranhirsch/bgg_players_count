@@ -109,22 +109,21 @@ class ThingItem(ModelBase):
         return int(self._field("id"))
 
     def thumbnail(self) -> str:
-        return nonthrows(nonthrows(self._root.find("thumbnail")).text)
+        return self._child_text("thumbnail")
 
     def image(self) -> str:
-        return nonthrows(nonthrows(self._root.find("image")).text)
+        return self._child_text("image")
 
     def names(self) -> Iterator[Name]:
         """Raw data, prefer calling the primary_name method instead"""
-        names = nonthrows(self._root.find("name"))
-        for name in names:
+        for name in nonthrows(self._root.findall("name")):
             yield Name(name)
 
     def primary_name(self) -> str:
         return next(name for name in self.names() if name.type() == "primary").value()
 
     def description(self) -> str:
-        return nonthrows(nonthrows(self._root.find("description")).text)
+        return self._child_text("description")
 
     def year_published(self) -> int:
         return int(self._child_value("yearpublished"))
@@ -137,7 +136,7 @@ class ThingItem(ModelBase):
 
     def polls(self) -> Iterator[Poll]:
         """Raw data, prefer calling the specific poll methods"""
-        for poll in nonthrows(self._root.find("poll")):
+        for poll in nonthrows(self._root.findall("poll")):
             yield Poll(poll)
 
     def suggested_num_players(self) -> Dict[str, Tuple[int, int, int]]:
@@ -175,7 +174,7 @@ class ThingItem(ModelBase):
 
     def links_raw(self) -> Iterator[Link]:
         """Raw data, prefer calling links instead"""
-        for link in nonthrows(self._root.find("link")):
+        for link in nonthrows(self._root.findall("link")):
             yield Link(link)
 
     def links(self) -> Dict[str, List[Tuple[int, str]]]:
