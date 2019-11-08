@@ -127,12 +127,12 @@ class ThingItem(ModelBase):
         return nonthrows(nonthrows(self._root.find("description")).text)
 
     def year_published(self) -> int:
-        return int(nonthrows(nonthrows(self._root.find("yearpublished")).get("value")))
+        return int(self._child_value("yearpublished"))
 
     def player_count(self) -> Tuple[int, int]:
         """The official (published) player count limits for the game"""
-        min = int(nonthrows(nonthrows(self._root.find("minplayers")).get("value")))
-        max = int(nonthrows(nonthrows(self._root.find("maxplayers")).get("value")))
+        min = int(self._child_value("minplayers"))
+        max = int(self._child_value("maxplayers"))
         return (min, max)
 
     def polls(self) -> Iterator[Poll]:
@@ -165,13 +165,13 @@ class ThingItem(ModelBase):
         )
 
     def playing_time(self) -> Tuple[datetime.timedelta, datetime.timedelta]:
-        min = int(nonthrows(nonthrows(self._root.find("minplaytime")).get("value")))
-        max = int(nonthrows(nonthrows(self._root.find("maxplaytime")).get("value")))
+        min = int(self._child_value("minplaytime"))
+        max = int(self._child_value("maxplaytime"))
         return (datetime.timedelta(minutes=min), datetime.timedelta(minutes=max))
 
     def min_age(self) -> int:
         """Minimum playing age as defined by the publisher"""
-        return int(nonthrows(nonthrows(self._root.find("minage")).get("value")))
+        return int(self._child_value("minage"))
 
     def links_raw(self) -> Iterator[Link]:
         """Raw data, prefer calling links instead"""

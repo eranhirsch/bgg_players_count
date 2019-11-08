@@ -19,6 +19,9 @@ class ModelBase:
     def _field(self, name) -> str:
         return nonthrows(self._root.get(name))
 
+    def _child_value(self, tag_name: str) -> str:
+        return nonthrows(nonthrows(self._root.find(tag_name)).get("value"))
+
     @staticmethod
     def _stringToBool(str) -> bool:
         if str == "0":

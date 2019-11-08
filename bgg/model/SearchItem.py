@@ -20,4 +20,4 @@ class SearchItem(ModelBase):
         return (nonthrows(name_elem.get("value")), nonthrows(name_elem.get("type")))
 
     def yearPublished(self) -> int:
-        return int(nonthrows(nonthrows(self._root.find("yearpublished")).get("value")))
+        return int(self._child_value('yearpublished'))
