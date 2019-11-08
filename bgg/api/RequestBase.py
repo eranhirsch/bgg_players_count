@@ -130,11 +130,8 @@ class RequestBase(Generic[TResponse]):
             # Caching is disabled
             return None
 
-        try:
             with cache:
                 return cache.read()
-        except FileNotFoundError:
-            return None
 
     def __writeToCache(self, response: str, **kwargs) -> None:
         cache = self.__openCacheFile("w", **kwargs)
@@ -157,8 +154,11 @@ class RequestBase(Generic[TResponse]):
             # for writing
             os.makedirs(cache_dir, exist_ok=True)
 
-        cache_file = os.path.join(cache_dir, f"{cache_file_name}.xml.bz2")
-        return bz2.open(cache_file, f"{mode}t")
+        try:
+            cache_file = os.path.join(cache_dir, f"{cache_file_name}.xml.bz2")
+            return bz2.open(cache_file, f"{mode}t")
+        except FileNotFoundError:
+            return None
 
     def __getInstanceCacheRootDir(self) -> str:
         request_root_dir = self.__getRequestTypeCacheRootDir()
