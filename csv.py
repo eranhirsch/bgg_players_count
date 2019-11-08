@@ -10,6 +10,8 @@ from observers.PlayerCountAggregatorLogic import (
     PlayerCountAggregatorLogic,
 )
 
+SEPARATOR = "\t"
+
 
 def main(argv: List[str] = []) -> int:
     with open(argv[1], "wt") as output:
@@ -26,7 +28,7 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
         for play in RequestPlays(thingid=game_id).queryAll():
             player_count_logic.visit(play)
 
-        yield f"{game_id}\t{PlayerCountAggregatorCSVPresenter(player_count_logic).render()}\n"
+        yield f"{game_id}{SEPARATOR}{PlayerCountAggregatorCSVPresenter(player_count_logic, SEPARATOR).render()}\n"
 
         index += 1
 

@@ -143,8 +143,11 @@ class PlayerCountAggregatorCLIPresenter:
 
 
 class PlayerCountAggregatorCSVPresenter:
-    def __init__(self, logic: PlayerCountAggregatorLogic) -> None:
+    def __init__(
+        self, logic: PlayerCountAggregatorLogic, separator: str = "\t"
+    ) -> None:
         self.__logic = logic
+        self.__separator = separator
 
     def render(self) -> str:
         results = self.__logic.getResults()
@@ -159,7 +162,7 @@ class PlayerCountAggregatorCSVPresenter:
         ]
         total_digital = sum(digital.values())
 
-        return "\t".join(
+        return self.__separator.join(
             map(
                 lambda num: f"{num:.2f}",
                 [
