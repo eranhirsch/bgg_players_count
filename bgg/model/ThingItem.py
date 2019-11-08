@@ -7,7 +7,8 @@ from .ModelBase import ModelBase
 
 
 class Name(ModelBase):
-    def _rootTagName(self) -> str:
+    @classmethod
+    def _rootTagName(cls) -> str:
         return "name"
 
     def type(self) -> str:
@@ -21,7 +22,8 @@ class Name(ModelBase):
 
 
 class PollResult(ModelBase):
-    def _rootTagName(self) -> str:
+    @classmethod
+    def _rootTagName(cls) -> str:
         return "result"
 
     def value(self) -> str:
@@ -36,7 +38,8 @@ class PollResult(ModelBase):
 
 
 class PollResults(ModelBase, Sized, Iterable[PollResult]):
-    def _rootTagName(self) -> str:
+    @classmethod
+    def _rootTagName(cls) -> str:
         return "results"
 
     def num_players(self) -> str:
@@ -55,7 +58,8 @@ class PollResults(ModelBase, Sized, Iterable[PollResult]):
 
 
 class Poll(ModelBase, Sized, Iterable[PollResults]):
-    def _rootTagName(self) -> str:
+    @classmethod
+    def _rootTagName(cls) -> str:
         return "poll"
 
     def name(self) -> str:
@@ -84,7 +88,8 @@ class Poll(ModelBase, Sized, Iterable[PollResults]):
 
 
 class Link(ModelBase):
-    def _rootTagName(self) -> str:
+    @classmethod
+    def _rootTagName(cls) -> str:
         return "link"
 
     def type(self) -> str:
