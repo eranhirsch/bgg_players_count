@@ -1,11 +1,11 @@
 import xml.etree.ElementTree as ET
 from typing import Dict
 
-from ..model.GeekList import GeekList
+from ..model import geeklist
 from .RequestBase import RequestBase
 
 
-class RequestList(RequestBase[GeekList]):
+class RequestList(RequestBase[geeklist.List]):
     """
     A request for a geek list of items
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API#toc7
@@ -14,7 +14,7 @@ class RequestList(RequestBase[GeekList]):
     def __init__(self, listid: int) -> None:
         self.__listID = listid
 
-    def fetch(self, with_comments: bool = False) -> GeekList:
+    def fetch(self, with_comments: bool = False) -> geeklist.List:
         return self._fetch(listid=self.__listID, with_comments=with_comments)
 
     def _api_version(self) -> int:
@@ -31,8 +31,8 @@ class RequestList(RequestBase[GeekList]):
 
         return params
 
-    def _build_response(self, root: ET.Element, **kwargs) -> GeekList:
-        return GeekList(root)
+    def _build_response(self, root: ET.Element, **kwargs) -> geeklist.List:
+        return geeklist.List(root)
 
     def _cache_file_name(str, **kwargs) -> str:
         return kwargs["listid"]

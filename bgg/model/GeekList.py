@@ -1,11 +1,51 @@
 import datetime
 from typing import Iterable, Iterator, Sized, Tuple
 
-from .GeekListItem import GeekListItem
 from .ModelBase import ModelBase
 
+DATE_FORMAT = "%a, %d %b %Y %H:%M:%S +0000"
 
-class GeekList(ModelBase, Sized, Iterable):
+
+class Item(ModelBase):
+    @classmethod
+    def _rootTagName(cls) -> str:
+        return "item"
+
+    def id(self) -> int:
+        return int(self._field("id"))
+
+    def object_type(self) -> str:
+        return self._field("objecttype")
+
+    def sub_type(self) -> str:
+        return self._field("subtype")
+
+    def object_id(self) -> int:
+        return int(self._field("objectid"))
+
+    def object_name(self) -> str:
+        return self._field("objectname")
+
+    def user_name(self) -> str:
+        return self._field("username")
+
+    def post_date(self) -> datetime.date:
+        return datetime.datetime.strptime(self._field("postdate"), DATE_FORMAT)
+
+    def edit_date(self) -> datetime.date:
+        return datetime.datetime.strptime(self._field("editdate"), DATE_FORMAT)
+
+    def thumbs(self) -> int:
+        return int(self._field("thumbs"))
+
+    def image_id(self) -> int:
+        return int(self._field("imageid"))
+
+    def body(self) -> str:
+        return self._child_text("body")
+
+
+class List(ModelBase, Sized, Iterable):
     @classmethod
     def _rootTagName(cls) -> str:
         return "geeklist"
@@ -32,7 +72,7 @@ class GeekList(ModelBase, Sized, Iterable):
     def description(self) -> str:
         return self._child_text("description")
 
-    def filter(self, *args: Tuple[str, str]) -> Iterator[GeekListItem]:
+    def filter(self, *args: Tuple[str, str]) -> Iterator[Item]:
         for item in self:
             if (item.object_type(), item.sub_type()) in args:
                 yield item
@@ -41,9 +81,9 @@ class GeekList(ModelBase, Sized, Iterable):
                     f"Skipping ({item.object_id()}): {item.object_name()}/Wrong type: {item.object_type()}/{item.sub_type()}"
                 )
 
-    def __iter__(self) -> Iterator[GeekListItem]:
+    def __iter__(self) -> Iterator[Item]:
         for item in self._root.findall("item"):
-            yield GeekListItem(item)
+            yield Item(item)
 
     def __len__(self) -> int:
         return int(self._child_text("numitems"))
