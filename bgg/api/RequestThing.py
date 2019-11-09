@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import Dict, Optional, Sequence, Set
 
-from ..model.ThingItems import ThingItems
+from ..model.ThingItem import ThingItems
 from ..utils import firstx
 from .RequestBase import RequestBase
 
