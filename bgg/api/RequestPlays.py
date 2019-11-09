@@ -22,7 +22,7 @@ class RequestPlays(RequestBase[play.Page], Sized, Iterable[play.Page]):
     ) -> None:
         if not username and not thingid:
             raise Exception("Either username or id required to query plays")
-        self.__userName = username
+        self.__user_name = username
         self.__id = thingid
         self.__type: Optional[str] = None
         self.__minDate: Optional[datetime.date] = None
@@ -81,8 +81,8 @@ class RequestPlays(RequestBase[play.Page], Sized, Iterable[play.Page]):
     def _api_params(self, **kwargs) -> Dict[str, str]:
         params = {}
 
-        if self.__userName:
-            params["username"] = self.__userName
+        if self.__user_name:
+            params["username"] = self.__user_name
 
         if self.__id:
             params["id"] = str(self.__id)
@@ -107,7 +107,7 @@ class RequestPlays(RequestBase[play.Page], Sized, Iterable[play.Page]):
         return play.Page(root)
 
     def _cache_dir(self) -> Optional[str]:
-        return f"{self.__id}"
+        return f"{self.__id}" if self.__id else f"user_{self.__user_name}"
 
     def _cache_file_name(str, **kwargs) -> str:
         return f"{kwargs['page']:04d}"
