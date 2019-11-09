@@ -17,7 +17,7 @@ class RequestThing(RequestBase):
         self.__ids: Sequence[int] = args
         self.__types: Sequence[str] = []
 
-    def of_type(self, *args: str) -> "RequestThing":
+    def of_types(self, *args: str) -> "RequestThing":
         self.__types = args
         return self
 
@@ -71,6 +71,10 @@ class RequestThing(RequestBase):
     def _cache_file_name(self, **kwargs) -> Optional[str]:
         if len(self.__ids) > 1:
             # Disable cache for multiple-point queries
+            return None
+
+        if len(self.__types) > 0:
+            # Disable cache for type filtering
             return None
 
         return f"{firstx(self.__ids)}"
