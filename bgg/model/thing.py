@@ -1,6 +1,6 @@
 import collections
 import datetime
-from typing import Dict, Iterable, Iterator, List, Set, Sized, Tuple
+from typing import Dict, Iterable, Iterator, List, Optional, Set, Sized, Tuple
 
 from ..utils import firstx, nonthrows
 from .ModelBase import ModelBase
@@ -100,6 +100,69 @@ class Link(ModelBase):
 
     def value(self) -> str:
         return self._field("value")
+
+
+class Rank(ModelBase):
+    @classmethod
+    def _rootTagName(cls) -> str:
+        return "rank"
+
+    def type(self) -> str:
+        return self._field("type")
+
+    def id(self) -> int:
+        return int(self._field("id"))
+
+    def name(self, friendly: bool = False) -> str:
+        return self._field("friendlyname" if friendly else "name")
+
+    def value(self) -> Optional[int]:
+        value = self._field("value")
+        return int(value) if value != "Not Ranked" else None
+
+    def bayesaverage(self) -> float:
+        return float(self._field("bayesaverage"))
+
+
+class Ratings(ModelBase):
+    @classmethod
+    def _rootTagName(cls) -> str:
+        return "ratings"
+
+    def users_rated(self) -> int:
+        return int(self._child_value("userrated"))
+
+    def stats(self) -> Tuple[float, float, float, float]:
+        return (
+            float(self._child_value("average")),
+            float(self._child_value("bayesaverage")),
+            float(self._child_value("stddev")),
+            float(self._child_value("median")),
+        )
+
+    def ranks(self) -> Dict[str, Rank]:
+        return {rank.name(): rank for rank in self.__ranks_raw()}
+
+    def market(self) -> Tuple[int, int, int, int]:
+        return (
+            int(self._child_value("owned")),
+            int(self._child_value("trading")),
+            int(self._child_value("wanting")),
+            int(self._child_value("wishing")),
+        )
+
+    def num_comments(self) -> int:
+        return int(self._child_value("numcomments"))
+
+    def num_weights(self) -> int:
+        return int(self._child_value("numweights"))
+
+    def average_weight(self) -> float:
+        return float(self._child_value("averageweight"))
+
+    def __ranks_raw(self) -> Iterator[Rank]:
+        for rank in self._child("ranks"):
+            yield Rank(rank)
 
 
 class Item(ModelBase):
@@ -217,6 +280,17 @@ class Item(ModelBase):
                     f"Found unexpected type {version.type()} in versions list"
                 )
             yield version
+
+    def ratings(self) -> Ratings:
+        self.__assert_flag("stats")
+        # Statistics themselves don't contain anything interesting so we skip
+        # right into the ratings object inside it
+        return Ratings(nonthrows(self._child("statistics").find("ratings")))
+
+    def overall_rank(self) -> int:
+        self.__assert_type("boardgame")
+        rating_for_type = self.ratings().ranks()[self.type()]
+        return nonthrows(rating_for_type.value())
 
     def __assert_flag(self, flag: str) -> None:
         if flag not in self.__flags:
