@@ -2,7 +2,7 @@ import re
 from enum import Enum, auto
 from typing import Dict
 
-from bgg.model.Play import Play
+from bgg.model import play
 
 # Some people log really odd quantities for plays, like 50 and 100. These aren't
 # very valuable to us so we cap it at a reasonable number and return that
@@ -67,7 +67,7 @@ class PlayerCountAggregatorLogic:
         for cat in ResultsCategory:
             self.__results[cat] = {}
 
-    def visit(self, play: Play) -> None:
+    def visit(self, play: play.Play) -> None:
         players = play.players()
         self.__bump(
             PlayerCountAggregatorLogic.__categorize(play),
@@ -85,7 +85,7 @@ class PlayerCountAggregatorLogic:
             self.__results[category][bucket] = quantity
 
     @staticmethod
-    def __categorize(play: Play) -> ResultsCategory:
+    def __categorize(play: play.Play) -> ResultsCategory:
         if play.is_incomplete():
             return ResultsCategory.INCOMPLETE
 

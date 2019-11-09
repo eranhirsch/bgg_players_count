@@ -1,6 +1,6 @@
 from typing import Dict
 
-from bgg.model.Play import Play
+from bgg.model import play
 
 from .PlayerCountAggregatorLogic import DIGITAL_LOCATIONS_RE
 
@@ -15,7 +15,7 @@ class LocationsCountLogic:
         self.__locations[LocationsCountLogic.__getLabel(True)] = {}
         self.__locations[LocationsCountLogic.__getLabel(False)] = {}
 
-    def visit(self, play: Play) -> None:
+    def visit(self, play: play.Play) -> None:
         location = play.location()
         if not location:
             return

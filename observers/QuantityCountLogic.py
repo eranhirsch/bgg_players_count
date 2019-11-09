@@ -1,6 +1,6 @@
 from typing import Dict
 
-from bgg.model.Play import Play
+from bgg.model import play
 
 
 class QuantityCountLogic:
@@ -9,7 +9,7 @@ class QuantityCountLogic:
     def __init__(self) -> None:
         self.__quantities = {}
 
-    def visit(self, play: Play) -> None:
+    def visit(self, play: play.Play) -> None:
         quantity = play.quantity()
         try:
             self.__quantities[quantity] += 1

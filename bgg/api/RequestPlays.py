@@ -3,8 +3,7 @@ import itertools
 import xml.etree.ElementTree as ET
 from typing import Dict, Generator, Iterable, Iterator, Optional, Sized
 
-from ..model.Play import Play
-from ..model.Plays import Plays
+from ..model import play
 from ..utils import InlineOutput
 from .RequestBase import RequestBase
 
@@ -12,7 +11,7 @@ from .RequestBase import RequestBase
 ENTRIES_IN_FULL_PAGE = 100
 
 
-class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
+class RequestPlays(RequestBase[play.Page], Sized, Iterable[play.Page]):
     """
     A request for a list of plays for the specific object.
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc10
@@ -43,12 +42,12 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
         self.__subType = subtype
         return self
 
-    def queryAll(self) -> Generator[Play, None, None]:
+    def queryAll(self) -> Generator[play.Play, None, None]:
         for plays in self:
-            for play in plays:
-                yield play
+            for p in plays:
+                yield p
 
-    def __iter__(self) -> Iterator[Plays]:
+    def __iter__(self) -> Iterator[play.Page]:
         total = None
         for page in itertools.count(start=1):
             InlineOutput.overwrite(f"Fetching page {page}")
@@ -104,8 +103,8 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
 
         return params
 
-    def _build_response(self, root: ET.Element, **kwargs) -> Plays:
-        return Plays(root)
+    def _build_response(self, root: ET.Element, **kwargs) -> play.Page:
+        return play.Page(root)
 
     def _cache_dir(self) -> Optional[str]:
         return f"{self.__id}"
