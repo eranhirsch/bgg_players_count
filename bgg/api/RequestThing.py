@@ -77,7 +77,7 @@ class RequestThing(RequestBase):
             # Disable cache for type filtering
             return None
 
-        if (len(kwargs['flags']) > 0):
+        if len(kwargs["flags"]) > 0:
             # Flags might be mixed together and create too many different
             # combinations which basically return the same thing, so just
             # disabling caching for flags atm
