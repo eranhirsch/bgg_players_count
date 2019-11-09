@@ -34,7 +34,7 @@ class RequestThing(RequestBase):
         if with_versions:
             flags.add("versions")
         if with_videos:
-            flags.add("videos")
+            raise NotImplementedError("Videos API currently not supported")
         if with_stats:
             flags.add("stats")
         if with_historical:
