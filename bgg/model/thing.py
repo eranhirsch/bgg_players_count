@@ -287,10 +287,9 @@ class Item(ModelBase):
         # right into the ratings object inside it
         return Ratings(nonthrows(self._child("statistics").find("ratings")))
 
-    def overall_rank(self) -> int:
+    def overall_rank(self) -> Optional[int]:
         self.__assert_type("boardgame")
-        rating_for_type = self.ratings().ranks()[self.type()]
-        return nonthrows(rating_for_type.value())
+        return self.ratings().ranks()[self.type()].value()
 
     def __assert_flag(self, flag: str) -> None:
         if flag not in self.__flags:
