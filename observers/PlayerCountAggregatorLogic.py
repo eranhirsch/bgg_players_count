@@ -13,7 +13,7 @@ DIGITAL_LOCATIONS_RE = [
     re.compile(re_str, re.IGNORECASE)
     for re_str in [
         # Devices:
-        r"^(a )?smartphone$",
+        r"^(a )?(smart|tele)?phone$",
         r"^android$",
         r"^appstore$",
         r"^ios( device)?$",
