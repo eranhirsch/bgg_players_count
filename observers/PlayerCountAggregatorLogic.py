@@ -48,7 +48,7 @@ DIGITAL_LOCATIONS_RE = [
         # Game-specific services that offer a digital version:
         r"^(https?://)?(brass\.)?o(rder)? ?of? ?t(he)? ?h(ammer)?(\.com/?)?$",  # brass
         r"^(https?://)?(www\.)?j(inteki(\.net)?|\.?net)/?$",  # netrunner
-        r"^dominion( online|\.games)$", # dominion
+        r"^dominion( online|\.(games|net))$", # dominion
     ]
 ]
 
