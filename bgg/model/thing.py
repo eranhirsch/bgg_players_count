@@ -130,7 +130,7 @@ class Ratings(ModelBase):
         return "ratings"
 
     def users_rated(self) -> int:
-        return int(self._child_value("userrated"))
+        return int(self._child_value("usersrated"))
 
     def stats(self) -> Tuple[float, float, float, float]:
         return (
