@@ -23,30 +23,34 @@ def main(argv: List[str] = []) -> int:
 def process_games(games: Iterable[int]) -> Iterator[str]:
     index = 1
     for game_id in games:
-        print(f"Processing plays for game {index:03d}: ID={game_id}")
+        game = RequestThing(game_id).query(with_stats=True).only_item()
+        if game.type() != "boardgame":
+            print(f"Skipping '{game.type()}': {game.primary_name()} ({game.id()})")
+            continue
+
+        metadata = [
+            f"{game.id()}",
+            game.primary_name(),
+            game.type(),
+            f"{game.year_published()}",
+            f"{game.overall_rank()}",
+            f"{game.player_count()[0]}-{game.player_count()[1]}",
+            f"{game.ratings().users_rated()}",
+        ]
+
+        print(
+            f"Processing plays for game {index:03d}: {game.primary_name()} ({game.id()})"
+        )
 
         player_count_logic = PlayerCountAggregatorLogic()
         for play in RequestPlays(thingid=game_id).queryAll():
             player_count_logic.visit(play)
 
-        yield f"{SEPARATOR.join(game_metadata(game_id))}{SEPARATOR}{PlayerCountAggregatorCSVPresenter(player_count_logic, SEPARATOR).render()}\n"
+        yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{PlayerCountAggregatorCSVPresenter(player_count_logic, SEPARATOR).render()}\n"
 
         index += 1
 
     print(f"Finished processing {index-1} games")
-
-
-def game_metadata(game_id: int) -> List[str]:
-    game = RequestThing(game_id).query(with_stats=True).only_item()
-    return [
-        f"{game.id()}",
-        game.primary_name(),
-        game.type(),
-        f"{game.year_published()}",
-        f"{game.overall_rank()}",
-        f"{game.player_count()[0]}-{game.player_count()[1]}",
-        f"{game.ratings().users_rated()}",
-    ]
 
 
 if __name__ == "__main__":
