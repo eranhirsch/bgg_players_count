@@ -39,7 +39,7 @@ class RequestSearch(RequestBase[SearchItems]):
 
         return params
 
-    def _build_response(self, root: ET.Element) -> SearchItems:
+    def _build_response(self, root: ET.Element, **kwargs) -> SearchItems:
         return SearchItems(root)
 
     def _cache_file_name(str, **kwargs) -> str:

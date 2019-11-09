@@ -104,7 +104,7 @@ class RequestPlays(RequestBase[Plays], Sized, Iterable[Plays]):
 
         return params
 
-    def _build_response(self, root: ET.Element) -> Plays:
+    def _build_response(self, root: ET.Element, **kwargs) -> Plays:
         return Plays(root)
 
     def _cache_dir(self) -> Optional[str]:

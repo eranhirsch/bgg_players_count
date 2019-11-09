@@ -31,7 +31,7 @@ class RequestList(RequestBase[GeekList]):
 
         return params
 
-    def _build_response(self, root: ET.Element) -> GeekList:
+    def _build_response(self, root: ET.Element, **kwargs) -> GeekList:
         return GeekList(root)
 
     def _cache_file_name(str, **kwargs) -> str:

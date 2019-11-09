@@ -60,7 +60,7 @@ class RequestBase(Generic[TResponse]):
         pass
 
     @abc.abstractmethod
-    def _build_response(self, root: ET.Element) -> TResponse:
+    def _build_response(self, root: ET.Element, **kwargs) -> TResponse:
         pass
 
     def _cache_dir(self) -> Optional[str]:
@@ -75,7 +75,7 @@ class RequestBase(Generic[TResponse]):
             try:
                 page_contents = self.__getRawResponse(**kwargs)
                 root = ET.fromstring(page_contents)
-                return self._build_response(root)
+                return self._build_response(root, **kwargs)
             except ServerIssue as issue:
                 InlineOutput.write(
                     f" Encountered server issue {issue.tldr}: {issue.extra or ''}"

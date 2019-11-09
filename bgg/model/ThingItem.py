@@ -1,6 +1,6 @@
 import collections
 import datetime
-from typing import Dict, Iterable, Iterator, List, Sized, Tuple
+from typing import Dict, Iterable, Iterator, List, Set, Sized, Tuple
 
 from ..utils import firstx, nonthrows
 from .ModelBase import ModelBase
@@ -106,6 +106,10 @@ class ThingItem(ModelBase):
     @classmethod
     def _rootTagName(cls) -> str:
         return "item"
+
+    def with_flags(self, flags: Set[str]) -> "ThingItem":
+        self.__flags = flags
+        return self
 
     def type(self) -> str:
         return self._field("type")

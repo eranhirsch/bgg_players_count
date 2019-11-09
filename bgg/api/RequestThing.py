@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Optional, Sequence
+from typing import Dict, Optional, Sequence, Set
 
 from ..model.ThingItems import ThingItems
 from ..utils import firstx
@@ -30,19 +30,19 @@ class RequestThing(RequestBase):
         with_marketplace: bool = False,
         with_comments: bool = False,
     ) -> ThingItems:
-        flags = []
+        flags: Set[str] = set()
         if with_versions:
-            flags.append("versions")
+            flags.add("versions")
         if with_videos:
-            flags.append("videos")
+            flags.add("videos")
         if with_stats:
-            flags.append("stats")
+            flags.add("stats")
         if with_historical:
-            flags.append("historical")
+            flags.add("historical")
         if with_marketplace:
-            flags.append("marketplace")
+            flags.add("marketplace")
         if with_comments:
-            flags.append("comments")
+            flags.add("comments")
         return self._fetch(flags=flags)
 
     def _api_version(self) -> int:
@@ -62,8 +62,8 @@ class RequestThing(RequestBase):
 
         return params
 
-    def _build_response(self, root: ET.Element) -> ThingItems:
-        return ThingItems(root)
+    def _build_response(self, root: ET.Element, **kwargs) -> ThingItems:
+        return ThingItems(root).with_flags(kwargs["flags"])
 
     def _should_cache_request(self) -> bool:
         return len(self.__ids) == 1
