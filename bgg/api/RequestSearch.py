@@ -1,11 +1,11 @@
 import xml.etree.ElementTree as ET
 from typing import Dict, Optional
 
-from ..model.SearchItems import SearchItems
+from ..model import search
 from .RequestBase import RequestBase
 
 
-class RequestSearch(RequestBase[SearchItems]):
+class RequestSearch(RequestBase[search.Items]):
     """
     A request for a list of items resulting from searching
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc14
@@ -18,7 +18,7 @@ class RequestSearch(RequestBase[SearchItems]):
         self.__type = type
         return self
 
-    def query(self, query: str, is_exact: bool = True) -> SearchItems:
+    def query(self, query: str, is_exact: bool = True) -> search.Items:
         return self._fetch(query=query, is_exact=is_exact)
 
     def _api_version(self) -> int:
@@ -39,8 +39,8 @@ class RequestSearch(RequestBase[SearchItems]):
 
         return params
 
-    def _build_response(self, root: ET.Element, **kwargs) -> SearchItems:
-        return SearchItems(root)
+    def _build_response(self, root: ET.Element, **kwargs) -> search.Items:
+        return search.Items(root)
 
     def _cache_file_name(str, **kwargs) -> str:
         return kwargs["query"]
