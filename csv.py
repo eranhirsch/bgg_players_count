@@ -37,7 +37,7 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
 
 
 def game_metadata(game_id: int) -> List[str]:
-    game = RequestThing(game_id).query().only_item()
+    game = RequestThing(game_id).query(with_stats=True).only_item()
     return [
         f"{game.id()}",
         game.primary_name(),
