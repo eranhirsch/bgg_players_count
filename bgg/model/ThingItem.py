@@ -129,6 +129,7 @@ class ThingItem(ModelBase):
         ).value()
 
     def description(self) -> str:
+        self.__assert_type("boardgame")
         return self._child_text("description")
 
     def year_published(self) -> int:
@@ -136,11 +137,13 @@ class ThingItem(ModelBase):
 
     def player_count(self) -> Tuple[int, int]:
         """The official (published) player count limits for the game"""
+        self.__assert_type("boardgame")
         min = int(self._child_value("minplayers"))
         max = int(self._child_value("maxplayers"))
         return (min, max)
 
     def suggested_num_players(self) -> Dict[str, Tuple[int, int, int]]:
+        self.__assert_type("boardgame")
         poll = next(
             poll for poll in self.__polls_raw() if poll.name() == "suggested_numplayers"
         )
@@ -151,6 +154,7 @@ class ThingItem(ModelBase):
         }
 
     def suggested_player_age(self) -> Dict[str, int]:
+        self.__assert_type("boardgame")
         return (
             next(
                 poll
@@ -162,6 +166,7 @@ class ThingItem(ModelBase):
         )
 
     def language_dependence(self) -> Dict[str, int]:
+        self.__assert_type("boardgame")
         return (
             next(
                 poll
@@ -173,12 +178,14 @@ class ThingItem(ModelBase):
         )
 
     def playing_time(self) -> Tuple[datetime.timedelta, datetime.timedelta]:
+        self.__assert_type("boardgame")
         min = int(self._child_value("minplaytime"))
         max = int(self._child_value("maxplaytime"))
         return (datetime.timedelta(minutes=min), datetime.timedelta(minutes=max))
 
     def min_age(self) -> int:
         """Minimum playing age as defined by the publisher"""
+        self.__assert_type("boardgame")
         return int(self._child_value("minage"))
 
     def links(self) -> Dict[str, List[Tuple[int, str]]]:
@@ -186,6 +193,42 @@ class ThingItem(ModelBase):
         for link in self.__links_raw():
             out[link.type()].append((link.id(), link.value()))
         return out
+
+    def product_code(self) -> str:
+        self.__assert_type("boardgameversion")
+        return self._child_value("productcode")
+
+    def physical_dimensions(self) -> Tuple[float, float, float, float]:
+        self.__assert_type("boardgameversion")
+        return (
+            float(self._child_value("width")),
+            float(self._child_value("length")),
+            float(self._child_value("depth")),
+            float(self._child_value("weight")),
+        )
+
+    def versions(self) -> Iterator["ThingItem"]:
+        self.__assert_flag("versions")
+        versions = self._child("versions")
+        for version_raw in versions:
+            version = ThingItem(version_raw)
+            if version.type() != "boardgameversion":
+                raise Exception(
+                    f"Found unexpected type {version.type()} in versions list"
+                )
+            yield version
+
+    def __assert_flag(self, flag: str) -> None:
+        if flag not in self.__flags:
+            raise Exception(
+                f"{flag} data not requested! Add 'with_{flag}' to the query"
+            )
+
+    def __assert_type(self, type: str) -> None:
+        if type != self.type():
+            raise Exception(
+                f"This data is only available for {type}, not for {self.type()}"
+            )
 
     def __names_raw(self) -> Iterator[Name]:
         """Raw data, prefer calling the primary_name method instead"""
