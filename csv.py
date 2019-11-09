@@ -43,6 +43,9 @@ def game_metadata(game_id: int) -> List[str]:
         game.primary_name(),
         game.type(),
         f"{game.year_published()}",
+        f"{game.overall_rank()}",
+        f"{game.player_count()[0]}-{game.player_count()[1]}",
+        f"{game.ratings().users_rated()}",
     ]
 
 
