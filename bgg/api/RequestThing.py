@@ -58,7 +58,7 @@ class RequestThing(RequestBase):
             params.update({"type": ",".join(self.__types)})
 
         if kwargs["flags"]:
-            params.update({"flag": "1" for flags in kwargs["flags"]})
+            params.update({flag: "1" for flag in kwargs["flags"]})
 
         return params
 
