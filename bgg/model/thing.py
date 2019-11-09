@@ -102,12 +102,12 @@ class Link(ModelBase):
         return self._field("value")
 
 
-class ThingItem(ModelBase):
+class Item(ModelBase):
     @classmethod
     def _rootTagName(cls) -> str:
         return "item"
 
-    def with_flags(self, flags: Set[str]) -> "ThingItem":
+    def with_flags(self, flags: Set[str]) -> "Item":
         self.__flags = flags
         return self
 
@@ -207,11 +207,11 @@ class ThingItem(ModelBase):
             float(self._child_value("weight")),
         )
 
-    def versions(self) -> Iterator["ThingItem"]:
+    def versions(self) -> Iterator["Item"]:
         self.__assert_flag("versions")
         versions = self._child("versions")
         for version_raw in versions:
-            version = ThingItem(version_raw)
+            version = Item(version_raw)
             if version.type() != "boardgameversion":
                 raise Exception(
                     f"Found unexpected type {version.type()} in versions list"
@@ -246,16 +246,16 @@ class ThingItem(ModelBase):
             yield Link(link)
 
 
-class ThingItems(ModelBase, Sized, Iterable[ThingItem]):
+class Items(ModelBase, Sized, Iterable[Item]):
     @classmethod
     def _rootTagName(cls) -> str:
         return "items"
 
-    def with_flags(self, flags: Set[str]) -> "ThingItems":
+    def with_flags(self, flags: Set[str]) -> "Items":
         self.__flags = flags
         return self
 
-    def only_item(self) -> ThingItem:
+    def only_item(self) -> Item:
         if len(self) > 1:
             raise Exception(f"There is more than one item in the response {len(self)}")
         return firstx(self)
@@ -263,6 +263,6 @@ class ThingItems(ModelBase, Sized, Iterable[ThingItem]):
     def __len__(self) -> int:
         return len(self._root)
 
-    def __iter__(self) -> Iterator[ThingItem]:
+    def __iter__(self) -> Iterator[Item]:
         for item in self._root:
-            yield ThingItem(item).with_flags(self.__flags)
+            yield Item(item).with_flags(self.__flags)

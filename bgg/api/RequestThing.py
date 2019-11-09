@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import Dict, Optional, Sequence, Set
 
-from ..model.ThingItem import ThingItems
+from ..model import thing
 from ..utils import firstx
 from .RequestBase import RequestBase
 
@@ -29,7 +29,7 @@ class RequestThing(RequestBase):
         with_historical: bool = False,
         with_marketplace: bool = False,
         with_comments: bool = False,
-    ) -> ThingItems:
+    ) -> thing.Items:
         flags: Set[str] = set()
         if with_versions:
             flags.add("versions")
@@ -62,8 +62,8 @@ class RequestThing(RequestBase):
 
         return params
 
-    def _build_response(self, root: ET.Element, **kwargs) -> ThingItems:
-        return ThingItems(root).with_flags(kwargs["flags"])
+    def _build_response(self, root: ET.Element, **kwargs) -> thing.Items:
+        return thing.Items(root).with_flags(kwargs["flags"])
 
     def _should_cache_request(self) -> bool:
         return len(self.__ids) == 1
