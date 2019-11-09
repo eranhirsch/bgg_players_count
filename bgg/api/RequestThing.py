@@ -29,6 +29,7 @@ class RequestThing(RequestBase):
         with_historical: bool = False,
         with_marketplace: bool = False,
         with_comments: bool = False,
+        with_rating_comments: bool = False,
     ) -> thing.Items:
         flags: Set[str] = set()
         if with_versions:
@@ -38,11 +39,17 @@ class RequestThing(RequestBase):
         if with_stats:
             flags.add("stats")
         if with_historical:
-            flags.add("historical")
+            raise NotImplementedError("Historical API currently not supported")
         if with_marketplace:
-            flags.add("marketplace")
+            raise NotImplementedError("Marketplace API currently not supported")
         if with_comments:
-            flags.add("comments")
+            if with_rating_comments:
+                raise Exception(
+                    "Can't use both comments and rating_comments for thing requests"
+                )
+            raise NotImplementedError("Comments API currently not supported")
+        if with_rating_comments:
+            raise NotImplementedError("Rating Comments API currently not supported")
         return self._fetch(flags=flags)
 
     def _api_version(self) -> int:
