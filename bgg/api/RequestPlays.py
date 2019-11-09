@@ -1,7 +1,7 @@
 import datetime
 import itertools
 import xml.etree.ElementTree as ET
-from typing import Dict, Generator, Iterable, Iterator, Optional, Sized
+from typing import Dict, Generator, Iterable, Iterator, Optional, Sized, Tuple
 
 from ..model import play
 from ..utils import InlineOutput
@@ -24,22 +24,19 @@ class RequestPlays(RequestBase[play.Page], Sized, Iterable[play.Page]):
             raise Exception("Either username or id required to query plays")
         self.__user_name = username
         self.__id = thingid
-        self.__type: Optional[str] = None
-        self.__minDate: Optional[datetime.date] = None
-        self.__maxDate: Optional[datetime.date] = None
-        self.__subType: Optional[str] = None
+        self.__type: Tuple[Optional[str], Optional[str]] = (None, None)
+        self.__date: Tuple[Optional[datetime.date], Optional[datetime.date]] = (
+            None,
+            None,
+        )
 
     def filter_on(
         self,
-        thingtype: Optional[str] = None,
-        subtype: Optional[str] = None,
-        mindate: Optional[datetime.date] = None,
-        maxdate: Optional[datetime.date] = None,
+        type: Tuple[Optional[str], Optional[str]] = (None, None),
+        date: Tuple[Optional[datetime.date], Optional[datetime.date]] = (None, None),
     ) -> "RequestPlays":
-        self.__type = thingtype
-        self.__minDate = mindate
-        self.__maxDate = maxdate
-        self.__subType = subtype
+        self.__type = type
+        self.__date = date
         return self
 
     def queryAll(self) -> Generator[play.Play, None, None]:
@@ -85,21 +82,25 @@ class RequestPlays(RequestBase[play.Page], Sized, Iterable[play.Page]):
             params["username"] = self.__user_name
 
         if self.__id:
-            params["id"] = str(self.__id)
+            params["id"] = f"{self.__id}"
 
-        if self.__type:
-            params["type"] = self.__type
+        type = self.__type[0]
+        if type:
+            params["type"] = type
 
-        if self.__minDate:
-            params["mindate"] = str(self.__minDate)
+        sub_type = self.__type[1]
+        if sub_type:
+            params["subtype"] = sub_type
 
-        if self.__maxDate:
-            params["maxdate"] = str(self.__maxDate)
+        min_date = self.__date[0]
+        if min_date:
+            params["mindate"] = f"{min_date}"
 
-        if self.__subType:
-            params["subtype"] = self.__subType
+        max_date = self.__date[1]
+        if max_date:
+            params["maxdate"] = f"{max_date}"
 
-        params["page"] = str(kwargs["page"])
+        params["page"] = f'{kwargs["page"]}'
 
         return params
 
@@ -109,5 +110,9 @@ class RequestPlays(RequestBase[play.Page], Sized, Iterable[play.Page]):
     def _cache_dir(self) -> Optional[str]:
         return f"{self.__id}" if self.__id else f"user_{self.__user_name}"
 
-    def _cache_file_name(str, **kwargs) -> str:
+    def _cache_file_name(self, **kwargs) -> Optional[str]:
+        if self.__type[0] or self.__type[1] or self.__date[0] or self.__date[1]:
+            # Dont cache filtered queries atm
+            return None
+
         return f"{kwargs['page']:04d}"
