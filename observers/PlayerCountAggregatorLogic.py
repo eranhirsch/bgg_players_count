@@ -40,6 +40,7 @@ DIGITAL_LOCATIONS_RE = [
         r"^(https?://)?(www\.)?bo(i|î)te ?(a|à) ?jeux(\.net/?)?/?$",
         r"^(https?://)?(www\.)?d(ays)? ?of? ?w(onder)?(\.com/?)?$",
         r"^(https?://)?(www\.)?yucata(\.de)?/?$",
+        r"^goko(\.com)?$",
         r"^octgn$",
         r"^steam$",
         r"^t(able)?t(op)?( ?s(imulator)?)?$",
@@ -47,6 +48,7 @@ DIGITAL_LOCATIONS_RE = [
         # Game-specific services that offer a digital version:
         r"^(https?://)?(brass\.)?o(rder)? ?of? ?t(he)? ?h(ammer)?(\.com/?)?$",  # brass
         r"^(https?://)?(www\.)?j(inteki(\.net)?|\.?net)/?$",  # netrunner
+        r"^dominion( online|\.games)$", # dominion
     ]
 ]
 
