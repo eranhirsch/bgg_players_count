@@ -17,16 +17,28 @@ class ModelBase:
         self._root = root
 
     def _field(self, name: str) -> str:
-        return nonthrows(self._root.get(name))
+        return nonthrows(
+            self._root.get(name),
+            f"Attribute '{name}' missing in '{self._rootTagName()}'",
+        )
 
     def _child(self, tag_name: str) -> ET.Element:
-        return nonthrows(self._root.find(tag_name))
+        return nonthrows(
+            self._root.find(tag_name),
+            f"Child '{tag_name}' missing in '{self._rootTagName()}'",
+        )
 
     def _child_value(self, tag_name: str) -> str:
-        return nonthrows(self._child(tag_name).get("value"))
+        return nonthrows(
+            self._child(tag_name).get("value"),
+            f"Value attribute missing for '{tag_name}' in '{self._rootTagName()}'",
+        )
 
     def _child_text(self, tag_name: str) -> str:
-        return nonthrows(self._child(tag_name).text)
+        return nonthrows(
+            self._child(tag_name).text,
+            f"'{tag_name}' has no inner text in '{self._rootTagName()}'",
+        )
 
     @staticmethod
     def _stringToBool(str) -> bool:
