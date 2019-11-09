@@ -154,22 +154,30 @@ class PlayerCountAggregatorCSVPresenter:
         results = self.__logic.getResults()
         regular = results[ResultsCategory.REGULAR]
         digital = results[ResultsCategory.DIGITAL]
+        incomplete = results[ResultsCategory.INCOMPLETE]
 
         total_regular = sum(regular.values())
         missing = regular[0] if 0 in regular else 0
+        meaningful_entries = total_regular - missing
         players_ratios = [
-            regular.get(player_count, 0) / (total_regular - missing)
+            regular.get(player_count, 0) / meaningful_entries
             for player_count in range(1, max(regular.keys()) + 1)
         ]
         total_digital = sum(digital.values())
+        total_incomplete = sum(incomplete.values())
 
         return self.__separator.join(
             map(
                 lambda num: f"{num:.2f}",
                 [
                     total_regular,
+                    # Percent digital
                     total_digital / (total_digital + total_regular),
+                    # Incomplete games (per mil)
+                    100 * total_incomplete / (total_incomplete + total_regular),
+                    # Data quality metric, percent of non-meaningful
                     missing / total_regular,
+                    meaningful_entries,
                 ]
                 + players_ratios,
             )
