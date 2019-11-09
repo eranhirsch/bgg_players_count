@@ -12,7 +12,9 @@ class ModelBase:
 
     def __init__(self, root: ET.Element) -> None:
         if root.tag != self._rootTagName():
-            raise Exception(f"Unexpected root tag: {root.tag}")
+            raise Exception(
+                f"Expected root tag '{self._rootTagName()}' but got '{root.tag}'"
+            )
 
         self._root = root
 
