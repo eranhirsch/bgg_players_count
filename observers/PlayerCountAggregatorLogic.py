@@ -24,12 +24,12 @@ DIGITAL_LOCATIONS_RE = [
         r"^tablet$",
         # Generic terms:
         r"^.*?\bapp\b.*?$",
+        r"^.*?\bon ?line\b.*?$",
         r"^(the )?internet$",
         r"^digitaa?l$",
         r"^electronic$",
         r"^emulator$",
         r"^mobile$",
-        r"^on ?line( play)?$",
         r"^virtual$",
         r"^web$",
         # General-purpose services that offer digital versions of games:
@@ -46,9 +46,10 @@ DIGITAL_LOCATIONS_RE = [
         r"^t(able)?t(op)?( ?s(imulator)?)?$",
         r"^tabletopia(\.com)?$",
         # Game-specific services that offer a digital version:
+        r"^(andro|do)minion(\.(games|net))?$", # dominion
         r"^(https?://)?(brass\.)?o(rder)? ?of? ?t(he)? ?h(ammer)?(\.com/?)?$",  # brass
+        r"^(https?://)?(terra\.)?snellman(\.net/?)?$",  # Terra Mystica
         r"^(https?://)?(www\.)?j(inteki(\.net)?|\.?net)/?$",  # netrunner
-        r"^dominion( online|\.(games|net))$", # dominion
     ]
 ]
 
