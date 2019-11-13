@@ -4,6 +4,7 @@ import sys
 from typing import List
 
 from bgg.api.RequestPlays import RequestPlays
+from bgg.api.RequestThing import RequestThing
 from CLIGamesParser import CLIGamesParser
 from observers.LocationsCountLogic import (
     LocationsCountCLIPresenter,
@@ -22,7 +23,10 @@ def main(argv: List[str] = []) -> int:
     try:
         index = 1
         for game_id in CLIGamesParser(argv[1:]):
-            print(f"Processing plays for game {index:03d}: ID={game_id}")
+            game = RequestThing(game_id).query().only_item()
+            print(
+                f"Processing plays for game {index:03d}: {game.primary_name()} ({game_id})"
+            )
             for play in RequestPlays(thingid=game_id).queryAll():
                 player_count_logic.visit(play)
                 locations_logic.visit(play)

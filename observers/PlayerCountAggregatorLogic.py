@@ -46,7 +46,7 @@ DIGITAL_LOCATIONS_RE = [
         r"^t(able)?t(op)?( ?s(imulator)?)?$",
         r"^tabletopia(\.com)?$",
         # Game-specific services that offer a digital version:
-        r"^(andro|do)minion(\.(games|net))?$", # dominion
+        r"^(andro|do)minion(\.(games|net))?$",  # dominion
         r"^(https?://)?(brass\.)?o(rder)? ?of? ?t(he)? ?h(ammer)?(\.com/?)?$",  # brass
         r"^(https?://)?(terra\.)?snellman(\.net/?)?$",  # Terra Mystica
         r"^(https?://)?(www\.)?j(inteki(\.net)?|\.?net)/?$",  # netrunner
