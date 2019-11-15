@@ -291,17 +291,23 @@ class Item(ModelBase):
         self.__assert_type("boardgame")
         return self.ratings().ranks()[self.type()].value()
 
-    def category(self) -> str:
+    def categories(self) -> List[str]:
         self.__assert_type("boardgame")
-        return "_".join(
-            sorted(
+        return [
+            rank.name(friendly=True)
+            for rank in sorted(
                 [
-                    rank.name()
+                    rank
                     for rank in self.ratings().ranks().values()
                     if rank.type() == "family"
-                ]
+                ],
+                key=lambda rank: rank.value(),
             )
-        )
+        ]
+
+    def primary_category(self) -> Optional[str]:
+        categories = self.categories()
+        return categories[0] if categories else None
 
     def __assert_flag(self, flag: str) -> None:
         if flag not in self.__flags:
