@@ -17,12 +17,6 @@ class Month:
 
         self.__month = month
 
-    def year(self) -> int:
-        return self.__year
-
-    def month(self) -> int:
-        return self.__month
-
     def __iadd__(self, months: int) -> "Month":
         new_year = self.__year + ((self.__month + months - 1) // 12)
         new_month = (self.__month + months) % 12
@@ -40,19 +34,16 @@ class Month:
 
         return False
 
-    def __str__(self) -> str:
-        return f"{self.__year}-{self.__month:02d}"
-
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Month):
             return NotImplemented
         return self.__year == other.__year and self.__month == other.__month
 
+    def __str__(self) -> str:
+        return f"{self.__year}-{self.__month:02d}"
+
     def __hash__(self) -> int:
         return hash(str(self))
-
-    def __repr__(self) -> str:
-        return str(self)
 
 
 class DateRange(Iterable[Month]):
