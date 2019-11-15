@@ -11,6 +11,10 @@ class Month:
 
     def __init__(self, year: int, month: int) -> None:
         self.__year = year
+
+        if month > 12 or month < 0:
+            raise Exception(f"Bad month {month}")
+
         self.__month = month
 
     def year(self) -> int:
@@ -20,9 +24,12 @@ class Month:
         return self.__month
 
     def __iadd__(self, months: int) -> "Month":
-        return Month(
-            self.__year + ((self.__month + months) // 12), (self.__month + months) % 12
-        )
+        new_year = self.__year + ((self.__month + months - 1) // 12)
+        new_month = (self.__month + months) % 12
+        if new_month == 0:
+            # Fix modulo issue with December
+            new_month = 12
+        return Month(new_year, new_month)
 
     def __lt__(self, other: "Month") -> bool:
         if self.__year < other.__year:
