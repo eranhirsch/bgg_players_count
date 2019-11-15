@@ -7,6 +7,8 @@ from bgg.model import play
 class Month:
     @staticmethod
     def fromDate(dt: datetime.date) -> "Month":
+        month = dt.month
+        month += 3 - (month % 3)
         return Month(dt.year, dt.month)
 
     def __init__(self, year: int, month: int) -> None:
@@ -55,7 +57,7 @@ class DateRange(Iterable[Month]):
         curr = self.__start
         while curr < self.__end:
             yield curr
-            curr += 1
+            curr += 3
 
 
 class Logic:

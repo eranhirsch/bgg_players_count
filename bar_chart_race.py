@@ -10,7 +10,7 @@ from observers import BarChartRace as bcr
 
 SEPARATOR = "\t"
 
-WINDOW = bcr.DateRange(bcr.Month(2009, 10), bcr.Month(2019, 10))
+WINDOW = bcr.DateRange(bcr.Month(2003, 9), bcr.Month(2020, 1))
 
 
 def main(argv: List[str] = []) -> int:
