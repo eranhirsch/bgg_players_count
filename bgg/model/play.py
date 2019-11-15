@@ -71,10 +71,11 @@ class Play(ModelBase):
         return int(self._field("userid"))
 
     def date(self) -> Optional[datetime.date]:
-        date_str = self._field("date")
-        if date_str == MISSING_DATE_VALUE:
+        try:
+            return datetime.date.fromisoformat(self._field("date"))
+        except ValueError:
+            # Value errors mean the string was malformed
             return None
-        return datetime.date.fromisoformat(date_str)
 
     def quantity(self) -> int:
         return int(self._field("quantity"))
