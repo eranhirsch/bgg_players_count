@@ -16,6 +16,9 @@ SEPARATOR = "\t"
 
 def main(argv: List[str] = []) -> int:
     with open(argv[1], "wt") as output:
+        output.write(
+            f"{SEPARATOR.join(['Name', 'ID', 'Year', 'Rank', 'Published', 'Ratings'] + PlayerCountAggregatorCSVPresenter.column_names())}\n"
+        )
         output.writelines(process_games(CLIGamesParser(argv[2:])))
     return 0
 
@@ -29,9 +32,8 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
             continue
 
         metadata = [
-            f"{game.id()}",
             game.primary_name(),
-            game.type(),
+            f"{game.id()}",
             f"{game.year_published()}",
             f"{game.overall_rank()}",
             f"{game.player_count()[0]}-{game.player_count()[1]}",

@@ -1,6 +1,6 @@
 import re
 from enum import Enum, auto
-from typing import Dict
+from typing import Dict, List
 
 from bgg.model import play
 
@@ -150,6 +150,14 @@ class PlayerCountAggregatorCLIPresenter:
 
 
 class PlayerCountAggregatorCSVPresenter:
+    @staticmethod
+    def column_names() -> List[str]:
+        return (
+            ["Total", "Digital", "Incomplete", "Missing", "Meaningful", "Solo"]
+            + [f"{i}P" for i in range(2, AGGREGATE_PLAYER_COUNT)]
+            + [f"{AGGREGATE_PLAYER_COUNT}+P"]
+        )
+
     def __init__(
         self, logic: PlayerCountAggregatorLogic, separator: str = "\t"
     ) -> None:
