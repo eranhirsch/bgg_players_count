@@ -16,7 +16,7 @@ WINDOW = bcr.DateRange(bcr.Month(2009, 10), bcr.Month(2019, 10))
 def main(argv: List[str] = []) -> int:
     with open(argv[1], "wt") as output:
         output.write(
-            f"{SEPARATOR.join(['Name', 'Image'] + bcr.Presenter.column_names(WINDOW))}\n"
+            f"{SEPARATOR.join(['Name', 'Category', 'Image'] + bcr.Presenter.column_names(WINDOW))}\n"
         )
         output.writelines(process_games(CLIGamesParser(argv[2:])))
     return 0
@@ -30,7 +30,7 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
             print(f"Skipping '{game.type()}': {game.primary_name()} ({game.id()})")
             continue
 
-        metadata = [game.primary_name(), game.image()]
+        metadata = [game.primary_name(), game.category(), game.image()]
 
         print(
             f"Processing plays for game {index:03d}: {game.primary_name()} ({game.id()})"
