@@ -30,7 +30,7 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
             print(f"Skipping '{game.type()}': {game.primary_name()} ({game.id()})")
             continue
 
-        metadata = [game.primary_name(), game.category(), game.image()]
+        metadata = [game.primary_name(), game.category(), game.thumbnail()]
 
         print(
             f"Processing plays for game {index:03d}: {game.primary_name()} ({game.id()})"
