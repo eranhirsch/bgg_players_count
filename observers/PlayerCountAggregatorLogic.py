@@ -8,6 +8,9 @@ from bgg.model import play
 # very valuable to us so we cap it at a reasonable number and return that
 SANITY_MAX_QUANTITY: int = 20
 
+# We will count all player counts abobve this number as one X+ category
+AGGREGATE_PLAYER_COUNT = 9
+
 # A list of apps and platforms that allow digital play.
 DIGITAL_LOCATIONS_RE = [
     re.compile(re_str, re.IGNORECASE)
@@ -161,18 +164,27 @@ class PlayerCountAggregatorCSVPresenter:
 
         total_regular = sum(regular.values())
         missing = regular[0] if 0 in regular else 0
-        meaningful_entries = total_regular - missing
+        meaningful_entries = max(total_regular - missing, 1)
         players_ratios = [
             regular.get(player_count, 0) / meaningful_entries
-            for player_count in range(1, max(regular.keys()) + 1)
+            for player_count in range(1, AGGREGATE_PLAYER_COUNT)
         ]
+        aggregate_ratio = (
+            sum(
+                regular.get(player_count, 0)
+                for player_count in range(
+                    AGGREGATE_PLAYER_COUNT, max(regular.keys()) + 1
+                )
+            )
+            / meaningful_entries
+        )
         total_digital = sum(digital.values())
         total_incomplete = sum(incomplete.values())
 
         return self.__separator.join(
-            map(
-                lambda num: f"{num:.2f}",
-                [
+            [
+                f"{num:.2f}"
+                for num in [
                     total_regular,
                     # Percent digital
                     total_digital / (total_digital + total_regular),
@@ -182,6 +194,7 @@ class PlayerCountAggregatorCSVPresenter:
                     missing / total_regular,
                     meaningful_entries,
                 ]
-                + players_ratios,
-            )
+                + players_ratios
+                + [aggregate_ratio]
+            ]
         )
