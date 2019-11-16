@@ -1,5 +1,6 @@
 #!/usr/local/bin/python3
 
+import datetime
 import sys
 from typing import Iterable, Iterator, List
 
@@ -10,8 +11,10 @@ from observers import BarChartRace as bcr
 
 SEPARATOR = "\t"
 
-AGGR_BY = 6
-WINDOW = bcr.DateRange(bcr.Month(2003, 9), bcr.Month(2020, 1), step=AGGR_BY)
+AGGR_BY = 3
+WINDOW = bcr.DateRange(
+    bcr.Month(2003, 9), bcr.Month.fromDate(datetime.date.today()), step=AGGR_BY
+)
 
 
 def main(argv: List[str] = []) -> int:
