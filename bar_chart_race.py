@@ -31,7 +31,7 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
             continue
 
         metadata = [
-            f"{game.primary_name()} ({game.year_published()})",
+            f"{game.year_published()}-{game.primary_name()}",
             game.primary_category() or "",
             game.thumbnail(),
         ]
