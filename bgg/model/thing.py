@@ -294,7 +294,7 @@ class Item(ModelBase):
     def categories(self) -> List[str]:
         self.__assert_type("boardgame")
         return [
-            rank.name(friendly=True).split(' ')[0]
+            rank.name(friendly=True).split(" ")[0]
             for rank in sorted(
                 [
                     rank

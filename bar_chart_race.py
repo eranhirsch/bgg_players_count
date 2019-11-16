@@ -10,7 +10,8 @@ from observers import BarChartRace as bcr
 
 SEPARATOR = "\t"
 
-WINDOW = bcr.DateRange(bcr.Month(2003, 9), bcr.Month(2020, 1))
+AGGR_BY = 6
+WINDOW = bcr.DateRange(bcr.Month(2003, 9), bcr.Month(2020, 1), step=AGGR_BY)
 
 
 def main(argv: List[str] = []) -> int:
@@ -40,7 +41,7 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
             f"Processing plays for game {index:03d}: {game.primary_name()} ({game.id()})"
         )
 
-        bar_chart_race = bcr.Logic()
+        bar_chart_race = bcr.Logic(aggr_by=AGGR_BY)
         for play in RequestPlays(thingid=game_id).queryAll():
             bar_chart_race.visit(play)
 

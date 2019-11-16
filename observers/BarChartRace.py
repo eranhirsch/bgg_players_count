@@ -6,10 +6,11 @@ from bgg.model import play
 
 class Month:
     @staticmethod
-    def fromDate(dt: datetime.date) -> "Month":
-        month = dt.month
-        month += 3 - (month % 3)
-        return Month(dt.year, dt.month)
+    def fromDate(dt: datetime.date, aggr_by: int = 1) -> "Month":
+        if 12 % aggr_by != 0:
+            raise Exception(f"{aggr_by} is not a divisor of 12!")
+
+        return Month(dt.year, (((dt.month - 1) // aggr_by) + 1) * aggr_by)
 
     def __init__(self, year: int, month: int) -> None:
         self.__year = year
@@ -49,27 +50,29 @@ class Month:
 
 
 class DateRange(Iterable[Month]):
-    def __init__(self, start: Month, end: Month):
+    def __init__(self, start: Month, end: Month, step: int = 1) -> None:
         self.__start = start
         self.__end = end
+        self.__step = step
 
     def __iter__(self) -> Iterator[Month]:
         curr = self.__start
         while curr < self.__end:
             yield curr
-            curr += 3
+            curr += self.__step
 
 
 class Logic:
-    def __init__(self) -> None:
+    def __init__(self, aggr_by: int = 1) -> None:
         self.__results: Dict[Month, int] = {}
+        self.__aggr_by = aggr_by
 
     def visit(self, play: play.Play) -> None:
         date = play.date()
         if not date:
             return
 
-        month = Month.fromDate(date)
+        month = Month.fromDate(date, self.__aggr_by)
         try:
             self.__results[month] += 1
         except KeyError:
