@@ -45,7 +45,7 @@ def main(argv: List[str] = []) -> int:
         print("\n")
         print(LocationsCountCLIPresenter(locations_logic).render(is_digital=True))
         print("\n")
-        print(qn.Presenter(quantity_logic).render(percentile=0.9))
+        print(qn.Presenter(quantity_logic).render(percentile=0.99))
 
 
 if __name__ == "__main__":

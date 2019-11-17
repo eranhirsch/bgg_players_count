@@ -22,12 +22,14 @@ class Presenter:
     def __init__(self, logic: Logic) -> None:
         self.__logic = logic
 
-    def render(self, percentile: float = 0.9) -> str:
+    def render(self, percentile: float = 0.99) -> str:
         results = self.__logic.getResults()
         total = sum(results.values())
         accumulated = 0
+        output = [f"Total: {total}"]
         for i in range(max(results.keys())):
             accumulated += results.get(i, 0)
+            output.append(f"{i}: {accumulated}")
             if accumulated / total > percentile:
-                return f"{i}"
-        raise Exception("Something went wrong")
+                break
+        return ",".join(output)
