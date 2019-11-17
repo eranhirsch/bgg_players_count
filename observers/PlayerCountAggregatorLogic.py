@@ -36,8 +36,8 @@ DIGITAL_LOCATIONS_RE = [
         r"^virtual$",
         r"^web$",
         # General-purpose services that offer digital versions of games:
+        r"^(https?://)?((m|www)\.)?b(rett)? ?s(piel)? ?w(elt)?(\.de(/.*)?)?$",
         r"^(https?://)?(\w+\.)?isotropic(\.org/?)?$",
-        r"^(https?://)?(m|www\.)?b(rett)? ?s(piel)? ?w(elt)?(\.de(/.*)?)?$",
         r"^(https?://)?(www\.)?b(oard)? ?g(ame)? ?a(rena)?(\.com/?| online)?$",
         r"^(https?://)?(www\.)?b(oard)? ?g(aming)?( |-)?o(nline)?(\.com/?)?$",
         r"^(https?://)?(www\.)?bo(i|î)te ?(a|à) ?jeux(\.net/?)?/?$",
