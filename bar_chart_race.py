@@ -2,6 +2,7 @@
 
 import datetime
 import sys
+import unicodedata
 from typing import Iterable, Iterator, List
 
 from bgg.api.RequestPlays import RequestPlays
@@ -34,8 +35,14 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
             print(f"Skipping '{game.type()}': {game.primary_name()} ({game.id()})")
             continue
 
+        name = (
+            unicodedata.normalize("NFKD", game.primary_name())
+            .encode("ascii", "ignore")
+            .decode("ascii")
+        )
+
         metadata = [
-            f"{game.year_published()}-{game.primary_name()}",
+            f"{game.year_published()}-{name}",
             game.primary_category() or "",
             game.thumbnail(),
         ]
