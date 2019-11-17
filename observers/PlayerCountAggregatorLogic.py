@@ -6,7 +6,7 @@ from bgg.model import play
 
 # Some people log really odd quantities for plays, like 50 and 100. These aren't
 # very valuable to us so we cap it at a reasonable number and return that
-SANITY_MAX_QUANTITY: int = 20
+SANITY_MAX_QUANTITY: int = 7
 
 # We will count all player counts abobve this number as one X+ category
 AGGREGATE_PLAYER_COUNT = 9
