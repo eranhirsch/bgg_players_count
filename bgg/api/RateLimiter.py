@@ -6,6 +6,7 @@ INITIAL_UPPER_BOUND = datetime.timedelta(seconds=10)
 
 SUCCESS_BUMP = 10
 
+
 class RateLimiter:
     def __init__(self) -> None:
         self.__last_attempt_time: Optional[datetime.datetime] = None
