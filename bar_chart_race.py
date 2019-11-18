@@ -12,22 +12,26 @@ from observers import BarChartRace as bcr
 
 SEPARATOR = "\t"
 
-AGGR_BY = 3
-WINDOW = bcr.DateRange(
-    bcr.Month(2003, 9), bcr.Month.fromDate(datetime.date.today()), step=AGGR_BY
-)
-
 
 def main(argv: List[str] = []) -> int:
+    aggr_by = int(argv[2])
     with open(argv[1], "wt") as output:
         output.write(
-            f"{SEPARATOR.join(['Name', 'Category', 'Image'] + bcr.Presenter.column_names(WINDOW))}\n"
+            f"{SEPARATOR.join(['Name', 'Category', 'Image'] + bcr.Presenter.column_names(window(aggr_by)))}\n"
         )
-        output.writelines(process_games(CLIGamesParser(argv[2:])))
+        output.writelines(process_games(aggr_by, CLIGamesParser(argv[2:])))
     return 0
 
 
-def process_games(games: Iterable[int]) -> Iterator[str]:
+def window(aggr_by: int) -> bcr.DateRange:
+    return bcr.DateRange(
+        bcr.Month(2000, aggr_by),
+        bcr.Month.fromDate(datetime.date.today()),
+        step=aggr_by,
+    )
+
+
+def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
     index = 1
     for game_id in games:
         game = RequestThing(game_id).query(with_stats=True).only_item()
@@ -51,11 +55,11 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
             f"Processing plays for game {index:03d}: {game.primary_name()} ({game.id()})"
         )
 
-        bar_chart_race = bcr.Logic(aggr_by=AGGR_BY)
+        bar_chart_race = bcr.Logic(aggr_by)
         for play in RequestPlays(thingid=game_id).queryAll():
             bar_chart_race.visit(play)
 
-        yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, WINDOW, SEPARATOR).render()}\n"
+        yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), SEPARATOR).render()}\n"
 
         index += 1
 
