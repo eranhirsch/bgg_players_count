@@ -180,8 +180,11 @@ class Item(ModelBase):
     def id(self) -> int:
         return int(self._field("id"))
 
-    def thumbnail(self) -> str:
-        return self._child_text("thumbnail")
+    def thumbnail(self) -> Optional[str]:
+        try:
+            return self._child_text("thumbnail")
+        except TypeError:
+            return None
 
     def image(self) -> str:
         return self._child_text("image")

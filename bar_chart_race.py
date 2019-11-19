@@ -48,7 +48,7 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
         metadata = [
             f"{game.year_published()}-{name}",
             game.primary_category() or "",
-            game.thumbnail(),
+            game.thumbnail() or "",
         ]
 
         print(
