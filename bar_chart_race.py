@@ -19,7 +19,7 @@ def main(argv: List[str] = []) -> int:
         output.write(
             f"{SEPARATOR.join(['Name', 'Category', 'Image'] + bcr.Presenter.column_names(window(aggr_by)))}\n"
         )
-        output.writelines(process_games(aggr_by, CLIGamesParser(argv[2:])))
+        output.writelines(process_games(aggr_by, CLIGamesParser(argv[3:])))
     return 0
 
 
