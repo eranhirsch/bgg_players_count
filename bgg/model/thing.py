@@ -302,7 +302,7 @@ class Item(ModelBase):
                 [
                     rank
                     for rank in self.ratings().ranks().values()
-                    if rank.type() == "family"
+                    if rank.type() == "family" and rank.value() is not None
                 ],
                 key=lambda rank: rank.value(),
             )
