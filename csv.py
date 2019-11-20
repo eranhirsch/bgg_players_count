@@ -50,7 +50,10 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
         for play in RequestPlays(thingid=game_id).queryAll():
             player_count_logic.visit(play)
 
-        yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{PlayerCountAggregatorCSVPresenter(player_count_logic, SEPARATOR).render()}\n"
+        try:
+            yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{PlayerCountAggregatorCSVPresenter(player_count_logic, SEPARATOR).render()}\n"
+        except Exception as e:
+            print(f"Skipping {game.primary_name()} because: {e}")
 
         index += 1
 
