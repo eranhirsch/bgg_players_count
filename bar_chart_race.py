@@ -11,6 +11,7 @@ from CLIGamesParser import CLIGamesParser
 from observers import BarChartRace as bcr
 
 SEPARATOR = "\t"
+MISSING_CATEGORY_LABEL = "[Unknown]"
 
 
 def main(argv: List[str] = []) -> int:
@@ -47,7 +48,7 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
 
         metadata = [
             f"{game.year_published()}-{name}",
-            game.primary_category() or "",
+            game.primary_category() or MISSING_CATEGORY_LABEL,
             game.thumbnail() or "",
         ]
 
