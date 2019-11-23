@@ -2,7 +2,7 @@ from typing import Dict
 
 from bgg.model import play
 
-from .PlayerCountAggregatorLogic import DIGITAL_LOCATIONS_RE
+from .PlayerCountAggregator import DIGITAL_LOCATIONS_RE
 
 NUM_LOCATIONS_TO_PRINT = 100
 

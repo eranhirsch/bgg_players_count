@@ -6,19 +6,16 @@ from typing import List
 from bgg.api.RequestPlays import RequestPlays
 from bgg.api.RequestThing import RequestThing
 from CLIGamesParser import CLIGamesParser
+from observers import PlayerCountAggregator as pca
 from observers import QuantityNormalizer as qn
 from observers.LocationsCountLogic import (
     LocationsCountCLIPresenter,
     LocationsCountLogic,
 )
-from observers.PlayerCountAggregatorLogic import (
-    PlayerCountAggregatorCLIPresenter,
-    PlayerCountAggregatorLogic,
-)
 
 
 def main(argv: List[str] = []) -> int:
-    player_count_logic = PlayerCountAggregatorLogic()
+    player_count_logic = pca.Logic()
     locations_logic = LocationsCountLogic()
     quantity_logic = qn.Logic()
 
@@ -39,7 +36,7 @@ def main(argv: List[str] = []) -> int:
         return 0
 
     finally:
-        print(PlayerCountAggregatorCLIPresenter(player_count_logic).render())
+        print(pca.CLIPresenter(player_count_logic).render())
         print("\n" * 3)
         print(LocationsCountCLIPresenter(locations_logic).render(is_digital=False))
         print("\n")

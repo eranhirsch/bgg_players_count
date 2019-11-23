@@ -6,10 +6,7 @@ from typing import Iterable, Iterator, List
 from bgg.api.RequestPlays import RequestPlays
 from bgg.api.RequestThing import RequestThing
 from CLIGamesParser import CLIGamesParser
-from observers.PlayerCountAggregatorLogic import (
-    PlayerCountAggregatorCSVPresenter,
-    PlayerCountAggregatorLogic,
-)
+from observers import PlayerCountAggregator as pca
 
 SEPARATOR = "\t"
 
@@ -17,7 +14,7 @@ SEPARATOR = "\t"
 def main(argv: List[str] = []) -> int:
     with open(argv[1], "wt") as output:
         output.write(
-            f"{SEPARATOR.join(['Name', 'ID', 'Category', 'Year', 'Rank', 'Published', 'Ratings', 'Owned'] + PlayerCountAggregatorCSVPresenter.column_names())}\n"
+            f"{SEPARATOR.join(['Name', 'ID', 'Category', 'Year', 'Rank', 'Published', 'Ratings', 'Owned'] + pca.CSVPresenter.column_names())}\n"
         )
         output.writelines(process_games(CLIGamesParser(argv[2:])))
     return 0
@@ -46,12 +43,12 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
             f"Processing plays for game {index:03d}: {game.primary_name()} ({game.id()})"
         )
 
-        player_count_logic = PlayerCountAggregatorLogic()
+        player_count_logic = pca.Logic()
         for play in RequestPlays(thingid=game_id).queryAll():
             player_count_logic.visit(play)
 
         try:
-            yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{PlayerCountAggregatorCSVPresenter(player_count_logic, SEPARATOR).render()}\n"
+            yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{pca.CSVPresenter(player_count_logic, SEPARATOR).render()}\n"
         except Exception as e:
             print(f"Skipping {game.primary_name()} because: {e}")
 

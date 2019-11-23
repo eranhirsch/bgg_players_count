@@ -66,7 +66,7 @@ class ResultsCategory(Enum):
 TCategoryResult = Dict[int, int]
 
 
-class PlayerCountAggregatorLogic:
+class Logic:
     __results: Dict[ResultsCategory, TCategoryResult] = {}
 
     def __init__(self) -> None:
@@ -76,7 +76,7 @@ class PlayerCountAggregatorLogic:
     def visit(self, play: play.Play) -> None:
         players = play.players()
         self.__bump(
-            PlayerCountAggregatorLogic.__categorize(play),
+            Logic.__categorize(play),
             len(players) if players else 0,
             min(play.quantity(), SANITY_MAX_QUANTITY),
         )
@@ -104,15 +104,15 @@ class PlayerCountAggregatorLogic:
         return ResultsCategory.REGULAR
 
 
-class PlayerCountAggregatorCLIPresenter:
-    def __init__(self, logic: PlayerCountAggregatorLogic) -> None:
+class CLIPresenter:
+    def __init__(self, logic: Logic) -> None:
         self.__logic = logic
 
     def render(self) -> str:
         results = self.__logic.getResults()
         return "\n\n\n".join(
             [
-                f"// {label.name} {'/'*(36-len(label.name))}\n{PlayerCountAggregatorCLIPresenter.__formatCounts(counts)}"
+                f"// {label.name} {'/'*(36-len(label.name))}\n{CLIPresenter.__formatCounts(counts)}"
                 for label, counts in results.items()
             ]
         )
@@ -149,7 +149,7 @@ class PlayerCountAggregatorCLIPresenter:
         return "\n".join(out)
 
 
-class PlayerCountAggregatorCSVPresenter:
+class CSVPresenter:
     @staticmethod
     def column_names() -> List[str]:
         return (
@@ -158,9 +158,7 @@ class PlayerCountAggregatorCSVPresenter:
             + [f"{AGGREGATE_PLAYER_COUNT}+P"]
         )
 
-    def __init__(
-        self, logic: PlayerCountAggregatorLogic, separator: str = "\t"
-    ) -> None:
+    def __init__(self, logic: Logic, separator: str = "\t") -> None:
         self.__logic = logic
         self.__separator = separator
 
