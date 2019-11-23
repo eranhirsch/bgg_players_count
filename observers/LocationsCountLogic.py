@@ -39,11 +39,12 @@ class LocationsCountLogic:
 
 
 class LocationsCountCLIPresenter:
-    def __init__(self, logic: LocationsCountLogic) -> None:
+    def __init__(self, logic: LocationsCountLogic, is_digital: bool) -> None:
         self.__logic = logic
+        self.__is_digital = is_digital
 
-    def render(self, **kwargs) -> str:
-        locations = self.__logic.getResults(**kwargs)
+    def __str__(self) -> str:
+        locations = self.__logic.getResults(self.__is_digital)
         return "\n".join(
             ["Location\tCount"]
             + [

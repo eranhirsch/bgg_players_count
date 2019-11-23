@@ -92,7 +92,7 @@ class Presenter:
         self.__range = range
         self.__separator = separator
 
-    def render(self) -> str:
+    def __str__(self) -> str:
         results = self.__logic.getResults()
         return self.__separator.join(
             [f"{results.get(month, 0)}" for month in self.__range]

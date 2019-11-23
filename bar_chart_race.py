@@ -60,7 +60,7 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
         for play in RequestPlays(thingid=game_id).queryAll():
             bar_chart_race.visit(play)
 
-        yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), SEPARATOR).render()}\n"
+        yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), SEPARATOR)}\n"
 
         index += 1
 

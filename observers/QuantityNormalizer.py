@@ -19,10 +19,11 @@ class Logic:
 
 
 class Presenter:
-    def __init__(self, logic: Logic) -> None:
+    def __init__(self, logic: Logic, percentile: float = 0.99) -> None:
         self.__logic = logic
+        self.__percentile = percentile
 
-    def render(self, percentile: float = 0.99) -> str:
+    def __str__(self) -> str:
         results = self.__logic.getResults()
         total = sum(results.values())
         accumulated = 0
@@ -30,6 +31,6 @@ class Presenter:
         for i in range(max(results.keys())):
             accumulated += results.get(i, 0)
             output.append(f"{i}: {accumulated}")
-            if accumulated / total > percentile:
+            if accumulated / total > self.__percentile:
                 break
         return ",".join(output)

@@ -36,13 +36,13 @@ def main(argv: List[str] = []) -> int:
         return 0
 
     finally:
-        print(pca.CLIPresenter(player_count_logic).render())
+        print(pca.CLIPresenter(player_count_logic))
         print("\n" * 3)
-        print(LocationsCountCLIPresenter(locations_logic).render(is_digital=False))
+        print(LocationsCountCLIPresenter(locations_logic, is_digital=False))
         print("\n")
-        print(LocationsCountCLIPresenter(locations_logic).render(is_digital=True))
+        print(LocationsCountCLIPresenter(locations_logic, is_digital=True))
         print("\n")
-        print(qn.Presenter(quantity_logic).render(percentile=0.99))
+        print(qn.Presenter(quantity_logic, percentile=0.99))
 
 
 if __name__ == "__main__":

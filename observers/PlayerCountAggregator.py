@@ -108,7 +108,7 @@ class CLIPresenter:
     def __init__(self, logic: Logic) -> None:
         self.__logic = logic
 
-    def render(self) -> str:
+    def __str__(self) -> str:
         results = self.__logic.getResults()
         return "\n\n\n".join(
             [
@@ -162,7 +162,7 @@ class CSVPresenter:
         self.__logic = logic
         self.__separator = separator
 
-    def render(self) -> str:
+    def __str__(self) -> str:
         results = self.__logic.getResults()
         regular = results[ResultsCategory.REGULAR]
         digital = results[ResultsCategory.DIGITAL]
