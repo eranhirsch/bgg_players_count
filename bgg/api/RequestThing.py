@@ -84,10 +84,13 @@ class RequestThing(RequestBase):
             # Disable cache for type filtering
             return None
 
-        if len(kwargs["flags"]) > 0:
+        flags = kwargs["flags"]
+        if len(flags) > 1:
             # Flags might be mixed together and create too many different
             # combinations which basically return the same thing, so just
             # disabling caching for flags atm
             return None
-
-        return f"{firstx(self.__ids)}"
+        elif len(flags) == 1:
+            return f"{firstx(self.__ids)}_{firstx(flags)}"
+        else:
+            return f"{firstx(self.__ids)}"
