@@ -3,7 +3,8 @@
 import datetime
 import sys
 import unicodedata
-from typing import Iterable, Iterator, List
+from collections import defaultdict
+from typing import Dict, Iterable, Iterator, List, Set
 
 from bgg.api.RequestPlays import RequestPlays
 from bgg.api.RequestThing import RequestThing
@@ -12,6 +13,9 @@ from observers import BarChartRace as bcr
 
 SEPARATOR = "\t"
 MISSING_CATEGORY_LABEL = "[Unknown]"
+COLLECTED_FAMILIES: Set[int] = {36963, 39442, 54682}
+
+g_games_in_family: Dict[str, Set[int]] = defaultdict(set)
 
 
 def main(argv: List[str] = []) -> int:
@@ -38,6 +42,18 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
         game = RequestThing(game_id).query(with_stats=True).only_item()
         if game.type() != "boardgame":
             print(f"Skipping '{game.type()}': {game.primary_name()} ({game.id()})")
+            continue
+
+        collected_family = [
+            family_entry[1]
+            for family_entry in game.links()["boardgamefamily"]
+            if family_entry[0] in COLLECTED_FAMILIES
+        ][0]
+        if collected_family:
+            g_games_in_family[collected_family].add(game.id())
+            print(
+                f"Skipping '{game.primary_name()}' ({game.id()}). It is part of family: {collected_family}"
+            )
             continue
 
         name = (
