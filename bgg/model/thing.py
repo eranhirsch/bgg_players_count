@@ -285,9 +285,7 @@ class Item(ModelBase):
 
     def __assert_flag(self, flag: str) -> None:
         if flag not in self.__flags:
-            raise Exception(
-                f"{flag} data not requested! Add '{flag}' to query flags"
-            )
+            raise Exception(f"{flag} data not requested! Add '{flag}' to query flags")
 
     def __assert_type(self, type: str) -> None:
         if type != self.type():
