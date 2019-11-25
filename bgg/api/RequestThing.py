@@ -53,7 +53,7 @@ class RequestThing(RequestItemsBase[thing.Item]):
         if "rating_comments" in flags:
             raise NotImplementedError("Rating Comments API currently not supported")
 
-        self.__flags = set(*flags)
+        self.__flags = flags
         return self
 
     def _api_version(self) -> int:
