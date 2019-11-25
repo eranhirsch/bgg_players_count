@@ -46,9 +46,6 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
     index = 1
     for game_id in games:
         game = RequestThing(game_id).query(with_stats=True).only_item()
-        if game.type() != "boardgame":
-            print(f"Skipping '{game.type()}': {game.primary_name()} ({game.id()})")
-            continue
 
         collected_families = [
             family_entry[1]
@@ -61,6 +58,10 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
             print(
                 f"Skipping '{game.primary_name()}' ({game.id()}). It is part of family: {collected_family}"
             )
+            continue
+
+        if game.type() != "boardgame":
+            print(f"Skipping '{game.type()}': {game.primary_name()} ({game.id()})")
             continue
 
         metadata = [
@@ -118,7 +119,9 @@ def process_family(aggr_by: int, family_name: str, family_games: Iterable[int]) 
 
         if game.ratings().users_rated() > popular_users_rated:
             popular_users_rated = game.ratings().users_rated()
-            popular_category = game.primary_category()
+            if game.type() == "boardgame":
+                # expansions don't have categories
+                popular_category = game.primary_category()
             popular_thumbnail = game.thumbnail()
 
         if not earliest_year or game.year_published() < earliest_year:
