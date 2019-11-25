@@ -72,9 +72,6 @@ class RequestThing(RequestBase):
     def _build_response(self, root: ET.Element, **kwargs) -> thing.Items:
         return thing.Items(root).with_flags(kwargs["flags"])
 
-    def _should_cache_request(self) -> bool:
-        return len(self.__ids) == 1
-
     def _cache_file_name(self, **kwargs) -> Optional[str]:
         if len(self.__ids) > 1:
             # Disable cache for multiple-point queries

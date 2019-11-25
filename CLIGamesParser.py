@@ -1,11 +1,13 @@
 from typing import Iterable, Iterator, List
 
+from bgg.api.RequestFamily import RequestFamily
 from bgg.api.RequestList import RequestList
 from bgg.api.RequestPlays import RequestPlays
 from bgg.api.RequestSearch import RequestSearch
 from bgg.utils import firstx
 
 LIST_PREFIX = "list-"
+FAMILY_PREFIX = "family-"
 FLAG_ALL_CACHED = "--all-cached"
 
 
@@ -32,6 +34,16 @@ class CLIGamesParser(Iterable[int]):
                     yield item.object_id()
 
                 print(f"Finished GeekList {geeklist.id()}")
+
+            elif user_input.startswith(FAMILY_PREFIX):
+                family_id = int(user_input.split(FAMILY_PREFIX)[1])
+                family = RequestFamily(family_id).query().only_item()
+                print(f'Iterating over family "{family.primary_name()}"')
+
+                for item_id, item_name in family:
+                    yield item_id
+
+                print(f"Finished family {family.id()}")
 
             elif user_input.isdigit():
                 yield int(user_input)

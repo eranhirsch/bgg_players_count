@@ -3,22 +3,8 @@ import datetime
 from typing import Dict, Iterable, Iterator, List, Optional, Set, Sized, Tuple
 
 from ..utils import firstx, nonthrows
+from . import Link, Name
 from .ModelBase import ModelBase
-
-
-class Name(ModelBase):
-    @classmethod
-    def _rootTagName(cls) -> str:
-        return "name"
-
-    def type(self) -> str:
-        return self._field("type")
-
-    def sort_index(self) -> int:
-        return int(self._field("sortindex"))
-
-    def value(self) -> str:
-        return self._field("value")
 
 
 class PollResult(ModelBase):
@@ -85,21 +71,6 @@ class Poll(ModelBase, Sized, Iterable[PollResults]):
 
     def __len__(self) -> int:
         return len(self._root)
-
-
-class Link(ModelBase):
-    @classmethod
-    def _rootTagName(cls) -> str:
-        return "link"
-
-    def type(self) -> str:
-        return self._field("type")
-
-    def id(self) -> int:
-        return int(self._field("id"))
-
-    def value(self) -> str:
-        return self._field("value")
 
 
 class Rank(ModelBase):
