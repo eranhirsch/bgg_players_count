@@ -130,7 +130,9 @@ def process_family(aggr_by: int, family_name: str, family_games: Iterable[int]) 
         index += 1
 
     metadata = [
-        f"{earliest_year}-{normalize_str(family_name)}",
+        # I don't use the word family here because it would clash with the
+        # family category
+        f"[SERIES] {earliest_year}-{normalize_str(family_name)}",
         popular_category or MISSING_CATEGORY_LABEL,
         popular_thumbnail or "",
     ]
