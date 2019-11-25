@@ -45,7 +45,7 @@ def normalize_str(s: str) -> str:
 
 def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
     for index, game_id in enumerate(games):
-        game = RequestThing(game_id).with_flags("stats").query().only_item()
+        game = RequestThing(game_id).with_flags("stats").query_first()
 
         collected_families = [
             family_id
@@ -110,7 +110,7 @@ def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
     popular_thumbnail = None
     popular_users_rated = 0
     for index, game_id in enumerate(family_games):
-        game = RequestThing(game_id).with_flags("stats").query().only_item()
+        game = RequestThing(game_id).with_flags("stats").query_first()
 
         print(
             f"Adding {index:03d} {game.primary_name()} ({game.id()}) to family {family.primary_name()}"

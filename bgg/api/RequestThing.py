@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Optional, Sequence, Set
+from typing import Dict, Iterator, Optional, Sequence, Set
 
 from ..model import thing
 from ..utils import firstx
@@ -16,7 +16,7 @@ KNOWN_FLAGS = {
 }
 
 
-class RequestThing(RequestBase):
+class RequestThing(RequestBase[thing.Items]):
     """
     A request for a specific entry in the bgg things DB. Things are the core
     abstraction for games, expansions, etc...
@@ -26,6 +26,7 @@ class RequestThing(RequestBase):
     def __init__(self, *args: int) -> None:
         self.__ids: Sequence[int] = args
         self.__types: Sequence[str] = []
+        self.__flags: Set[str] = set()
 
     def of_types(self, *args: str) -> "RequestThing":
         self.__types = args
@@ -52,11 +53,27 @@ class RequestThing(RequestBase):
         if "rating_comments" in flags:
             raise NotImplementedError("Rating Comments API currently not supported")
 
-        self.__flags: Set[str] = set(*flags)
+        self.__flags = set(*flags)
         return self
 
-    def query(self) -> thing.Items:
-        return self._fetch()
+    def query(self) -> Iterator[thing.Item]:
+        for item in self._fetch():
+            yield item.with_flags(self.__flags)
+
+    def query_first(self) -> thing.Item:
+        if len(self.__ids) > 1:
+            raise Exception(f"Requested more than 1 item, use 'query' instead")
+
+        items_iter = iter(self.query())
+        item = next(items_iter)
+
+        try:
+            next(items_iter)
+            raise Exception(f"Response had more than 1 item in it!")
+        except StopIteration:
+            # If we caught a StopIteration it means the iterator had no more
+            # values in it; Which is what we want
+            return item
 
     def _api_version(self) -> int:
         return 2
@@ -76,7 +93,7 @@ class RequestThing(RequestBase):
         return params
 
     def _build_response(self, root: ET.Element, **kwargs) -> thing.Items:
-        return thing.Items(root).with_flags(self.__flags)
+        return thing.Items(root)
 
     def _cache_file_name(self, **kwargs) -> Optional[str]:
         if len(self.__ids) > 1:
