@@ -87,13 +87,19 @@ class Presenter:
     def column_names(range: DateRange) -> List[str]:
         return [str(month) for month in range]
 
-    def __init__(self, logic: Logic, range: DateRange, separator: str = "\t") -> None:
+    def __init__(
+        self, logic: Logic, range: DateRange, min_year: int, separator: str = "\t"
+    ) -> None:
         self.__logic = logic
         self.__range = range
         self.__separator = separator
+        self.__min_year = min_year
 
     def __str__(self) -> str:
         results = self.__logic.getResults()
         return self.__separator.join(
-            [f"{results.get(month, 0)}" for month in self.__range]
+            [
+                f"{results.get(month, 0) if not month < Month(self.__min_year, 1) else 0}"
+                for month in self.__range
+            ]
         )

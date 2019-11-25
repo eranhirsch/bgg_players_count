@@ -79,7 +79,7 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
             bar_chart_race.visit(play)
 
         if plays >= MIN_PLAYS_FOR_DISPLAY:
-            yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), SEPARATOR)}\n"
+            yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), game.year_published(), SEPARATOR)}\n"
         else:
             print(
                 f"Game {game.primary_name()} ({game.id()}) only had {plays} plays so it won't be added to the output!"
@@ -139,7 +139,7 @@ def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
         f"Finished processing family {family.primary_name()}, it has {index-1} games in it"
     )
 
-    return f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), SEPARATOR)}\n"
+    return f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), earliest_year or 1999, SEPARATOR)}\n"
 
 
 if __name__ == "__main__":
