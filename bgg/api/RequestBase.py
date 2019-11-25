@@ -9,6 +9,7 @@ from typing import IO, Dict, Generic, Iterator, Optional, TypeVar
 
 import requests
 
+from ..model.ModelBase import ModelBase
 from ..utils import InlineOutput, nonthrows
 from .RateLimiter import RateLimiter
 
@@ -34,7 +35,7 @@ RETRY_BASE_INTERVAL = datetime.timedelta(seconds=1)
 TEMP_ROOT_DIR = ".tmp"
 CACHE_ROOT_DIR = "bggcache"
 
-TResponse = TypeVar("TResponse")
+TResponse = TypeVar("TResponse", bound=ModelBase)
 
 
 class RequestBase(Generic[TResponse]):
