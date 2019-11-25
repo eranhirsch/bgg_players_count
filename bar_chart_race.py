@@ -38,6 +38,10 @@ def window(aggr_by: int) -> bcr.DateRange:
     )
 
 
+def normalize_str(s: str) -> str:
+    return unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii")
+
+
 def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
     index = 1
     for game_id in games:
@@ -58,14 +62,8 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
             )
             continue
 
-        name = (
-            unicodedata.normalize("NFKD", game.primary_name())
-            .encode("ascii", "ignore")
-            .decode("ascii")
-        )
-
         metadata = [
-            f"{game.year_published()}-{name}",
+            f"{game.year_published()}-{normalize_str(game.primary_name())}",
             game.primary_category() or MISSING_CATEGORY_LABEL,
             game.thumbnail() or "",
         ]
@@ -103,12 +101,6 @@ def process_families(aggr_by: int) -> Iterator[str]:
 
 
 def process_family(aggr_by: int, family_name: str, family_games: Iterable[int]) -> str:
-    name = (
-        unicodedata.normalize("NFKD", family_name)
-        .encode("ascii", "ignore")
-        .decode("ascii")
-    )
-
     bar_chart_race = bcr.Logic(aggr_by)
 
     earliest_year = None
@@ -120,7 +112,7 @@ def process_family(aggr_by: int, family_name: str, family_games: Iterable[int]) 
         game = RequestThing(game_id).query(with_stats=True).only_item()
 
         print(
-            f"Adding {index:03d} {game.primary_name()} ({game.id()}) to family {name}"
+            f"Adding {index:03d} {game.primary_name()} ({game.id()}) to family {family_name}"
         )
 
         if game.ratings().users_rated() > popular_users_rated:
@@ -137,12 +129,12 @@ def process_family(aggr_by: int, family_name: str, family_games: Iterable[int]) 
         index += 1
 
     metadata = [
-        f"{earliest_year}-{name}",
+        f"{earliest_year}-{normalize_str(family_name)}",
         popular_category or MISSING_CATEGORY_LABEL,
         popular_thumbnail or "",
     ]
 
-    print(f"Finished processing family {name}, it has {index-1} games in it")
+    print(f"Finished processing family {family_name}, it has {index-1} games in it")
 
     return f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), SEPARATOR)}\n"
 
