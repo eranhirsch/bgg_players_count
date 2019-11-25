@@ -1,38 +1,23 @@
 import xml.etree.ElementTree as ET
 from typing import Dict, Optional, Sequence
 
-from ..model import Items, family
-from ..utils import firstx
-from .RequestBase import RequestBase
+from ..model import family
+from .RequestBase import RequestItemsBase
 
 
-class RequestFamily(RequestBase[Items[family.Item]]):
+class RequestFamily(RequestItemsBase[family.Item]):
     """
     Things could be grouped in abstract 'families' based on a commonality.
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc4
     """
 
     def __init__(self, *args: int) -> None:
-        self.__ids: Sequence[int] = args
+        super().__init__(*args)
         self.__types: Sequence[str] = []
 
     def of_types(self, *args: str) -> "RequestFamily":
         self.__types = args
         return self
-
-    def query(self) -> Items[family.Item]:
-        return self._fetch()
-
-    def query_first(self) -> family.Item:
-        if len(self.__ids) > 1:
-            raise Exception(f"Requested more than 1 item, use 'query' instead")
-
-        items = self.query()
-
-        if len(items) > 1:
-            raise Exception(f"There is more than one item in the response {len(items)}")
-
-        return firstx(items)
 
     def _api_version(self) -> int:
         return 2
@@ -41,25 +26,21 @@ class RequestFamily(RequestBase[Items[family.Item]]):
         return "family"
 
     def _api_params(self, **kwargs) -> Dict[str, str]:
-        params = {"id": ",".join([f"{id}" for id in self.__ids])}
+        params = super()._api_params(**kwargs)
 
         if self.__types:
             params.update({"type": ",".join(self.__types)})
 
         return params
 
-    def _build_response(self, root: ET.Element, **kwargs) -> Items[family.Item]:
-        return Items(root, lambda item_elem: family.Item(item_elem))
+    def _build_item(self, item_elem: ET.Element) -> family.Item:
+        return family.Item(item_elem)
 
     def _cache_file_name(self, **kwargs) -> Optional[str]:
-        return None
-
-        if len(self.__ids) > 1:
-            # Disable cache for multiple-point queries
-            return None
+        cache_file_name = super()._cache_file_name(**kwargs)
 
         if len(self.__types) > 0:
             # Disable cache for type filtering
             return None
 
-        return f"{firstx(self.__ids)}"
+        return cache_file_name

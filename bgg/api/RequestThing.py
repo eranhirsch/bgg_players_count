@@ -1,9 +1,9 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Iterator, Optional, Sequence, Set
+from typing import Dict, Optional, Sequence, Set
 
-from ..model import Items, thing
+from ..model import thing
 from ..utils import firstx
-from .RequestBase import RequestBase
+from .RequestBase import RequestItemsBase
 
 KNOWN_FLAGS = {
     "stats",
@@ -16,7 +16,7 @@ KNOWN_FLAGS = {
 }
 
 
-class RequestThing(RequestBase[Items[thing.Item]]):
+class RequestThing(RequestItemsBase[thing.Item]):
     """
     A request for a specific entry in the bgg things DB. Things are the core
     abstraction for games, expansions, etc...
@@ -24,7 +24,7 @@ class RequestThing(RequestBase[Items[thing.Item]]):
     """
 
     def __init__(self, *args: int) -> None:
-        self.__ids: Sequence[int] = args
+        super().__init__(*args)
         self.__types: Sequence[str] = []
         self.__flags: Set[str] = set()
 
@@ -56,25 +56,6 @@ class RequestThing(RequestBase[Items[thing.Item]]):
         self.__flags = set(*flags)
         return self
 
-    def query(self) -> Iterator[thing.Item]:
-        for item in self._fetch():
-            yield item.with_flags(self.__flags)
-
-    def query_first(self) -> thing.Item:
-        if len(self.__ids) > 1:
-            raise Exception(f"Requested more than 1 item, use 'query' instead")
-
-        items_iter = iter(self.query())
-        item = next(items_iter)
-
-        try:
-            next(items_iter)
-            raise Exception(f"Response had more than 1 item in it!")
-        except StopIteration:
-            # If we caught a StopIteration it means the iterator had no more
-            # values in it; Which is what we want
-            return item
-
     def _api_version(self) -> int:
         return 2
 
@@ -82,7 +63,7 @@ class RequestThing(RequestBase[Items[thing.Item]]):
         return "thing"
 
     def _api_params(self, **kwargs) -> Dict[str, str]:
-        params = {"id": ",".join([f"{id}" for id in self.__ids])}
+        params = super()._api_params(**kwargs)
 
         if self.__types:
             params.update({"type": ",".join(self.__types)})
@@ -92,13 +73,11 @@ class RequestThing(RequestBase[Items[thing.Item]]):
 
         return params
 
-    def _build_response(self, root: ET.Element, **kwargs) -> Items[thing.Item]:
-        return Items(root, lambda item_elem: thing.Item(item_elem))
+    def _build_item(self, item_elem: ET.Element) -> thing.Item:
+        return thing.Item(item_elem).with_flags(self.__flags)
 
     def _cache_file_name(self, **kwargs) -> Optional[str]:
-        if len(self.__ids) > 1:
-            # Disable cache for multiple-point queries
-            return None
+        cache_file_name = super()._cache_file_name(**kwargs)
 
         if len(self.__types) > 0:
             # Disable cache for type filtering
@@ -109,7 +88,8 @@ class RequestThing(RequestBase[Items[thing.Item]]):
             # combinations which basically return the same thing, so just
             # disabling caching for flags atm
             return None
-        elif len(self.__flags) == 1:
-            return f"{firstx(self.__ids)}_{firstx(self.__flags)}"
-        else:
-            return f"{firstx(self.__ids)}"
+
+        if len(self.__flags) == 1 and cache_file_name:
+            return f"{cache_file_name}_{firstx(self.__flags)}"
+
+        return cache_file_name

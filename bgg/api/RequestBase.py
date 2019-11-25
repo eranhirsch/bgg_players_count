@@ -5,12 +5,13 @@ import os
 import time
 import xml.etree.ElementTree as ET
 from enum import IntEnum
-from typing import IO, Dict, Generic, Iterator, Optional, TypeVar
+from typing import IO, Dict, Generic, Iterator, Optional, Sequence, TypeVar
 
 import requests
 
+from ..model import Items
 from ..model.ModelBase import ModelBase
-from ..utils import InlineOutput, nonthrows
+from ..utils import InlineOutput, firstx, nonthrows
 from .RateLimiter import RateLimiter
 
 API_BASE_URL = {
@@ -172,6 +173,43 @@ class RequestBase(Generic[TResponse]):
     @classmethod
     def __getRequestTypeCacheRootDir(cls) -> str:
         return os.path.join(TEMP_ROOT_DIR, CACHE_ROOT_DIR, cls.__name__)
+
+
+class RequestItemsBase(RequestBase[Items[TResponse]]):
+    @abc.abstractmethod
+    def _build_item(self, item_elem: ET.Element) -> TResponse:
+        pass
+
+    def __init__(self, *args: int) -> None:
+        self.__ids: Sequence[int] = args
+
+    def query_first(self, **kwargs) -> TResponse:
+        if len(self.__ids) > 1:
+            raise Exception(f"Requested more than 1 item, use 'query' instead")
+
+        items_iter = iter(self._fetch(**kwargs))
+        item = next(items_iter)
+
+        try:
+            next(items_iter)
+            raise Exception(f"Response had more than 1 item in it!")
+        except StopIteration:
+            # If we caught a StopIteration it means the iterator had no more
+            # values in it; Which is what we want
+            return item
+
+    def _api_params(self, **kwargs) -> Dict[str, str]:
+        return {"id": ",".join([f"{id}" for id in self.__ids])}
+
+    def _build_response(self, root: ET.Element, **kwargs) -> Items[TResponse]:
+        return Items(root, self._build_item)
+
+    def _cache_file_name(self, **kwargs) -> Optional[str]:
+        if len(self.__ids) > 1:
+            # Disable cache for multiple-point queries
+            return None
+
+        return f"{firstx(self.__ids)}"
 
 
 class ServerIssue(Exception):
