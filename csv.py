@@ -26,7 +26,7 @@ def main(argv: List[str] = []) -> int:
 
 def process_games(games: Iterable[int]) -> Iterator[str]:
     for index, game_id in enumerate(games):
-        game = RequestThing(game_id).query(with_stats=True).only_item()
+        game = RequestThing(game_id).with_flags("stats").query().only_item()
         if game.type() != "boardgame":
             print(f"Skipping '{game.type()}': {game.primary_name()} ({game.id()})")
             continue

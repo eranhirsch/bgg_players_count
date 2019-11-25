@@ -37,7 +37,7 @@ class CLIGamesParser(Iterable[int]):
 
             elif user_input.startswith(FAMILY_PREFIX):
                 family_id = int(user_input.split(FAMILY_PREFIX)[1])
-                family = RequestFamily(family_id).query().only_item()
+                family = RequestFamily(family_id).query_first()
                 print(f'Iterating over family "{family.primary_name()}"')
 
                 for item_id, item_name in family:

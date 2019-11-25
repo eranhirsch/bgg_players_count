@@ -1,6 +1,6 @@
 from typing import Iterable, Iterator, Optional, Sized, Tuple
 
-from ..utils import firstx, nonthrows
+from ..utils import nonthrows
 from . import Link, Name
 from .ModelBase import ModelBase
 
@@ -58,11 +58,6 @@ class Items(ModelBase, Sized, Iterable[Item]):
     @classmethod
     def _rootTagName(cls) -> str:
         return "items"
-
-    def only_item(self) -> Item:
-        if len(self) > 1:
-            raise Exception(f"There is more than one item in the response {len(self)}")
-        return firstx(self)
 
     def __len__(self) -> int:
         return len(self._root)

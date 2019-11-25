@@ -5,6 +5,16 @@ from ..model import thing
 from ..utils import firstx
 from .RequestBase import RequestBase
 
+KNOWN_FLAGS = {
+    "stats",
+    "",
+    "video",
+    "historical",
+    "marketplace",
+    "comments",
+    "rating_comments",
+}
+
 
 class RequestThing(RequestBase):
     """
@@ -21,36 +31,32 @@ class RequestThing(RequestBase):
         self.__types = args
         return self
 
-    def query(
-        self,
-        with_versions: bool = False,
-        with_videos: bool = False,
-        with_stats: bool = False,
-        with_historical: bool = False,
-        with_marketplace: bool = False,
-        with_comments: bool = False,
-        with_rating_comments: bool = False,
-    ) -> thing.Items:
-        flags: Set[str] = set()
-        if with_versions:
-            flags.add("versions")
-        if with_videos:
+    def with_flags(self, *flags_raw: str) -> "RequestThing":
+        flags = set(flags_raw)
+
+        if not flags.issubset(KNOWN_FLAGS):
+            raise Exception(f"Unknown flags {', '.join(flags-KNOWN_FLAGS)}")
+
+        if "video" in flags:
             raise NotImplementedError("Videos API currently not supported")
-        if with_stats:
-            flags.add("stats")
-        if with_historical:
+        if "historical" in flags:
             raise NotImplementedError("Historical API currently not supported")
-        if with_marketplace:
+        if "marketplace" in flags:
             raise NotImplementedError("Marketplace API currently not supported")
-        if with_comments:
-            if with_rating_comments:
+        if "comments" in flags:
+            if "rating_comments" in flags:
                 raise Exception(
                     "Can't use both comments and rating_comments for thing requests"
                 )
             raise NotImplementedError("Comments API currently not supported")
-        if with_rating_comments:
+        if "rating_comments" in flags:
             raise NotImplementedError("Rating Comments API currently not supported")
-        return self._fetch(flags=flags)
+
+        self.__flags: Set[str] = set(*flags)
+        return self
+
+    def query(self) -> thing.Items:
+        return self._fetch()
 
     def _api_version(self) -> int:
         return 2
@@ -64,13 +70,13 @@ class RequestThing(RequestBase):
         if self.__types:
             params.update({"type": ",".join(self.__types)})
 
-        if kwargs["flags"]:
-            params.update({flag: "1" for flag in kwargs["flags"]})
+        if self.__flags:
+            params.update({flag: "1" for flag in self.__flags})
 
         return params
 
     def _build_response(self, root: ET.Element, **kwargs) -> thing.Items:
-        return thing.Items(root).with_flags(kwargs["flags"])
+        return thing.Items(root).with_flags(self.__flags)
 
     def _cache_file_name(self, **kwargs) -> Optional[str]:
         if len(self.__ids) > 1:
@@ -81,13 +87,12 @@ class RequestThing(RequestBase):
             # Disable cache for type filtering
             return None
 
-        flags = kwargs["flags"]
-        if len(flags) > 1:
+        if len(self.__flags) > 1:
             # Flags might be mixed together and create too many different
             # combinations which basically return the same thing, so just
             # disabling caching for flags atm
             return None
-        elif len(flags) == 1:
-            return f"{firstx(self.__ids)}_{firstx(flags)}"
+        elif len(self.__flags) == 1:
+            return f"{firstx(self.__ids)}_{firstx(self.__flags)}"
         else:
             return f"{firstx(self.__ids)}"

@@ -6,7 +6,7 @@ from ..utils import firstx
 from .RequestBase import RequestBase
 
 
-class RequestFamily(RequestBase):
+class RequestFamily(RequestBase[family.Items]):
     """
     Things could be grouped in abstract 'families' based on a commonality.
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc4
@@ -22,6 +22,17 @@ class RequestFamily(RequestBase):
 
     def query(self) -> family.Items:
         return self._fetch()
+
+    def query_first(self) -> family.Item:
+        if len(self.__ids) > 1:
+            raise Exception(f"Requested more than 1 item, use 'query' instead")
+
+        items = self.query()
+
+        if len(items) > 1:
+            raise Exception(f"There is more than one item in the response {len(items)}")
+
+        return firstx(items)
 
     def _api_version(self) -> int:
         return 2

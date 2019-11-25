@@ -45,7 +45,7 @@ def normalize_str(s: str) -> str:
 
 def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
     for index, game_id in enumerate(games):
-        game = RequestThing(game_id).query(with_stats=True).only_item()
+        game = RequestThing(game_id).with_flags("stats").query().only_item()
 
         collected_families = [
             family_id
@@ -101,7 +101,7 @@ def process_families(aggr_by: int) -> Iterator[str]:
 
 
 def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
-    family = RequestFamily(id).query().only_item()
+    family = RequestFamily(id).query_first()
 
     bar_chart_race = bcr.Logic(aggr_by)
 
@@ -110,7 +110,7 @@ def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
     popular_thumbnail = None
     popular_users_rated = 0
     for index, game_id in enumerate(family_games):
-        game = RequestThing(game_id).query(with_stats=True).only_item()
+        game = RequestThing(game_id).with_flags("stats").query().only_item()
 
         print(
             f"Adding {index:03d} {game.primary_name()} ({game.id()}) to family {family.primary_name()}"
