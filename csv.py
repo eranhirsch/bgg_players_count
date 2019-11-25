@@ -12,7 +12,7 @@ from observers import PlayerCountAggregator as pca
 from observers import SessionCounter as sc
 
 SEPARATOR = "\t"
-COLLECTED_FAMILIES: Set[int] = {36963, 39442, 54682, 2580}
+COLLECTED_FAMILIES: Set[int] = {36963, 39442, 54682, 2580, 25246, 23234}
 MIN_PLAYS_FOR_DISPLAY = 50
 
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
