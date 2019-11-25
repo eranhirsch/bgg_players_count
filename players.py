@@ -17,8 +17,7 @@ def main(argv: List[str] = []) -> int:
     quantity_logic = qn.Logic()
 
     try:
-        index = 1
-        for game_id in CLIGamesParser(argv[1:]):
+        for index, game_id in enumerate(CLIGamesParser(argv[1:])):
             game = RequestThing(game_id).query().only_item()
             print(
                 f"Processing plays for game {index:03d}: {game.primary_name()} ({game_id})"
@@ -27,7 +26,6 @@ def main(argv: List[str] = []) -> int:
                 player_count_logic.visit(play)
                 locations_logic.visit(play)
                 quantity_logic.visit(play)
-            index += 1
 
         print(f"Finished processing")
         return 0
