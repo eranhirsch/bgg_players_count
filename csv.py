@@ -25,8 +25,7 @@ def main(argv: List[str] = []) -> int:
 
 
 def process_games(games: Iterable[int]) -> Iterator[str]:
-    index = 1
-    for game_id in games:
+    for index, game_id in enumerate(games):
         game = RequestThing(game_id).query(with_stats=True).only_item()
         if game.type() != "boardgame":
             print(f"Skipping '{game.type()}': {game.primary_name()} ({game.id()})")
@@ -61,8 +60,6 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
             yield f"{SEPARATOR.join([str(field) for field in fields])}\n"
         except Exception as e:
             print(f"Skipping {game.primary_name()} because: {e}")
-
-        index += 1
 
     print(f"Finished processing {index-1} games")
 

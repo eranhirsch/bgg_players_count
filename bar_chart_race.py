@@ -43,8 +43,7 @@ def normalize_str(s: str) -> str:
 
 
 def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
-    index = 1
-    for game_id in games:
+    for index, game_id in enumerate(games):
         game = RequestThing(game_id).query(with_stats=True).only_item()
 
         collected_families = [
@@ -87,8 +86,6 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
                 f"Game {game.primary_name()} ({game.id()}) only had {plays} plays so it won't be added to the output!"
             )
 
-        index += 1
-
     print(f"Finished processing {index-1} games")
 
 
@@ -109,8 +106,7 @@ def process_family(aggr_by: int, family_name: str, family_games: Iterable[int]) 
     popular_category = None
     popular_thumbnail = None
     popular_users_rated = 0
-    index = 1
-    for game_id in family_games:
+    for index, game_id in enumerate(family_games):
         game = RequestThing(game_id).query(with_stats=True).only_item()
 
         print(
@@ -129,8 +125,6 @@ def process_family(aggr_by: int, family_name: str, family_games: Iterable[int]) 
 
         for play in RequestPlays(thingid=game_id).queryAll():
             bar_chart_race.visit(play)
-
-        index += 1
 
     metadata = [
         # I don't use the word family here because it would clash with the
