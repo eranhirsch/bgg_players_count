@@ -121,10 +121,11 @@ def process_family(id: int, family_games: Iterable[int]) -> str:
             popular_users_rated = game.ratings().users_rated()
             if game.type() == "boardgame":
                 # expansions don't have categories
-                popular_category = game.primary_category()
-                best_rank = game.overall_rank()
+                if game.primary_category():
+                    popular_category = game.primary_category()
+                if game.overall_rank():
+                    best_rank = game.overall_rank()
                 published_play_count = game.player_count()
-            game.thumbnail()
 
         if not earliest_year or game.year_published() < earliest_year:
             earliest_year = game.year_published()
