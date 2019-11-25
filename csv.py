@@ -21,8 +21,8 @@ g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
 def main(argv: List[str] = []) -> int:
     fields = (
         ["Name", "ID", "Category", "Year", "Rank", "Published", "Ratings", "Owned"]
-        + pca.CSVPresenter.column_names()
         + sc.Presenter.column_names()
+        + pca.CSVPresenter.column_names()
     )
     with open(argv[1], "wt") as output:
         output.write(f"{SEPARATOR.join(fields)}\n")
