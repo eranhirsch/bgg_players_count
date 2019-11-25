@@ -50,12 +50,13 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
             print(f"Skipping '{game.type()}': {game.primary_name()} ({game.id()})")
             continue
 
-        collected_family = [
+        collected_families = [
             family_entry[1]
             for family_entry in game.links()["boardgamefamily"]
             if family_entry[0] in COLLECTED_FAMILIES
-        ][0]
-        if collected_family:
+        ]
+        if collected_families:
+            collected_family = collected_families[0]
             g_games_in_family[collected_family].add(game.id())
             print(
                 f"Skipping '{game.primary_name()}' ({game.id()}). It is part of family: {collected_family}"
