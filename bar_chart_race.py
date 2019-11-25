@@ -25,6 +25,7 @@ def main(argv: List[str] = []) -> int:
             f"{SEPARATOR.join(['Name', 'Category', 'Image'] + bcr.Presenter.column_names(window(aggr_by)))}\n"
         )
         output.writelines(process_games(aggr_by, CLIGamesParser(argv[3:])))
+        output.writelines(process_families(aggr_by))
     return 0
 
 
@@ -81,6 +82,57 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
         index += 1
 
     print(f"Finished processing {index-1} games")
+
+
+def process_families(aggr_by: int) -> Iterator[str]:
+    for family_name, family_games in g_games_in_family.items():
+        if not family_games:
+            raise Exception(f"Family {family_name} has no entries in it!")
+
+        name = (
+            unicodedata.normalize("NFKD", family_name)
+            .encode("ascii", "ignore")
+            .decode("ascii")
+        )
+
+        bar_chart_race = bcr.Logic(aggr_by)
+
+        earliest_year = None
+        popular_category = None
+        popular_thumbnail = None
+        popular_users_rated = 0
+        index = 1
+        for game_id in family_games:
+            game = RequestThing(game_id).query(with_stats=True).only_item()
+
+            print(
+                f"Adding {index:03d} {game.primary_name()} ({game.id()}) to family {name}"
+            )
+
+            if game.ratings().users_rated() > popular_users_rated:
+                popular_users_rated = game.ratings().users_rated()
+                popular_category = game.primary_category()
+                popular_thumbnail = game.thumbnail()
+
+            if not earliest_year or game.year_published() < earliest_year:
+                earliest_year = game.year_published()
+
+            for play in RequestPlays(thingid=game_id).queryAll():
+                bar_chart_race.visit(play)
+
+            index += 1
+
+        metadata = [
+            f"{earliest_year}-{name}",
+            popular_category or MISSING_CATEGORY_LABEL,
+            popular_thumbnail or "",
+        ]
+
+        yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), SEPARATOR)}\n"
+
+        print(f"Finished processing family {name}, it has {index-1} games in it")
+
+    print(f"Finished processing all families")
 
 
 if __name__ == "__main__":
