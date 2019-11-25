@@ -6,6 +6,7 @@ import unicodedata
 from collections import defaultdict
 from typing import Dict, Iterable, Iterator, List, Set
 
+from bgg.api.RequestFamily import RequestFamily
 from bgg.api.RequestPlays import RequestPlays
 from bgg.api.RequestThing import RequestThing
 from CLIGamesParser import CLIGamesParser
@@ -16,7 +17,7 @@ MISSING_CATEGORY_LABEL = "[Unknown]"
 COLLECTED_FAMILIES: Set[int] = {36963, 39442, 54682}
 MIN_PLAYS_FOR_DISPLAY = 10
 
-g_games_in_family: Dict[str, Set[int]] = defaultdict(set)
+g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
 
 
 def main(argv: List[str] = []) -> int:
@@ -47,9 +48,9 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
         game = RequestThing(game_id).query(with_stats=True).only_item()
 
         collected_families = [
-            family_entry[1]
-            for family_entry in game.links()["boardgamefamily"]
-            if family_entry[0] in COLLECTED_FAMILIES
+            family_id
+            for family_id, family_name in game.links()["boardgamefamily"]
+            if family_id in COLLECTED_FAMILIES
         ]
         if collected_families:
             collected_family = collected_families[0]
@@ -90,16 +91,18 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
 
 
 def process_families(aggr_by: int) -> Iterator[str]:
-    for family_name, family_games in g_games_in_family.items():
+    for family_id, family_games in g_games_in_family.items():
         if not family_games:
-            raise Exception(f"Family {family_name} has no entries in it!")
+            raise Exception(f"Family {family_id} has no entries in it!")
 
-        yield process_family(aggr_by, family_name, family_games)
+        yield process_family(aggr_by, family_id, family_games)
 
     print(f"Finished processing all families")
 
 
-def process_family(aggr_by: int, family_name: str, family_games: Iterable[int]) -> str:
+def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
+    family = RequestFamily(id).query().only_item()
+
     bar_chart_race = bcr.Logic(aggr_by)
 
     earliest_year = None
@@ -110,7 +113,7 @@ def process_family(aggr_by: int, family_name: str, family_games: Iterable[int]) 
         game = RequestThing(game_id).query(with_stats=True).only_item()
 
         print(
-            f"Adding {index:03d} {game.primary_name()} ({game.id()}) to family {family_name}"
+            f"Adding {index:03d} {game.primary_name()} ({game.id()}) to family {family.primary_name()}"
         )
 
         if game.ratings().users_rated() > popular_users_rated:
@@ -129,12 +132,14 @@ def process_family(aggr_by: int, family_name: str, family_games: Iterable[int]) 
     metadata = [
         # I don't use the word family here because it would clash with the
         # family category
-        f"[SERIES] {earliest_year}-{normalize_str(family_name)}",
+        f"[SERIES] {earliest_year}-{normalize_str(family.primary_name())}",
         popular_category or MISSING_CATEGORY_LABEL,
-        popular_thumbnail or "",
+        family.thumbnail() or popular_thumbnail or "",
     ]
 
-    print(f"Finished processing family {family_name}, it has {index-1} games in it")
+    print(
+        f"Finished processing family {family.primary_name()}, it has {index-1} games in it"
+    )
 
     return f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), SEPARATOR)}\n"
 
