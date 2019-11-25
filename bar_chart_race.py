@@ -14,7 +14,7 @@ from observers import BarChartRace as bcr
 SEPARATOR = "\t"
 MISSING_CATEGORY_LABEL = "[Unknown]"
 COLLECTED_FAMILIES: Set[int] = {36963, 39442, 54682}
-MIN_PLAYS_FOR_DISPLAY = 50
+MIN_PLAYS_FOR_DISPLAY = 10
 
 g_games_in_family: Dict[str, Set[int]] = defaultdict(set)
 
