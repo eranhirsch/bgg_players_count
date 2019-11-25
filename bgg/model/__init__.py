@@ -1,4 +1,31 @@
+from typing import Callable, Generic, Iterable, Iterator, Sized, TypeVar
+from xml.etree import ElementTree as ET
+
 from .ModelBase import ModelBase
+
+TModel = TypeVar("TModel", bound=ModelBase)
+
+
+class Items(ModelBase, Generic[TModel], Sized, Iterable[TModel]):
+    @classmethod
+    def _rootTagName(cls) -> str:
+        return "items"
+
+    def __init__(
+        self, root: ET.Element, factory: Callable[[ET.Element], TModel]
+    ) -> None:
+        super().__init__(root)
+        self.__factory = factory
+
+    def total(self) -> int:
+        return int(self._field("total"))
+
+    def __len__(self) -> int:
+        return len(self._root)
+
+    def __iter__(self) -> Iterator[TModel]:
+        for child in self._root:
+            yield self.__factory(child)
 
 
 class Name(ModelBase):

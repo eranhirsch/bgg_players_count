@@ -1,12 +1,12 @@
 import xml.etree.ElementTree as ET
 from typing import Dict, Optional, Sequence
 
-from ..model import family
+from ..model import Items, family
 from ..utils import firstx
 from .RequestBase import RequestBase
 
 
-class RequestFamily(RequestBase[family.Items]):
+class RequestFamily(RequestBase[Items[family.Item]]):
     """
     Things could be grouped in abstract 'families' based on a commonality.
     Defined in: https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc4
@@ -20,7 +20,7 @@ class RequestFamily(RequestBase[family.Items]):
         self.__types = args
         return self
 
-    def query(self) -> family.Items:
+    def query(self) -> Items[family.Item]:
         return self._fetch()
 
     def query_first(self) -> family.Item:
@@ -48,8 +48,8 @@ class RequestFamily(RequestBase[family.Items]):
 
         return params
 
-    def _build_response(self, root: ET.Element, **kwargs) -> family.Items:
-        return family.Items(root)
+    def _build_response(self, root: ET.Element, **kwargs) -> Items[family.Item]:
+        return Items(root, lambda item_elem: family.Item(item_elem))
 
     def _cache_file_name(self, **kwargs) -> Optional[str]:
         return None

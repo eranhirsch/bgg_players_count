@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import Dict, Iterator, Optional, Sequence, Set
 
-from ..model import thing
+from ..model import Items, thing
 from ..utils import firstx
 from .RequestBase import RequestBase
 
@@ -16,7 +16,7 @@ KNOWN_FLAGS = {
 }
 
 
-class RequestThing(RequestBase[thing.Items]):
+class RequestThing(RequestBase[Items[thing.Item]]):
     """
     A request for a specific entry in the bgg things DB. Things are the core
     abstraction for games, expansions, etc...
@@ -92,8 +92,8 @@ class RequestThing(RequestBase[thing.Items]):
 
         return params
 
-    def _build_response(self, root: ET.Element, **kwargs) -> thing.Items:
-        return thing.Items(root)
+    def _build_response(self, root: ET.Element, **kwargs) -> Items[thing.Item]:
+        return Items(root, lambda item_elem: thing.Item(item_elem))
 
     def _cache_file_name(self, **kwargs) -> Optional[str]:
         if len(self.__ids) > 1:

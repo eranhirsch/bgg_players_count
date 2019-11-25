@@ -1,4 +1,4 @@
-from typing import Iterable, Iterator, Optional, Sized, Tuple
+from typing import Iterable, Iterator, Optional, Tuple
 
 from ..utils import nonthrows
 from . import Link, Name
@@ -52,16 +52,3 @@ class Item(ModelBase, Iterable[Tuple[int, str]]):
         """Raw data, prefer calling links instead"""
         for link in nonthrows(self._root.findall("link")):
             yield Link(link)
-
-
-class Items(ModelBase, Sized, Iterable[Item]):
-    @classmethod
-    def _rootTagName(cls) -> str:
-        return "items"
-
-    def __len__(self) -> int:
-        return len(self._root)
-
-    def __iter__(self) -> Iterator[Item]:
-        for item in self._root:
-            yield Item(item)
