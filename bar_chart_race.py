@@ -75,10 +75,8 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
         )
 
         bar_chart_race = bcr.Logic(aggr_by)
-        plays = 0
-        for play in RequestPlays(thingid=game_id).queryAll():
+        for plays, play in enumerate(RequestPlays(thingid=game_id).queryAll()):
             bar_chart_race.visit(play)
-            plays += 1
 
         if plays >= MIN_PLAYS_FOR_DISPLAY:
             yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), SEPARATOR)}\n"
