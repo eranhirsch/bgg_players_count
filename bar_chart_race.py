@@ -115,11 +115,18 @@ def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
             f"Adding {index:03d} {game.primary_name()} ({game.id()}) to family {family.primary_name()}"
         )
 
+        if (
+            game.type() == "boardgame"
+            and game.primary_category()
+            and (
+                not popular_category
+                or game.ratings().users_rated() > popular_users_rated
+            )
+        ):
+            popular_category = game.primary_category()
+
         if game.ratings().users_rated() > popular_users_rated:
             popular_users_rated = game.ratings().users_rated()
-            if game.type() == "boardgame":
-                # expansions don't have categories
-                popular_category = game.primary_category()
             popular_thumbnail = game.thumbnail()
 
         if not earliest_year or game.year_published() < earliest_year:
