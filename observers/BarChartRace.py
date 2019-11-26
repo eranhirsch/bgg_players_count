@@ -85,7 +85,7 @@ class Logic:
 class Presenter:
     @staticmethod
     def column_names(range: DateRange) -> List[str]:
-        return [str(month) for month in range]
+        return [f"{month}-30" for month in range]
 
     def __init__(
         self, logic: Logic, range: DateRange, min_year: int, separator: str = "\t"
