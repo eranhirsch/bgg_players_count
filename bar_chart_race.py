@@ -24,7 +24,7 @@ def main(argv: List[str] = []) -> int:
     aggr_by = int(argv[2])
     with open(argv[1], "wt") as output:
         output.write(
-            f"{SEPARATOR.join(['Name', 'Category', 'Image'] + bcr.Presenter.column_names(window(aggr_by)))}\n"
+            f"{SEPARATOR.join(['Name', 'Category', 'Image', '1999-12-31'] + bcr.Presenter.column_names(window(aggr_by)))}\n"
         )
         output.writelines(process_games(aggr_by, CLIGamesParser(argv[3:])))
         output.writelines(process_families(aggr_by))
@@ -68,6 +68,7 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
             f"{game.year_published()}-{normalize_str(game.primary_name())}",
             game.primary_category() or MISSING_CATEGORY_LABEL,
             game.thumbnail() or "",
+            "0",
         ]
 
         print(
@@ -133,6 +134,7 @@ def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
         f"[SERIES] {earliest_year}-{normalize_str(family.primary_name())}",
         popular_category or MISSING_CATEGORY_LABEL,
         family.thumbnail() or popular_thumbnail or "",
+        "0",
     ]
 
     print(
