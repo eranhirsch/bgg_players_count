@@ -138,7 +138,7 @@ def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
     ]
 
     print(
-        f"Finished processing family {family.primary_name()}, it has {index-1} games in it"
+        f"Finished processing family {family.primary_name()}, it has {index+1} games in it"
     )
 
     return f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), earliest_year or 1999, SEPARATOR)}\n"
