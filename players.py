@@ -18,7 +18,7 @@ def main(argv: List[str] = []) -> int:
 
     try:
         for index, game_id in enumerate(CLIGamesParser(argv[1:])):
-            game = RequestThing(game_id).query_first()
+            game = RequestThing(game_id).with_flags('stats').query_first()
             print(
                 f"Processing plays for game {index:03d}: {game.primary_name()} ({game_id})"
             )
