@@ -12,8 +12,14 @@ from observers import PlayerCountAggregator as pca
 from observers import SessionCounter as sc
 
 SEPARATOR = "\t"
-COLLECTED_FAMILIES: Set[int] = {36963, 39442, 54682, 2580, 25246, 23234}
-MIN_PLAYS_FOR_DISPLAY = 50
+COLLECTED_FAMILIES: Set[int] = {
+    36963,  # Exit: The Game
+    39442,  # Unlock
+    54682,  # KeyForge
+    2580,  # Dominion
+    23234,  # Pathfinder
+}
+MIN_PLAYS_FOR_DISPLAY = 1500
 
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
 
@@ -109,6 +115,7 @@ def process_family(id: int, family_games: Iterable[int]) -> str:
     best_rank = None
     published_play_count = None
     popular_users_rated = 0
+    total_users_rated = 0
     total_owned = 0
     for index, game_id in enumerate(family_games):
         game = RequestThing(game_id).with_flags("stats").query_first()
@@ -117,20 +124,25 @@ def process_family(id: int, family_games: Iterable[int]) -> str:
             f"Adding {index:03d} {game.primary_name()} ({game.id()}) to family {family.primary_name()}"
         )
 
+        if game.type() == "boardgame":
+            best_rank = (
+                min(best_rank, game.overall_rank())
+                if best_rank and game.overall_rank()
+                else game.overall_rank()
+            )
+
         if game.ratings().users_rated() > popular_users_rated:
             popular_users_rated = game.ratings().users_rated()
             if game.type() == "boardgame":
-                # expansions don't have categories
                 if game.primary_category():
                     popular_category = game.primary_category()
-                if game.overall_rank():
-                    best_rank = game.overall_rank()
                 published_play_count = game.player_count()
 
         if not earliest_year or game.year_published() < earliest_year:
             earliest_year = game.year_published()
 
         total_owned += game.ratings().market()[0]
+        total_users_rated += game.ratings().users_rated()
 
         for play in RequestPlays(thingid=game_id).queryAll():
             player_count_logic.visit(play)
@@ -155,7 +167,7 @@ def process_family(id: int, family_games: Iterable[int]) -> str:
         earliest_year,
         best_rank,
         published,
-        popular_users_rated,
+        total_users_rated,
         total_owned,
         sc.Presenter(session_count_logic),
         pca.CSVPresenter(player_count_logic, SEPARATOR),
