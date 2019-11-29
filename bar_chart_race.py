@@ -14,8 +14,13 @@ from observers import BarChartRace as bcr
 
 SEPARATOR = "\t"
 MISSING_CATEGORY_LABEL = "[Unknown]"
-COLLECTED_FAMILIES: Set[int] = {36963, 39442, 54682, 2580, 25246, 23234}
-MIN_PLAYS_FOR_DISPLAY = 10
+COLLECTED_FAMILIES: Set[int] = {
+    36963,  # Exit: The Game
+    39442,  # Unlock
+    54682,  # KeyForge
+    2580,  # Dominion
+    23234,  # Pathfinder
+}
 
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
 
@@ -79,12 +84,7 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
         for plays, play in enumerate(RequestPlays(thingid=game_id).queryAll()):
             bar_chart_race.visit(play)
 
-        if plays >= MIN_PLAYS_FOR_DISPLAY:
-            yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), game.year_published(), SEPARATOR)}\n"
-        else:
-            print(
-                f"Game {game.primary_name()} ({game.id()}) only had {plays} plays so it won't be added to the output!"
-            )
+        yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), game.year_published(), SEPARATOR)}\n"
 
     print(f"Finished processing {index-1} games")
 
