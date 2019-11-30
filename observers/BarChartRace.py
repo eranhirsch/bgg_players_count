@@ -1,5 +1,6 @@
 import datetime
-from typing import Dict, Iterable, Iterator, List
+from collections import defaultdict
+from typing import Dict, Iterable, Iterator, List, Set, Tuple
 
 from bgg.model import play
 
@@ -64,7 +65,7 @@ class DateRange(Iterable[Month]):
 
 class Logic:
     def __init__(self, aggr_by: int = 1) -> None:
-        self.__results: Dict[Month, int] = {}
+        self.__results: Dict[Month, Set[Tuple[int, datetime.date]]] = defaultdict(set)
         self.__aggr_by = aggr_by
 
     def visit(self, play: play.Play) -> None:
@@ -73,12 +74,9 @@ class Logic:
             return
 
         month = Month.fromDate(date, self.__aggr_by)
-        try:
-            self.__results[month] += 1
-        except KeyError:
-            self.__results[month] = 1
+        self.__results[month].add((play.user_id(), date))
 
-    def getResults(self) -> Dict[Month, int]:
+    def getResults(self) -> Dict[Month, Set[Tuple[int, datetime.date]]]:
         return self.__results
 
 
@@ -99,7 +97,7 @@ class Presenter:
         results = self.__logic.getResults()
         return self.__separator.join(
             [
-                f"{results.get(month, 0) if not month < Month(self.__min_year, 1) else 0}"
+                f"{len(results.get(month, {})) if not month < Month(self.__min_year, 1) else 0}"
                 for month in self.__range
             ]
         )
