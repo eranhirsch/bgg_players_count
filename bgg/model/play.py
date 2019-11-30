@@ -67,7 +67,7 @@ class Play(ModelBase):
     def id(self) -> int:
         return int(self._field("id"))
 
-    def userID(self) -> int:
+    def user_id(self) -> int:
         return int(self._field("userid"))
 
     def date(self) -> Optional[datetime.date]:
