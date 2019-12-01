@@ -20,6 +20,10 @@ COLLECTED_FAMILIES: Set[int] = {
     54682,  # KeyForge
     2580,  # Dominion
     23234,  # Pathfinder
+    62,  # Advanced Squad Leader
+    25246,  # Star Realms
+    7687,  # Summoner Wars
+    18113,  # Star Wars X-Wing
 }
 
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
