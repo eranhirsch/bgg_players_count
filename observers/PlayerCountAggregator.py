@@ -42,6 +42,8 @@ DIGITAL_LOCATIONS_RE = [
         r"^(https?://)?(www\.)?b(oard)? ?g(aming)?( |-)?o(nline)?(\.com/?)?$",
         r"^(https?://)?(www\.)?bo(i|î)te ?(a|à) ?jeux(\.net/?)?/?$",
         r"^(https?://)?(www\.)?d(ays)? ?of? ?w(onder)?(\.com/?)?$",
+        r"^(https?://)?(www\.)?vassal(engine)?(\.org/?)?$",
+        r"^(https?://)?(www\.)?wargameroom(\.com/?)?$",
         r"^(https?://)?(www\.)?yucata(\.de)?/?$",
         r"^goko(\.com)?$",
         r"^octgn$",
