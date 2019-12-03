@@ -24,8 +24,8 @@ COLLECTED_FAMILIES: Set[int] = {
     25246,  # Star Realms
     7687,  # Summoner Wars
     18113,  # Star Wars X-Wing
-    10782, # Timeline
-    8878, # Time's Up
+    10782,  # Timeline
+    8878,  # Time's Up
 }
 
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
