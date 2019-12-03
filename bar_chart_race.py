@@ -15,17 +15,18 @@ from observers import BarChartRace as bcr
 SEPARATOR = "\t"
 MISSING_CATEGORY_LABEL = "[Unknown]"
 COLLECTED_FAMILIES: Set[int] = {
+    10782,  # Timeline
+    18113,  # Star Wars X-Wing
+    23234,  # Pathfinder
+    25246,  # Star Realms
+    2580,  # Dominion
     36963,  # Exit: The Game
     39442,  # Unlock
     54682,  # KeyForge
-    2580,  # Dominion
-    23234,  # Pathfinder
     62,  # Advanced Squad Leader
-    25246,  # Star Realms
     7687,  # Summoner Wars
-    18113,  # Star Wars X-Wing
-    10782,  # Timeline
     8878,  # Time's Up
+    9644,  # Dixit
 }
 
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
