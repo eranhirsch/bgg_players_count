@@ -31,6 +31,10 @@ COLLECTED_FAMILIES: Set[int] = {
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
 
 
+def get_logic(aggr_by: int) -> bcr.MonthlyLogic:
+    return bcr.UniquePlaysLogic(aggr_by)
+
+
 def main(argv: List[str] = []) -> int:
     aggr_by = int(argv[2])
     with open(argv[1], "wt") as output:
@@ -86,8 +90,8 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
             f"Processing plays for game {index:03d}: {game.primary_name()} ({game.id()})"
         )
 
-        bar_chart_race = bcr.Logic(aggr_by)
-        for plays, play in enumerate(RequestPlays(thingid=game_id).queryAll()):
+        bar_chart_race = get_logic(aggr_by)
+        for play in RequestPlays(thingid=game_id).queryAll():
             bar_chart_race.visit(play)
 
         yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), game.year_published(), SEPARATOR)}\n"
@@ -108,7 +112,7 @@ def process_families(aggr_by: int) -> Iterator[str]:
 def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
     family = RequestFamily(id).query_first()
 
-    bar_chart_race = bcr.Logic(aggr_by)
+    bar_chart_race = get_logic(aggr_by)
 
     earliest_year = None
     popular_category = None

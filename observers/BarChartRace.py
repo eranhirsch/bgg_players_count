@@ -1,6 +1,17 @@
+import abc
 import datetime
 from collections import defaultdict
-from typing import Dict, Iterable, Iterator, List, Set, Tuple
+from typing import (
+    Dict,
+    Generic,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    TypeVar,
+)
 
 from bgg.model import play
 
@@ -63,21 +74,40 @@ class DateRange(Iterable[Month]):
             curr += self.__step
 
 
-class Logic:
+T = TypeVar("T")
+
+
+class MonthlyLogic(Generic[T]):
+    @abc.abstractclassmethod
+    def _countable_item(cls, play: play.Play) -> T:
+        pass
+
     def __init__(self, aggr_by: int = 1) -> None:
-        self.__results: Dict[Month, Set[Tuple[int, datetime.date]]] = defaultdict(set)
-        self.__aggr_by = aggr_by
+        self.__results: Dict[Month, Set[T]] = defaultdict(set)
+        self._aggr_by = aggr_by
 
     def visit(self, play: play.Play) -> None:
         date = play.date()
         if not date:
             return
 
-        month = Month.fromDate(date, self.__aggr_by)
-        self.__results[month].add((play.user_id(), date))
+        month = Month.fromDate(date, self._aggr_by)
+        self.__results[month].add(self._countable_item(play))
 
-    def getResults(self) -> Dict[Month, Set[Tuple[int, datetime.date]]]:
+    def getResults(self) -> Dict[Month, Set[T]]:
         return self.__results
+
+
+class UniquePlaysLogic(MonthlyLogic[Tuple[int, Optional[datetime.date]]]):
+    @classmethod
+    def _countable_item(cls, play: play.Play) -> Tuple[int, Optional[datetime.date]]:
+        return (play.user_id(), play.date())
+
+
+class UniqueUsersLogic(MonthlyLogic[int]):
+    @classmethod
+    def _countable_item(cls, play: play.Play) -> int:
+        return play.user_id()
 
 
 class Presenter:
@@ -86,7 +116,11 @@ class Presenter:
         return [f"{month}-30" for month in range]
 
     def __init__(
-        self, logic: Logic, range: DateRange, min_year: int, separator: str = "\t"
+        self,
+        logic: MonthlyLogic,
+        range: DateRange,
+        min_year: int,
+        separator: str = "\t",
     ) -> None:
         self.__logic = logic
         self.__range = range
