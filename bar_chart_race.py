@@ -94,6 +94,13 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
         for play in RequestPlays(thingid=game_id).queryAll():
             bar_chart_race.visit(play)
 
+        for exp_index, expansion in enumerate(game.links()["boardgameexpansion"]):
+            print(
+                f"Fetching plays for expansion {exp_index:02d}: {expansion[1]} ({expansion[0]}) of {game.primary_name()}"
+            )
+            for play in RequestPlays(thingid=expansion[0]).queryAll():
+                bar_chart_race.visit(play)
+
         yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), game.year_published(), SEPARATOR)}\n"
 
     print(f"Finished processing {index-1} games")
