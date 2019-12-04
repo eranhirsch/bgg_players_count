@@ -16,13 +16,16 @@ SEPARATOR = "\t"
 MISSING_CATEGORY_LABEL = "[Unknown]"
 COLLECTED_FAMILIES: Set[int] = {
     17,  # Ticket to Ride
+    34,  # Axis & Allies
     62,  # Advanced Squad Leader
     2580,  # Dominion
     7687,  # Summoner Wars
     8878,  # Time's Up
     9644,  # Dixit
+    9974,  # Ascension
     10782,  # Timeline
     18113,  # Star Wars X-Wing
+    22707,  # Cards Against Humanity
     23234,  # Pathfinder
     25246,  # Star Realms
     36963,  # Exit: The Game
