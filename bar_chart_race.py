@@ -30,6 +30,7 @@ COLLECTED_FAMILIES: Set[int] = {
     22707,  # Cards Against Humanity
     23234,  # Pathfinder
     25246,  # Star Realms
+    27123,  # Love Letter
     36963,  # Exit: The Game
     39442,  # Unlock
     54682,  # KeyForge
