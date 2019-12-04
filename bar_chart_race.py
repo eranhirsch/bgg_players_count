@@ -15,9 +15,11 @@ from observers import BarChartRace as bcr
 SEPARATOR = "\t"
 MISSING_CATEGORY_LABEL = "[Unknown]"
 COLLECTED_FAMILIES: Set[int] = {
+    8,  # Fluxx
     17,  # Ticket to Ride
     34,  # Axis & Allies
     62,  # Advanced Squad Leader
+    100,  # Monopoly
     2580,  # Dominion
     7687,  # Summoner Wars
     8878,  # Time's Up
