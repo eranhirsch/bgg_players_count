@@ -15,6 +15,7 @@ from observers import BarChartRace as bcr
 SEPARATOR = "\t"
 MISSING_CATEGORY_LABEL = "[Unknown]"
 COLLECTED_FAMILIES: Set[int] = {
+    2,  # Carcassonne
     8,  # Fluxx
     17,  # Ticket to Ride
     34,  # Axis & Allies
@@ -31,9 +32,11 @@ COLLECTED_FAMILIES: Set[int] = {
     23234,  # Pathfinder
     25246,  # Star Realms
     27123,  # Love Letter
+    27945,  # One Night
     36963,  # Exit: The Game
     39442,  # Unlock
     54682,  # KeyForge
+    57039,  # Azul
 }
 
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
