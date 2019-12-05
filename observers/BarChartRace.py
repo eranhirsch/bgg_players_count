@@ -119,7 +119,7 @@ class Presenter:
         self,
         logic: MonthlyLogic,
         range: DateRange,
-        min_year: int,
+        min_year: Optional[int],
         separator: str = "\t",
     ) -> None:
         self.__logic = logic
@@ -129,9 +129,12 @@ class Presenter:
 
     def __str__(self) -> str:
         results = self.__logic.getResults()
-        return self.__separator.join(
-            [
-                f"{len(results.get(month, {})) if not month < Month(self.__min_year, 1) else 0}"
-                for month in self.__range
-            ]
-        )
+        counts = [
+            str(
+                0
+                if self.__min_year and month < Month(self.__min_year, 1)
+                else len(results.get(month, {}))
+            )
+            for month in self.__range
+        ]
+        return self.__separator.join(counts)

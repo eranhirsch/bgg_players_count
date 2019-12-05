@@ -169,8 +169,8 @@ class Item(ModelBase):
         self.__assert_type("boardgame")
         return self._child_text("description")
 
-    def year_published(self) -> int:
-        return int(self._child_value("yearpublished"))
+    def year_published(self) -> Optional[int]:
+        return self._nonifyInt(self._child_value("yearpublished"))
 
     def player_count(self) -> Tuple[int, int]:
         """The official (published) player count limits for the game"""

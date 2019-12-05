@@ -14,6 +14,7 @@ from observers import BarChartRace as bcr
 
 SEPARATOR = "\t"
 MISSING_CATEGORY_LABEL = "[Unknown]"
+MISSING_YEAR_LABEL = "????"
 COLLECTED_FAMILIES: Set[int] = {
     2,  # Carcassonne
     3,  # Catan
@@ -99,7 +100,7 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
             continue
 
         metadata = [
-            f"{game.year_published()}-{normalize_str(game.primary_name())}",
+            f"{game.year_published() or MISSING_YEAR_LABEL}-{normalize_str(game.primary_name())}",
             game.primary_category() or MISSING_CATEGORY_LABEL,
             game.thumbnail() or "",
             "0",
@@ -165,7 +166,9 @@ def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
             popular_users_rated = game.ratings().users_rated()
             popular_thumbnail = game.thumbnail()
 
-        if not earliest_year or game.year_published() < earliest_year:
+        if game.year_published() and (
+            not earliest_year or game.year_published() < earliest_year
+        ):
             earliest_year = game.year_published()
 
         for play in RequestPlays(thingid=game_id).queryAll():
@@ -174,7 +177,7 @@ def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
     metadata = [
         # I don't use the word family here because it would clash with the
         # family category
-        f"[SERIES] {earliest_year}-{normalize_str(family.primary_name())}",
+        f"[SERIES] {earliest_year or MISSING_YEAR_LABEL}-{normalize_str(family.primary_name())}",
         popular_category or MISSING_CATEGORY_LABEL,
         family.thumbnail() or popular_thumbnail or "",
         "0",
