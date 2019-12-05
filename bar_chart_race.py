@@ -16,12 +16,14 @@ SEPARATOR = "\t"
 MISSING_CATEGORY_LABEL = "[Unknown]"
 COLLECTED_FAMILIES: Set[int] = {
     2,  # Carcassonne
+    3,  # Catan
     8,  # Fluxx
     17,  # Ticket to Ride
     34,  # Axis & Allies
     62,  # Advanced Squad Leader
     100,  # Monopoly
     2580,  # Dominion
+    4571,  # Race for the Galaxy
     7687,  # Summoner Wars
     8878,  # Time's Up
     9644,  # Dixit
@@ -33,10 +35,16 @@ COLLECTED_FAMILIES: Set[int] = {
     25246,  # Star Realms
     27123,  # Love Letter
     27945,  # One Night
+    35759,  # T.I.M.E Stories
     36963,  # Exit: The Game
+    37062,  # Codenames
     39442,  # Unlock
+    46771,  # Champions of Midgard
     54682,  # KeyForge
     57039,  # Azul
+    57498,  # Through the Ages
+    57499,  # Brass
+    57505,  # Mansions of Madness
 }
 
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
