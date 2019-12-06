@@ -43,12 +43,14 @@ COLLECTED_FAMILIES: Set[int] = {
     36963,  # Exit: The Game
     37062,  # Codenames
     39442,  # Unlock
+    44820,  # Sushi Go
     46771,  # Champions of Midgard
     54682,  # KeyForge
     57039,  # Azul
     57498,  # Through the Ages
     57499,  # Brass
     57505,  # Mansions of Madness
+    57676,  # Railroad Ink
 }
 
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
