@@ -25,11 +25,14 @@ COLLECTED_FAMILIES: Set[int] = {
     100,  # Monopoly
     2580,  # Dominion
     4571,  # Race for the Galaxy
+    5723,  # War of the Rings
     7687,  # Summoner Wars
     8878,  # Time's Up
     9644,  # Dixit
     9974,  # Ascension
+    10552,  # CaSh 'n Gun$
     10782,  # Timeline
+    12926,  # Wits and Wagers
     18113,  # Star Wars X-Wing
     22707,  # Cards Against Humanity
     23234,  # Pathfinder
