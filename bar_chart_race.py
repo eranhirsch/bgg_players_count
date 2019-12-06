@@ -22,13 +22,17 @@ COLLECTED_FAMILIES: Set[int] = {
     17,  # Ticket to Ride
     34,  # Axis & Allies
     62,  # Advanced Squad Leader
+    71,  # Cluedo
     100,  # Monopoly
     2580,  # Dominion
+    3430,  # Pandemic
     4571,  # Race for the Galaxy
+    4711,  # Scrabble
     5723,  # War of the Rings
     7687,  # Summoner Wars
     8878,  # Time's Up
     9644,  # Dixit
+    9768,  # BattleLore
     9974,  # Ascension
     10552,  # CaSh 'n Gun$
     10782,  # Timeline
@@ -39,13 +43,19 @@ COLLECTED_FAMILIES: Set[int] = {
     25246,  # Star Realms
     27123,  # Love Letter
     27945,  # One Night
+    28525,  # King of Tokyo
     35759,  # T.I.M.E Stories
     36963,  # Exit: The Game
     37062,  # Codenames
     39442,  # Unlock
+    39723,  # Forbidden Games
     44820,  # Sushi Go
     46771,  # Champions of Midgard
+    47479,  # Century Trilogy
+    50195,  # Kingdomino
+    54060,  # Betrayal Family
     54682,  # KeyForge
+    56924,  # Risk (Official)
     57039,  # Azul
     57498,  # Through the Ages
     57499,  # Brass
