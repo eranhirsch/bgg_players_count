@@ -4,7 +4,7 @@ import datetime
 import sys
 import unicodedata
 from collections import defaultdict
-from typing import Dict, Iterable, Iterator, List, Set
+from typing import Dict, Iterable, Iterator, List, Set, Tuple
 
 from bgg.api.RequestFamily import RequestFamily
 from bgg.api.RequestPlays import RequestPlays
@@ -68,18 +68,24 @@ COLLECTED_FAMILIES: Set[int] = {
 g_games_in_family: Dict[int, Set[int]] = defaultdict(set)
 
 
-def get_logic(aggr_by: int) -> bcr.MonthlyLogic:
-    return bcr.UniquePlaysLogic(aggr_by)
-
-
 def main(argv: List[str] = []) -> int:
-    aggr_by = int(argv[2])
-    with open(argv[1], "wt") as output:
-        output.write(
-            f"{SEPARATOR.join(['Name', 'Category', 'Image', '1999-12-31'] + bcr.Presenter.column_names(window(aggr_by)))}\n"
-        )
-        output.writelines(process_games(aggr_by, CLIGamesParser(argv[3:])))
-        output.writelines(process_families(aggr_by))
+    aggr_by = int(argv[3])
+
+    with open(argv[1], "wt") as plays_output:
+        with open(argv[2], "wt") as users_output:
+            plays_output.write(
+                f"{SEPARATOR.join(['Name', 'Category', 'Image', '1999-12-31'] + bcr.Presenter.column_names(window(aggr_by)))}\n"
+            )
+            users_output.write(
+                f"{SEPARATOR.join(['Name', 'Category', 'Image', '1999-12-31'] + bcr.Presenter.column_names(window(aggr_by)))}\n"
+            )
+            for plays, users in process_games(aggr_by, CLIGamesParser(argv[4:])):
+                plays_output.write(plays)
+                users_output.write(users)
+            for plays, users in process_families(aggr_by):
+                plays_output.write(plays)
+                users_output.write(users)
+
     return 0
 
 
@@ -95,7 +101,7 @@ def normalize_str(s: str) -> str:
     return unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii")
 
 
-def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
+def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[Tuple[str, str]]:
     for index, game_id in enumerate(games):
         game = RequestThing(game_id).with_flags("stats").query_first()
 
@@ -127,36 +133,49 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[str]:
             f"Processing plays for game {index:03d}: {game.primary_name()} ({game.id()})"
         )
 
-        bar_chart_race = get_logic(aggr_by)
+        plays_logic = bcr.UniquePlaysLogic(aggr_by)
+        users_logic = bcr.UniqueUsersLogic(aggr_by)
         for play in RequestPlays(thingid=game_id).queryAll():
-            bar_chart_race.visit(play)
+            plays_logic.visit(play)
+            users_logic.visit(play)
 
         for exp_index, expansion in enumerate(game.links()["boardgameexpansion"]):
             print(
                 f"Fetching plays for expansion {exp_index:02d}: {expansion[1]} ({expansion[0]}) of {game.primary_name()}"
             )
             for play in RequestPlays(thingid=expansion[0]).queryAll():
-                bar_chart_race.visit(play)
+                plays_logic.visit(play)
+                users_logic.visit(play)
 
-        yield f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(bar_chart_race, window(aggr_by), game.year_published(), SEPARATOR)}\n"
+        yield (
+            f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(plays_logic, window(aggr_by), game.year_published(), SEPARATOR)}\n",
+            f"{SEPARATOR.join(metadata)}{SEPARATOR}{bcr.Presenter(users_logic, window(aggr_by), game.year_published(), SEPARATOR)}\n",
+        )
 
     print(f"Finished processing {index-1} games")
 
 
-def process_families(aggr_by: int) -> Iterator[str]:
+def process_families(aggr_by: int) -> Iterator[Tuple[str, str]]:
     for family_id, family_games in g_games_in_family.items():
         if not family_games:
             raise Exception(f"Family {family_id} has no entries in it!")
 
-        yield process_family(aggr_by, family_id, family_games)
+        yield (
+            process_family(
+                aggr_by, family_id, family_games, bcr.UniquePlaysLogic(aggr_by)
+            ),
+            process_family(
+                aggr_by, family_id, family_games, bcr.UniqueUsersLogic(aggr_by)
+            ),
+        )
 
     print(f"Finished processing all families")
 
 
-def process_family(aggr_by: int, id: int, family_games: Iterable[int]) -> str:
+def process_family(
+    aggr_by: int, id: int, family_games: Iterable[int], bar_chart_race: bcr.MonthlyLogic
+) -> str:
     family = RequestFamily(id).query_first()
-
-    bar_chart_race = get_logic(aggr_by)
 
     earliest_year = None
     popular_category = None
