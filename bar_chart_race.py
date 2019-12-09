@@ -40,6 +40,7 @@ COLLECTED_FAMILIES: Set[int] = {
     18113,  # Star Wars X-Wing
     22707,  # Cards Against Humanity
     23234,  # Pathfinder
+    24962,  # Hive
     25246,  # Star Realms
     27123,  # Love Letter
     27945,  # One Night
@@ -52,6 +53,7 @@ COLLECTED_FAMILIES: Set[int] = {
     44820,  # Sushi Go
     46771,  # Champions of Midgard
     47479,  # Century Trilogy
+    48927,  # Clank!
     50195,  # Kingdomino
     54060,  # Betrayal Family
     54682,  # KeyForge
