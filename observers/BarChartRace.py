@@ -83,7 +83,7 @@ class MonthlyLogic(Generic[T]):
         pass
 
     def __init__(self, aggr_by: int = 1) -> None:
-        self.__results: Dict[Month, Set[T]] = defaultdict(set)
+        self._results: Dict[Month, Set[T]] = defaultdict(set)
         self._aggr_by = aggr_by
 
     def visit(self, play: play.Play) -> None:
@@ -92,10 +92,10 @@ class MonthlyLogic(Generic[T]):
             return
 
         month = Month.fromDate(date, self._aggr_by)
-        self.__results[month].add(self._countable_item(play))
+        self._results[month].add(self._countable_item(play))
 
     def getResults(self) -> Dict[Month, Set[T]]:
-        return self.__results
+        return self._results
 
 
 class UniquePlaysLogic(MonthlyLogic[Tuple[int, Optional[datetime.date]]]):
@@ -105,6 +105,18 @@ class UniquePlaysLogic(MonthlyLogic[Tuple[int, Optional[datetime.date]]]):
 
 
 class UniqueUsersLogic(MonthlyLogic[int]):
+    @classmethod
+    def _countable_item(cls, play: play.Play) -> int:
+        return play.user_id()
+
+
+class TotalUsersLogic(MonthlyLogic[int]):
+    __total: Dict[Month, Set[int]] = defaultdict(set)
+
+    def __init__(self, aggr_by: int = 1) -> None:
+        super().__init__(aggr_by)
+        self._results = TotalUsersLogic.__total
+
     @classmethod
     def _countable_item(cls, play: play.Play) -> int:
         return play.user_id()

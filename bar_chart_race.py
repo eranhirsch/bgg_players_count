@@ -86,6 +86,17 @@ def main(argv: List[str] = []) -> int:
                 plays_output.write(plays)
                 users_output.write(users)
 
+            total_fields = [
+                "TOTAL",
+                MISSING_CATEGORY_LABEL,
+                "",
+                MISSING_YEAR_LABEL,
+                bcr.Presenter(bcr.TotalUsersLogic(), window(aggr_by), 1999, SEPARATOR),
+            ]
+            users_output.write(
+                f"{SEPARATOR.join([str(field) for field in total_fields])}\n"
+            )
+
     return 0
 
 
@@ -135,9 +146,11 @@ def process_games(aggr_by: int, games: Iterable[int]) -> Iterator[Tuple[str, str
 
         plays_logic = bcr.UniquePlaysLogic(aggr_by)
         users_logic = bcr.UniqueUsersLogic(aggr_by)
+        total_logic = bcr.TotalUsersLogic(aggr_by)
         for play in RequestPlays(thingid=game_id).queryAll():
             plays_logic.visit(play)
             users_logic.visit(play)
+            total_logic.visit(play)
 
         for exp_index, expansion in enumerate(game.links()["boardgameexpansion"]):
             print(
@@ -160,6 +173,7 @@ def process_families(aggr_by: int) -> Iterator[Tuple[str, str]]:
         if not family_games:
             raise Exception(f"Family {family_id} has no entries in it!")
 
+        process_family(aggr_by, family_id, family_games, bcr.TotalUsersLogic(aggr_by))
         yield (
             process_family(
                 aggr_by, family_id, family_games, bcr.UniquePlaysLogic(aggr_by)
