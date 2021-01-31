@@ -1,17 +1,8 @@
 import abc
 import datetime
 from collections import defaultdict
-from typing import (
-    Dict,
-    Generic,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Set,
-    Tuple,
-    TypeVar,
-)
+from typing import (Dict, Generic, Iterable, Iterator, List, Optional, Set,
+                    Tuple, TypeVar)
 
 from bgg.model import play
 

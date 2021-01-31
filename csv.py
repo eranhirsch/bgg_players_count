@@ -63,7 +63,7 @@ def process_games(games: Iterable[int]) -> Iterator[str]:
             f"Processing plays for game {index:03d}: {game.primary_name()} ({game.id()})"
         )
 
-        player_count_logic = pca.Logic()
+        player_count_logic = pca.Logic(game.player_count())
         session_count_logic = sc.Logic()
         for plays, play in enumerate(RequestPlays(thingid=game_id).queryAll()):
             player_count_logic.visit(play)

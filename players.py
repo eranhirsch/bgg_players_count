@@ -12,7 +12,6 @@ from observers import QuantityNormalizer as qn
 
 
 def main(argv: List[str] = []) -> int:
-    player_count_logic = pca.Logic()
     locations_logic = lc.Logic()
     quantity_logic = qn.Logic()
 
@@ -22,6 +21,7 @@ def main(argv: List[str] = []) -> int:
             print(
                 f"Processing plays for game {index:03d}: {game.primary_name()} ({game_id})"
             )
+            player_count_logic = pca.Logic(game.player_count())
             for play in RequestPlays(thingid=game_id).queryAll():
                 player_count_logic.visit(play)
                 locations_logic.visit(play)

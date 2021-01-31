@@ -1,6 +1,6 @@
 import re
 from enum import Enum, auto
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from bgg.model import play
 
@@ -70,16 +70,20 @@ TCategoryResult = Dict[int, int]
 
 class Logic:
     __results: Dict[ResultsCategory, TCategoryResult] = {}
+    __player_count: Tuple[int, int]
 
-    def __init__(self) -> None:
+    def __init__(self, player_count: Tuple[int, int]) -> None:
+        self.__player_count = player_count
         for cat in ResultsCategory:
             self.__results[cat] = {}
 
     def visit(self, play: play.Play) -> None:
         players = play.players()
+        num_players = len(players) if players else 0
+        num_players = num_players if num_players >= self.__player_count[0] and num_players <= self.__player_count[1] else 0
         self.__bump(
             Logic.__categorize(play),
-            len(players) if players else 0,
+            num_players,
             min(play.quantity(), SANITY_MAX_QUANTITY),
         )
 
@@ -191,7 +195,7 @@ class CSVPresenter:
 
         return self.__separator.join(
             [
-                f"{num:.2f}"
+                f"{num:.3f}"
                 for num in [
                     total_regular,
                     # Percent digital
