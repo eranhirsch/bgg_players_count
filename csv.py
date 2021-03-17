@@ -13,11 +13,11 @@ from observers import SessionCounter as sc
 
 SEPARATOR = "\t"
 COLLECTED_FAMILIES: Set[int] = {
-    36963,  # Exit: The Game
-    39442,  # Unlock
-    54682,  # KeyForge
-    2580,  # Dominion
-    23234,  # Pathfinder
+#    36963,  # Exit: The Game
+#    39442,  # Unlock
+#    54682,  # KeyForge
+#    2580,  # Dominion
+#    23234,  # Pathfinder
 }
 MIN_PLAYS_FOR_DISPLAY = 1500
 
